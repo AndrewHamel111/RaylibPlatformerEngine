@@ -25,6 +25,7 @@ int main()
 	//}
 	
 	//{ init env_list (truly init per level)
+	std::vector<env_level> levels;
 	env_list environment{0};
 	//}
 	
