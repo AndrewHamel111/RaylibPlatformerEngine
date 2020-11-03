@@ -60,6 +60,12 @@ bool operator<(const Vector2& v, const Rectangle& b)
 	return (v.x > b.x && b.x + b.width > v.x) && (v.y > b.y && b.y + b.height > v.y);
 }
 
+// vector <= rectangle (vector in bounds or on boundary)
+bool operator<=(const Vector2& v, const Rectangle& b)
+{
+	return (v.x >= b.x && b.x + b.width >= v.x) && (v.y >= b.y && b.y + b.height >= v.y);
+}
+
 float Vector2SqrMagnitude(const Vector2& x)
 {
 	return x.x * x.x + x.y * x.y;

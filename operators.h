@@ -27,6 +27,7 @@ Vector2 operator*(const float& c, const Vector2& x); /**< Vector scaling */
 Vector2 operator-(const Vector2& a, const Vector2& b); /**< Vector subtraction (using scaling) */
 
 bool operator<(const Vector2& v, const Rectangle& b); /**< Vector in bounds check */
+bool operator<=(const Vector2& v, const Rectangle& b); /**< Vector in bounds || boundary check */
 
 float Vector2SqrMagnitude(const Vector2& x);  /**< SqrMagnitude of a Vector2 */
 float Vector2Magnitude(const Vector2& x);  /**< Magnitude of a Vector2 (MUCH SLOWER) */

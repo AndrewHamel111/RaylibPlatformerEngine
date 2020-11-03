@@ -3,6 +3,7 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="RaylibPlatformerEngine" />
+		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -22,7 +23,30 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="HTTPRequest.hpp" />
+		<Unit filename="Makefile" />
+		<Unit filename="constants.h" />
+		<Unit filename="environment.cpp" />
+		<Unit filename="environment.h" />
+		<Unit filename="jute.cpp" />
+		<Unit filename="jute.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="network.cpp" />
+		<Unit filename="network.hpp" />
+		<Unit filename="operators.cpp" />
+		<Unit filename="operators.h" />
+		<Unit filename="player.cpp" />
+		<Unit filename="player.h" />
 		<Extensions>
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general use_at_in_tags="1" />
+			</DoxyBlocks>
 			<lib_finder disable_auto="1" />
 		</Extensions>
 	</Project>

@@ -2,18 +2,27 @@
 
 /// STRUCT ENV_OBJECT
 
-env_object::env_object(): rect{Rectangle{0,0,100,50}}, sides{true, false, false, false}, id{255}, color{DARKGRAY}
+env_object::env_object(): rect{Rectangle{0,0,100,50}}, sides{true, false, false, false}, id{255}, type{BLOCK}, color{DARKGRAY}, label{""}
 {}
 
-env_object::env_object(Rectangle rect): rect{rect}, sides{true, false, false, false}, id{255}, color{DARKGRAY}
-{}
+env_object::env_object(Rectangle rect): env_object()
+{
+    this->rect = rect;
+}
 
 void DrawEnvObject(const env_object o)
 {
-	if (o.id == 255)
-	{
-		DrawRectangleRec(o.rect, o.color);
-	}
+    if (o.type == BLOCK)
+    {
+        if (o.id == 255)
+        {
+            DrawRectangleRec(o.rect, o.color);
+        }
+    }
+    else if (o.type == TEXT)
+    {
+        DrawTextRec(GetFontDefault(), o.label.c_str(), o.rect, 20, 1.0, true, o.color);
+    }
 }
 
 void DrawEnvList(const env_list l)
