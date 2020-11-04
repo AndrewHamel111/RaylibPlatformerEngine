@@ -128,6 +128,8 @@ void player::check(env_list env)
 			continue;
 		}
 
+		// TODO propogate hitbox change to here
+
         i = hitbox_anchors.begin();
         _i = 0;
 		bool anchor_flags[8] = {false};
