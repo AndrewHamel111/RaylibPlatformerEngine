@@ -26,6 +26,8 @@
 		<Unit filename="HTTPRequest.hpp" />
 		<Unit filename="Makefile" />
 		<Unit filename="constants.h" />
+		<Unit filename="dool.cpp" />
+		<Unit filename="dool.h" />
 		<Unit filename="environment.cpp" />
 		<Unit filename="environment.h" />
 		<Unit filename="jute.cpp" />

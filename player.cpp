@@ -122,6 +122,7 @@ void player::check(env_list env)
     // for each env_object
     while (envI != envIE)
     {
+    	/// TODO replace this logic with the linecheck logic (this logic has been backed up to a file)
         if ((this->pos + Vector2{0, -50}) < envI->rect)
 		{
 			envI++;
@@ -266,4 +267,32 @@ void player::DrawPlayer()
         //DrawCircleV(pos + *(i++),2, BLUE);
 
 	//}
+}
+
+
+/*	Vector2{-51, -101}		Vector2{0, -101} 	Vector2{51, -101}
+	Vector2{-51, -50}							Vector2{51, -50}
+	Vector2{-51, 1}			Vector2{0, 1}		Vector2{51, 1} */
+void LineCheck(LineCheckDirection dir, player p, int lineSegments, env_list obj)
+{
+	/// TODO write this stuff
+	// never use less than 5 line segments (would be very inaccurate if we did)
+	if (lineSegments < 5) lineSegments = 5;
+
+	switch(dir)
+	{
+	case UP: // top left to top right
+		for(int i = 0; i < lineSegments; i++)
+		{
+			Vector2 hitPoint = Vector2{-51 + (float)i/(lineSegments - 1), -101} + p.pos;
+
+		}
+		break;
+	case RIGHT: // top right to bottom right
+		break;
+	case DOWN: // bottom right to bottom left
+		break;
+	case LEFT: // bottom left to top right
+		break;
+	}
 }

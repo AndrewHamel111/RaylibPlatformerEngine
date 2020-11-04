@@ -1,0 +1,125 @@
+void player::check(env_list env)
+{
+	// iterators and a counter
+    auto envI = env.begin(), envIE = env.end();
+    auto i = hitbox_anchors.begin(), iE = hitbox_anchors.end();
+
+    unsigned short _i = 0;
+
+    bool temp_flag_ON_GROUND = false;
+    bool temp_flag_ON_WALL_LEFT = false;
+    bool temp_flag_ON_WALL_RIGHT = false;
+
+    // for each env_object
+    while (envI != envIE)
+    {
+    	/// TODO replace this logic with the linecheck logic (this logic has been backed up to a file)
+        if ((this->pos + Vector2{0, -50}) < envI->rect)
+		{
+			envI++;
+			continue;
+		}
+
+		// TODO propogate hitbox change to here
+
+        i = hitbox_anchors.begin();
+        _i = 0;
+		bool anchor_flags[8] = {false};
+
+        // for each player hitbox anchor
+        while(i != iE)
+        {
+        	// trip the corresponding flags
+			if (this->pos + *i < envI->rect)
+			{
+				anchor_flags[_i] = true;
+				std::cout << "stale cum " << std::to_string(_i) << std::endl;
+			}
+
+			_i++;
+			i++;
+        }
+
+        if (envI->sides[2] && ((anchor_flags[0] && anchor_flags[1]) || (anchor_flags[7] && anchor_flags[0])))
+		{
+			// IN CEILING
+
+			// if still moving upward set vel to 0
+			if (this->vel.y < 0)
+			{
+				this->pos.y = envI->rect.y + envI->rect.height + this->hitboxSize.y;
+				this->vel.y = 0;
+			}
+		}
+		if (envI->sides[3] && ((anchor_flags[1] && anchor_flags[2]) || (anchor_flags[2] && anchor_flags[3])))
+		{
+			// WALL ON RIGHT
+
+			// if still moving right set vel to 0
+			if (this->vel.x > 0)
+			{
+				this->pos.x = envI->rect.x - this->hitboxSize.x/2;
+				this->vel.x = 0;
+			}
+
+			temp_flag_ON_WALL_RIGHT = true;
+		}
+		if (envI->sides[0] && ((anchor_flags[3] && anchor_flags[4]) || (anchor_flags[4] && anchor_flags[5])))
+		{
+			// IN FLOOR
+
+			// if still falling set vel to 0
+			if (this->vel.y > 0)
+			{
+				this->pos.y = envI->rect.y;
+				this->vel.y = 0;
+			}
+
+			temp_flag_ON_GROUND = true;
+		}
+		if (envI->sides[1] && ((anchor_flags[5] && anchor_flags[6]) || (anchor_flags[6] && anchor_flags[7])))
+		{
+			// WALL ON LEFT
+
+			// if still moving right set vel to 0
+			if (this->vel.x < 0)
+			{
+				this->pos.x = envI->rect.x + envI->rect.width + this->hitboxSize.x/2;
+				this->vel.x = 0;
+			}
+
+			temp_flag_ON_WALL_LEFT = true;
+		}
+
+        envI++;
+    }
+
+    /// UPDATE PLAYER STATE FLAGS
+
+    // TODO add a grace period for wall jumps (player can hang on wall for a moment, perhaps slowly sliding down
+
+    if (temp_flag_ON_GROUND && this->vel.y == 0)
+	{
+		_flag[IS_JUMPING] = false;
+		_flag[ON_GROUND] = true;
+	}
+	else
+		_flag[ON_GROUND] = false;
+
+    if (temp_flag_ON_WALL_RIGHT)
+	{
+		_flag[IS_JUMPING] = false;
+		_flag[ON_WALL_RIGHT] = true;
+	}
+	else
+		_flag[ON_WALL_RIGHT] = false;
+
+    if (temp_flag_ON_WALL_LEFT)
+	{
+		_flag[IS_JUMPING] = false;
+		_flag[ON_WALL_LEFT] = true;
+	}
+	else
+		_flag[ON_WALL_LEFT] = false;
+
+}

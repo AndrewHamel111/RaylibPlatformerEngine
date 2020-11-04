@@ -1,18 +1,6 @@
 #ifndef PLAYER_H_
 #define PLAYER_H_
 
-/*
-IDEAS FOR PLAYER MOVEMENT
-
-- use the principle as outlined in sm64, i.e. updates occur in the following order:
-	- move the player (allow clipping)
-	- the walls/floors push the player back into the playable area
-
-	- draw the player some time after all these have been resolved
-- player can wall jump on the same frame that they "entered" a wall
-
-*/
-
 //{ DEFINE
 #define PLAYER_FLAG_COUNT 6
 
@@ -48,10 +36,6 @@ class player
 {
 	// FIELDS
 
-	Vector2 pos; /**< Position of the player. pos = (x,y) where x should be the horizontal center and y is the lowest point (feet) */
-	Vector2 vel; /**< Current velocity of the player.*/
-	Vector2 acc; /**< Acceleration of the player. This may be affected by powerups, holding shift, etc.*/
-
 	// player flags and aux values (state values)
 	bool _flag[PLAYER_FLAG_COUNT] = {false};
 	float _value[PLAYER_FLAG_COUNT] = {0};
@@ -77,6 +61,10 @@ class player
 
 
 public:
+	Vector2 pos; /**< Position of the player. pos = (x,y) where x should be the horizontal center and y is the lowest point (feet) */
+	Vector2 vel; /**< Current velocity of the player.*/
+	Vector2 acc; /**< Acceleration of the player. This may be affected by powerups, holding shift, etc.*/
+
 	Vector2 hitboxSize; /**< Width and height of the player's hitbox. */
 
                             /// CONSTRUCTORS
@@ -84,6 +72,7 @@ public:
 	player(Vector2);  /**< Position constructor only specifies the starting position of the player. */
 
                             /// ACCESS METHODS
+	/// DEPRECATED, SINCE POS, VEL, ACC ARE NOW PUBLIC
 	Vector2 getPos() const;
 	Vector2 getVel() const;
 	Vector2 getAcc() const;
@@ -103,5 +92,11 @@ public:
 
 	void DrawPlayer();
 };
+
+enum LineCheckDirection {
+	UP, RIGHT, LEFT, DOWN
+};
+
+void LineCheck(LineCheckDirection dir, player p, int lineSegments, env_list obj);
 
 #endif

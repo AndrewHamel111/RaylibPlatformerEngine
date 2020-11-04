@@ -61,7 +61,7 @@ int main()
 
 		//{ CAMERA UPDATE
         camera.zoom += ((float)GetMouseWheelMove()*0.005f);
-        camera.target = p1.getPos() + Vector2{0, p1.hitboxSize.y / 2};
+        camera.target = p1.pos + Vector2{0, p1.hitboxSize.y / 2};
         camera.offset = Vector2{400, 300 + p1.hitboxSize.y / 2};
         //camera.rotation += 0.5f;
 
@@ -140,24 +140,22 @@ void InitializeLevel(int level, env_list* env)
 
         obj = env_object{Rectangle{-400,300, 200,300}};
         obj.setSides(true, true, true, false);
-        obj.color = PINK;
+        obj.color = RED;
         obj.type = BLOCK;
         env->push_back(obj);
 
         obj = env_object{Rectangle{0,100, 200,300}};
         obj.setSides(true, true, true, true);
-        obj.color = PINK;
+        obj.color = RED;
         obj.type = BLOCK;
         env->push_back(obj);
 
         obj = env_object{Rectangle{450,200, 100,100}};
-        obj.color = LIGHTGRAY;
         obj.type = BLOCK;
         env->push_back(obj);
 
         obj = env_object{Rectangle{-400,0, 200,100}};
         obj.setSides(true, true, true, true);
-        obj.color = BLACK;
         obj.type = BLOCK;
         env->push_back(obj);
 
