@@ -21,6 +21,7 @@ IDEAS FOR PLAYER MOVEMENT
 #define PLAYER_MAX_VELOCITY 10
 #define PLAYER_GRAVITY 1
 #define PLAYER_JUMP_VELOCITY 15
+#define PLAYER_WALL_JUMP_MODIFIER 0.95
 
 #ifndef RAYLIB_H_
 	#define RAYLIB_H_
@@ -33,6 +34,9 @@ IDEAS FOR PLAYER MOVEMENT
 
 #include <cmath>
 #include <string>
+
+// TEMPORARY, FOR DEBUGGING ONLY
+#include <iostream>
 
 #ifndef NEARBLACK
 	#define NEARBLACK CLITERAL(Color){ 20, 20, 20, 255}
@@ -48,8 +52,6 @@ class player
 	Vector2 vel; /**< Current velocity of the player.*/
 	Vector2 acc; /**< Acceleration of the player. This may be affected by powerups, holding shift, etc.*/
 
-	Vector2 hitboxSize; /**< Width and height of the player's hitbox. */
-
 	// player flags and aux values (state values)
 	bool _flag[PLAYER_FLAG_COUNT] = {false};
 	float _value[PLAYER_FLAG_COUNT] = {0};
@@ -59,13 +61,13 @@ class player
 	// METHODS
 
 
-
 	// OTHER
 
 	enum PLAYER_FLAG { ON_WALL_LEFT, ON_WALL_RIGHT, IN_CEILING, IN_FLOOR, IS_JUMPING, ON_GROUND};
 
 
 public:
+	Vector2 hitboxSize; /**< Width and height of the player's hitbox. */
 
                             /// CONSTRUCTORS
 	player();  /**< Default constructor initializes player to the center of the screen with no velocity and default acc. */
@@ -76,8 +78,8 @@ public:
 	Vector2 getVel() const;
 	Vector2 getAcc() const;
 
-	void setPos(Vector2 pos);
-	void setPos(float posX, float posY);
+	void setPos(Vector2);
+	void setPos(float, float);
 
 	void setHitboxAnchors(std::vector<Vector2>);
 

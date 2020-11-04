@@ -7,6 +7,7 @@ player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, h
 	// DEFAULT CONSTRUCTOR
 
     // ADD CORNERS AND EDGES TO ANCHORS
+    this->hitbox_anchors.clear();
     this->hitbox_anchors.push_back(Vector2{0, -101});
     this->hitbox_anchors.push_back(Vector2{51, -101});
     this->hitbox_anchors.push_back(Vector2{51, -50});
@@ -61,10 +62,27 @@ void player::move()
 	vel.y += acc.y;
 
 	// add jump (when applicable)
-	if (IsKeyDown(KEY_SPACE) && !_flag[IS_JUMPING])
+	if (IsKeyPressed(KEY_SPACE) && !_flag[IS_JUMPING])
 	{
-		vel.y = (-1) * PLAYER_JUMP_VELOCITY;
-		_flag[IS_JUMPING] = true;
+		// normal jump
+		if (_flag[ON_GROUND])
+		{
+			vel.y = (-1) * PLAYER_JUMP_VELOCITY;
+			_flag[IS_JUMPING] = true;
+		}
+		// wall jump (from left wall)
+		else if (_flag[ON_WALL_LEFT])
+		{
+			vel.y = (-1) * PLAYER_JUMP_VELOCITY;
+			vel.x =  PLAYER_WALL_JUMP_MODIFIER * PLAYER_JUMP_VELOCITY;
+		}
+		// wall jump (from right wall)
+		else if (_flag[ON_WALL_RIGHT])
+		{
+			vel.y = (-1) * PLAYER_JUMP_VELOCITY;
+			vel.x = (-1) * PLAYER_WALL_JUMP_MODIFIER * PLAYER_JUMP_VELOCITY;
+			_flag[IS_JUMPING] = true;
+		}
 	}
 
 	//////////////////
@@ -97,8 +115,6 @@ void player::check(env_list env)
 
     unsigned short _i = 0;
 
-    //
-
     bool temp_flag_ON_GROUND = false;
     bool temp_flag_ON_WALL_LEFT = false;
     bool temp_flag_ON_WALL_RIGHT = false;
@@ -106,59 +122,77 @@ void player::check(env_list env)
     // for each env_object
     while (envI != envIE)
     {
+        if ((this->pos + Vector2{0, -50}) < envI->rect)
+		{
+			envI++;
+			continue;
+		}
+
         i = hitbox_anchors.begin();
+        _i = 0;
 		bool anchor_flags[8] = {false};
 
         // for each player hitbox anchor
         while(i != iE)
         {
         	// trip the corresponding flags
-			if (*i < envI->rect)
+			if (this->pos + *i < envI->rect)
+			{
 				anchor_flags[_i] = true;
+				std::cout << "stale cum " << std::to_string(_i) << std::endl;
+			}
 
 			_i++;
 			i++;
         }
 
-        if ((anchor_flags[0] & anchor_flags[1]) || (anchor_flags[7] && anchor_flags[0]))
+        if (envI->sides[2] && ((anchor_flags[0] && anchor_flags[1]) || (anchor_flags[7] && anchor_flags[0])))
 		{
 			// IN CEILING
-			this->pos.y = envI->rect.y + envI->rect.height + this->hitboxSize.y;
 
 			// if still moving upward set vel to 0
 			if (this->vel.y < 0)
+			{
+				this->pos.y = envI->rect.y + envI->rect.height + this->hitboxSize.y;
 				this->vel.y = 0;
+			}
 		}
-		else if ((anchor_flags[1] & anchor_flags[2]) || (anchor_flags[2] && anchor_flags[3]))
+		if (envI->sides[3] && ((anchor_flags[1] && anchor_flags[2]) || (anchor_flags[2] && anchor_flags[3])))
 		{
 			// WALL ON RIGHT
-			this->pos.x = envI->rect.x - this->hitboxSize.x/2;
 
 			// if still moving right set vel to 0
 			if (this->vel.x > 0)
+			{
+				this->pos.x = envI->rect.x - this->hitboxSize.x/2;
 				this->vel.x = 0;
+			}
 
 			temp_flag_ON_WALL_RIGHT = true;
 		}
-		else if ((anchor_flags[3] & anchor_flags[4]) || (anchor_flags[4] && anchor_flags[5]))
+		if (envI->sides[0] && ((anchor_flags[3] && anchor_flags[4]) || (anchor_flags[4] && anchor_flags[5])))
 		{
 			// IN FLOOR
-			this->pos.y = envI->rect.y;
 
 			// if still falling set vel to 0
 			if (this->vel.y > 0)
+			{
+				this->pos.y = envI->rect.y;
 				this->vel.y = 0;
+			}
 
 			temp_flag_ON_GROUND = true;
 		}
-		else if ((anchor_flags[5] & anchor_flags[6]) || (anchor_flags[6] && anchor_flags[7]))
+		if (envI->sides[1] && ((anchor_flags[5] && anchor_flags[6]) || (anchor_flags[6] && anchor_flags[7])))
 		{
 			// WALL ON LEFT
-			this->pos.x = envI->rect.x + envI->rect.width + this->hitboxSize.x/2;
 
 			// if still moving right set vel to 0
 			if (this->vel.x < 0)
+			{
+				this->pos.x = envI->rect.x + envI->rect.width + this->hitboxSize.x/2;
 				this->vel.x = 0;
+			}
 
 			temp_flag_ON_WALL_LEFT = true;
 		}
@@ -168,7 +202,9 @@ void player::check(env_list env)
 
     /// UPDATE PLAYER STATE FLAGS
 
-    if (temp_flag_ON_GROUND)
+    // TODO add a grace period for wall jumps (player can hang on wall for a moment, perhaps slowly sliding down
+
+    if (temp_flag_ON_GROUND && this->vel.y == 0)
 	{
 		_flag[IS_JUMPING] = false;
 		_flag[ON_GROUND] = true;
@@ -192,21 +228,6 @@ void player::check(env_list env)
 	else
 		_flag[ON_WALL_LEFT] = false;
 
-    /*
-	// VERY TEMPORARY (collision with bottom of screen)
-	if (pos.y > 600)
-	{
-		// bump out of ground and stop the falling speed.
-		pos.y = 600;
-		vel.y = 0;
-
-		// allow a jump since we've touched ground
-		_flag[IS_JUMPING] = false;
-		_flag[ON_GROUND] = true;
-	}
-	else
-		_flag[ON_GROUND] = false;
-	*/
 }
 
 void player::correct()
@@ -231,16 +252,16 @@ void player::DrawPlayer()
 	Rectangle r = Rectangle{pos.x - w/2, pos.y - h, w, h};
 	DrawRectangleRec(r, Color{20,20,20,60});
 
-	std::string s = "vel " + std::to_string(vel.x) + " " + std::to_string(vel.y) +"\nacc " + std::to_string(acc.x) + " " + std::to_string(acc.y);
-	DrawText(s.c_str(), 0, 0, 20, NEARBLACK);
+	//std::string s = "vel " + std::to_string(vel.x) + " " + std::to_string(vel.y) +"\nacc " + std::to_string(acc.x) + " " + std::to_string(acc.y);
+	//DrawText(s.c_str(), 0, 0, 20, NEARBLACK);
 
-	if (_flag[ON_GROUND]) DrawText("GROUNDED", 0, 200, 20, NEARBLACK);
+	//if (_flag[ON_GROUND]) DrawText("GROUNDED", 0, 200, 20, NEARBLACK);
 
 	//{ DRAW HITBOX POINTS
 
-	auto i = hitbox_anchors.begin(), iE = hitbox_anchors.end();
-	while(i != iE)
-        DrawCircleV(pos + *(i++),2, BLUE);
+	//auto i = hitbox_anchors.begin(), iE = hitbox_anchors.end();
+	//while(i != iE)
+        //DrawCircleV(pos + *(i++),2, BLUE);
 
 	//}
 }

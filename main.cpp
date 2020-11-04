@@ -60,7 +60,10 @@ int main()
 		p1.update(levels[level].env_objects);
 
 		//{ CAMERA UPDATE
-        camera.zoom += ((float)GetMouseWheelMove()*0.05f);
+        camera.zoom += ((float)GetMouseWheelMove()*0.005f);
+        camera.target = p1.getPos() + Vector2{0, p1.hitboxSize.y / 2};
+        camera.offset = Vector2{400, 300 + p1.hitboxSize.y / 2};
+        //camera.rotation += 0.5f;
 
         if (camera.zoom > 3.0f) camera.zoom = 3.0f;
         else if (camera.zoom < 0.25f) camera.zoom = 0.25f;
@@ -80,7 +83,6 @@ int main()
         BeginDrawing();
 
             ClearBackground(RAYWHITE);
-            //DrawTextRec(GetFontDefault(), "Congrats! You created your first window!", Rectangle{200, 250, 400, 100}, 20, 1.0, true, LIGHTGRAY);
 
             BeginMode2D(camera);
 
@@ -92,6 +94,9 @@ int main()
 				p1.DrawPlayer();
 
 			EndMode2D();
+
+			Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
+			DrawText(FormatText("%.2f %.2f", v.x, v.y), GetMouseX(), GetMouseY() + 25, 20, NEARBLACK);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -116,13 +121,47 @@ void InitializeLevel(int level, env_list* env)
     switch(level)
     {
     case 0:
-        obj = env_object{Rectangle{0,600, 800, 100}};
+        obj = env_object{Rectangle{-1000,600, 2800, 100}};
         obj.type = BLOCK;
         env->push_back(obj);
 
-        obj = env_object{Rectangle{350,500,200,100}};
+        obj = env_object{Rectangle{350,300,200,300}};
         obj.type = BLOCK;
         env->push_back(obj);
+
+        obj = env_object{Rectangle{500,500,200,100}};
+        obj.type = BLOCK;
+        env->push_back(obj);
+
+        obj = env_object{Rectangle{200,400,200,100}};
+        obj.type = BLOCK;
+        env->push_back(obj);
+
+
+        obj = env_object{Rectangle{-400,300, 200,300}};
+        obj.setSides(true, true, true, false);
+        obj.color = PINK;
+        obj.type = BLOCK;
+        env->push_back(obj);
+
+        obj = env_object{Rectangle{0,100, 200,300}};
+        obj.setSides(true, true, true, true);
+        obj.color = PINK;
+        obj.type = BLOCK;
+        env->push_back(obj);
+
+        obj = env_object{Rectangle{450,200, 100,100}};
+        obj.color = LIGHTGRAY;
+        obj.type = BLOCK;
+        env->push_back(obj);
+
+        obj = env_object{Rectangle{-400,0, 200,100}};
+        obj.setSides(true, true, true, true);
+        obj.color = BLACK;
+        obj.type = BLOCK;
+        env->push_back(obj);
+
+
         break;
     default:
         obj = env_object{Rectangle{0,600, 800, 100}};

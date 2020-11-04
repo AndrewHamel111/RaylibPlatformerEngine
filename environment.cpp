@@ -10,6 +10,15 @@ env_object::env_object(Rectangle rect): env_object()
     this->rect = rect;
 }
 
+void env_object::setSides(bool a, bool b, bool c, bool d)
+{
+	// TODO make better
+	sides[0] = a;
+	sides[1] = b;
+	sides[2] = c;
+	sides[3] = d;
+}
+
 void DrawEnvObject(const env_object o)
 {
     if (o.type == BLOCK)

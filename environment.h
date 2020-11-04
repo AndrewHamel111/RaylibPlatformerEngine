@@ -28,6 +28,8 @@ struct env_object {
 
 	env_object();
 	env_object(Rectangle rect);
+
+	void setSides(bool, bool, bool, bool);
 };
 
 /** A simple alias to help reduce the number of times I need to use my :: With my new keyboard I often type M< instead of <> */
