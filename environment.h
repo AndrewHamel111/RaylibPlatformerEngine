@@ -1,6 +1,8 @@
 #ifndef ENVIRONMENT_H_
 #define ENVIRONMENT_H_
 
+#define ENV_RENDER_TYPE 2
+
 #include "raylib.h"
 
 #include <vector>

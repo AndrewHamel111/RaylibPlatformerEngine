@@ -32,27 +32,34 @@ void DrawEnvObject(const env_object o)
 			//Color light{o.color.r, o.color.g, o.color.b, (int)(o.color.a * 0.9f)};
 			// COLOR CHANGE VERSION
 			const unsigned int cOff = 20;
-			/*
-			// COLOR AWARE CHANGING (SOME DARKER SOME LIGHTER)
-			Color light{(o.color.r > 128) ? o.color.r - cOff : o.color.r + cOff,
-						(o.color.g > 128) ? o.color.g - cOff : o.color.g + cOff,
-						(o.color.b > 128) ? o.color.b - cOff : o.color.b + cOff,
-						o.color.a};
-						*/
-						/*
-						// CENTERS ARE DARKER
-			Color light{(o.color.r > cOff) ? o.color.r - cOff : 0,
-						(o.color.g > cOff) ? o.color.g - cOff : 0,
-						(o.color.b > cOff) ? o.color.b - cOff : 0,
-						o.color.a};
-						*/
-						// CENTERS ARE LIGHTER
-			Color light{(o.color.r < 255 - cOff) ? o.color.r + cOff : 255,
-						(o.color.g < 255 - cOff) ? o.color.g + cOff : 255,
-						(o.color.b < 255 - cOff) ? o.color.b + cOff : 255,
-						o.color.a};
 
-            DrawRectangleRec(o.rect, light);
+			Color alt;
+			// COLOR AWARE CHANGING (SOME DARKER SOME LIGHTER)
+			if (ENV_RENDER_TYPE == 0)
+			{
+				alt = Color{	(o.color.r > 128) ? o.color.r - cOff : o.color.r + cOff,
+								(o.color.g > 128) ? o.color.g - cOff : o.color.g + cOff,
+								(o.color.b > 128) ? o.color.b - cOff : o.color.b + cOff,
+								o.color.a};
+			}
+			else if (ENV_RENDER_TYPE == 1)
+			{
+			// CENTERS ARE DARKER
+				alt = Color{	(o.color.r > cOff) ? o.color.r - cOff : 0,
+								(o.color.g > cOff) ? o.color.g - cOff : 0,
+								(o.color.b > cOff) ? o.color.b - cOff : 0,
+								o.color.a};
+			}
+			else
+			{
+			// CENTERS ARE LIGHTER
+				alt = Color{	(o.color.r < 255 - cOff) ? o.color.r + cOff : 255,
+								(o.color.g < 255 - cOff) ? o.color.g + cOff : 255,
+								(o.color.b < 255 - cOff) ? o.color.b + cOff : 255,
+								o.color.a};
+			}
+
+            DrawRectangleRec(o.rect, alt);
 
 			// draw each side independently based on the value of o.sides[].
 			Color col;
