@@ -19,26 +19,60 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="Editor">
+				<Option output="RaylibPlatformerEngine" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="HTTPRequest.hpp" />
-		<Unit filename="Makefile" />
-		<Unit filename="constants.h" />
-		<Unit filename="dool.cpp" />
-		<Unit filename="dool.h" />
-		<Unit filename="environment.cpp" />
-		<Unit filename="environment.h" />
-		<Unit filename="jute.cpp" />
-		<Unit filename="jute.h" />
-		<Unit filename="main.cpp" />
-		<Unit filename="network.cpp" />
-		<Unit filename="network.hpp" />
-		<Unit filename="operators.cpp" />
-		<Unit filename="operators.h" />
-		<Unit filename="player.cpp" />
-		<Unit filename="player.h" />
+		<Unit filename="HTTPRequest.hpp">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="Makefile">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="button.hpp" />
+		<Unit filename="constants.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="dool.cpp">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="dool.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="environment.cpp">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="environment.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="files.cpp" />
+		<Unit filename="files.h" />
+		<Unit filename="main.cpp">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="network.cpp">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="network.hpp">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="operators.cpp">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="operators.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="player.cpp">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="player.h">
+			<Option target="Release" />
+		</Unit>
 		<Extensions>
 			<DoxyBlocks>
 				<comment_style block="0" line="0" />

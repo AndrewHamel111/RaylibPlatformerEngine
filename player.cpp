@@ -16,6 +16,12 @@ player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, h
     this->hitbox_anchors.push_back(Vector2{-51, 1});
     this->hitbox_anchors.push_back(Vector2{-51, -50});
     this->hitbox_anchors.push_back(Vector2{-51, -101});
+
+    // top left, top right, bottom right, bottom left
+    this->hitbox_corners[0] = Vector2{-51, -101};
+    this->hitbox_corners[1] = Vector2{51, -101};
+    this->hitbox_corners[2] = Vector2{51, 1};
+    this->hitbox_corners[3] = Vector2{-51, 1};
 }
 
 player::player(Vector2 pos): player()
@@ -45,18 +51,42 @@ Vector2 player::getAcc() const
 
 void player::move()
 {
-	acc.y = PLAYER_GRAVITY;
+	if (_flag[HOLDING_JUMP] && _flag[IS_JUMPING])
+		acc.y = PLAYER_GRAVITY * 0.7;
+	else if (_flag[IS_JUMPING])
+		acc.y = PLAYER_GRAVITY * 1.2;
+	else
+		acc.y = PLAYER_GRAVITY;
+
+	float maxVel;
+	float decel;
+	float accel;
+	float wall_jump;
+	if(IsKeyDown(KEY_LEFT_SHIFT))
+	{
+		maxVel = PLAYER_SPRINT_VELOCITY;
+		decel = PLAYER_SPRINT_DECELERATION;
+		accel = PLAYER_SPRINT_ACCELERATION;
+		wall_jump = PLAYER_WALL_JUMP_SPRINT;
+	}
+	else
+	{
+		maxVel = PLAYER_MAX_VELOCITY;
+		decel = PLAYER_DECELERATION;
+		accel = PLAYER_BASE_ACCELERATION;
+		wall_jump = PLAYER_WALL_JUMP_MODIFIER;
+	}
 
 	// set acc based on input
 	if (IsKeyDown(KEY_D))
-		acc.x = PLAYER_BASE_ACCELERATION;
+		acc.x = accel;
 	else if (IsKeyDown(KEY_A))
-		acc.x = (-1) * PLAYER_BASE_ACCELERATION;
+		acc.x = (-1) * accel;
 	else
 		acc.x = 0;
 
 	// apply acc (when applicable)
-	if (abs(vel.x) < PLAYER_MAX_VELOCITY)// || abs(vel.x + acc.x) < PLAYER_MAX_VELOCITY)
+	if (abs(vel.x) < maxVel)// || abs(vel.x + acc.x) < PLAYER_MAX_VELOCITY)
 		vel.x += acc.x;
 
 	vel.y += acc.y;
@@ -69,21 +99,29 @@ void player::move()
 		{
 			vel.y = (-1) * PLAYER_JUMP_VELOCITY;
 			_flag[IS_JUMPING] = true;
+			_flag[HOLDING_JUMP] = true;
 		}
 		// wall jump (from left wall)
 		else if (_flag[ON_WALL_LEFT])
 		{
 			vel.y = (-1) * PLAYER_JUMP_VELOCITY;
-			vel.x =  PLAYER_WALL_JUMP_MODIFIER * PLAYER_JUMP_VELOCITY;
+			vel.x =  wall_jump * PLAYER_JUMP_VELOCITY;
+			_flag[IS_JUMPING] = true;
+			_flag[HOLDING_JUMP] = true;
 		}
 		// wall jump (from right wall)
 		else if (_flag[ON_WALL_RIGHT])
 		{
 			vel.y = (-1) * PLAYER_JUMP_VELOCITY;
-			vel.x = (-1) * PLAYER_WALL_JUMP_MODIFIER * PLAYER_JUMP_VELOCITY;
+			vel.x = (-1) * wall_jump * PLAYER_JUMP_VELOCITY;
 			_flag[IS_JUMPING] = true;
+			_flag[HOLDING_JUMP] = true;
 		}
 	}
+
+	// cancel jump hold if we let go
+	if (_flag[HOLDING_JUMP] && _flag[IS_JUMPING] && !IsKeyDown(KEY_SPACE))
+		_flag[HOLDING_JUMP] = false;
 
 	//////////////////
 	//  UPDATE POSITION
@@ -93,7 +131,6 @@ void player::move()
 	// apply dec
 	if (vel.x != 0)
 	{
-		float decel = PLAYER_DECELERATION;
 		if (!_flag[ON_GROUND]) decel *= 0.5;
 
 		if (vel.x > 0)
@@ -110,46 +147,52 @@ void player::move()
 void player::check(env_list env)
 {
 	// iterators and a counter
-    auto envI = env.begin(), envIE = env.end();
-    auto i = hitbox_anchors.begin(), iE = hitbox_anchors.end();
-
-    unsigned short _i = 0;
+    auto envI = env.begin();
 
     bool temp_flag_ON_GROUND = false;
     bool temp_flag_ON_WALL_LEFT = false;
     bool temp_flag_ON_WALL_RIGHT = false;
 
+    const int lineSegmentCount = 20;
+
     // for each env_object
-    while (envI != envIE)
+    while (envI != env.end())
     {
-    	/// TODO replace this logic with the linecheck logic (this logic has been backed up to a file)
+    	if (envI->type == TEXT)
+		{
+			envI++;
+			continue;
+		}
+
+		// don't bother with collision check if our center is totally inside of the current object,
+		// since it's most likely a semisolid that the player is "in front of"
         if ((this->pos + Vector2{0, -50}) < envI->rect)
 		{
 			envI++;
 			continue;
 		}
 
-		// TODO propogate hitbox change to here
-
-        i = hitbox_anchors.begin();
-        _i = 0;
-		bool anchor_flags[8] = {false};
+        //i = hitbox_anchors.begin();
+        //_i = 0;
+		//bool anchor_flags[8] = {false};
 
         // for each player hitbox anchor
-        while(i != iE)
+        /*
+        while(i != hitbox_anchors.end())
         {
         	// trip the corresponding flags
 			if (this->pos + *i < envI->rect)
 			{
 				anchor_flags[_i] = true;
-				std::cout << "stale cum " << std::to_string(_i) << std::endl;
 			}
 
 			_i++;
 			i++;
         }
+        */
 
-        if (envI->sides[2] && ((anchor_flags[0] && anchor_flags[1]) || (anchor_flags[7] && anchor_flags[0])))
+        //if (envI->sides[2] && ((anchor_flags[0] && anchor_flags[1]) || (anchor_flags[7] && anchor_flags[0])))
+        if (envI->sides[2] && LineCheck(UP, lineSegmentCount, *envI))
 		{
 			// IN CEILING
 
@@ -160,7 +203,8 @@ void player::check(env_list env)
 				this->vel.y = 0;
 			}
 		}
-		if (envI->sides[3] && ((anchor_flags[1] && anchor_flags[2]) || (anchor_flags[2] && anchor_flags[3])))
+		//if (envI->sides[3] && ((anchor_flags[1] && anchor_flags[2]) || (anchor_flags[2] && anchor_flags[3])))
+        if (envI->sides[3] && LineCheck(RIGHT, lineSegmentCount, *envI))
 		{
 			// WALL ON RIGHT
 
@@ -173,7 +217,8 @@ void player::check(env_list env)
 
 			temp_flag_ON_WALL_RIGHT = true;
 		}
-		if (envI->sides[0] && ((anchor_flags[3] && anchor_flags[4]) || (anchor_flags[4] && anchor_flags[5])))
+		//if (envI->sides[0] && ((anchor_flags[3] && anchor_flags[4]) || (anchor_flags[4] && anchor_flags[5])))
+        if (envI->sides[0] && LineCheck(DOWN, lineSegmentCount, *envI))
 		{
 			// IN FLOOR
 
@@ -186,7 +231,8 @@ void player::check(env_list env)
 
 			temp_flag_ON_GROUND = true;
 		}
-		if (envI->sides[1] && ((anchor_flags[5] && anchor_flags[6]) || (anchor_flags[6] && anchor_flags[7])))
+		//if (envI->sides[1] && ((anchor_flags[5] && anchor_flags[6]) || (anchor_flags[6] && anchor_flags[7])))
+        if (envI->sides[1] && LineCheck(LEFT, lineSegmentCount, *envI))
 		{
 			// WALL ON LEFT
 
@@ -273,26 +319,53 @@ void player::DrawPlayer()
 /*	Vector2{-51, -101}		Vector2{0, -101} 	Vector2{51, -101}
 	Vector2{-51, -50}							Vector2{51, -50}
 	Vector2{-51, 1}			Vector2{0, 1}		Vector2{51, 1} */
-void LineCheck(LineCheckDirection dir, player p, int lineSegments, env_list obj)
+bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 {
-	/// TODO write this stuff
 	// never use less than 5 line segments (would be very inaccurate if we did)
 	if (lineSegments < 5) lineSegments = 5;
+
+	const float hitPercentage = PLAYER_HITBOX_PERCENTAGE;
+
+	unsigned char collisionCounter = 0;
 
 	switch(dir)
 	{
 	case UP: // top left to top right
 		for(int i = 0; i < lineSegments; i++)
 		{
-			Vector2 hitPoint = Vector2{-51 + (float)i/(lineSegments - 1), -101} + p.pos;
-
+			// player's position + the offset to reach the appropriate corner (top left) + the offset from where we are in the iteration
+			Vector2 hitPoint = this->pos + this->hitbox_corners[0] + Vector2{(float)i/(lineSegments - 1)*this->hitboxSize.x, 0};
+			if (hitPoint < obj.rect && this->pos.y > (obj.rect.y + obj.rect.height)) ///TODO double check this if
+				collisionCounter++;
 		}
 		break;
 	case RIGHT: // top right to bottom right
+		for(int i = 0; i < lineSegments; i++)
+		{
+			Vector2 hitPoint = this->pos + this->hitbox_corners[1] + Vector2{0, (float)i/(lineSegments - 1)*this->hitboxSize.y};
+			if (hitPoint < obj.rect && this->pos.x < obj.rect.x)
+				collisionCounter++;
+		}
 		break;
 	case DOWN: // bottom right to bottom left
+		for(int i = 0; i < lineSegments; i++)
+		{
+			Vector2 hitPoint = this->pos + this->hitbox_corners[2] - Vector2{(float)i/(lineSegments - 1)*this->hitboxSize.x, 0};
+			if (hitPoint < obj.rect && this->pos.y < (obj.rect.y + this->hitboxSize.y/2))
+				collisionCounter++;
+		}
 		break;
 	case LEFT: // bottom left to top right
+		for(int i = 0; i < lineSegments; i++)
+		{
+			Vector2 hitPoint = this->pos + this->hitbox_corners[3] - Vector2{0, (float)i/(lineSegments - 1)*this->hitboxSize.y};
+			if (hitPoint < obj.rect && this->pos.x > (obj.rect.x + obj.rect.width))
+				collisionCounter++;
+		}
 		break;
 	}
+
+	if ((float)collisionCounter/lineSegments >= hitPercentage)
+		return true;
+	return false;
 }

@@ -2,12 +2,13 @@
 
 /// STRUCT ENV_OBJECT
 
-env_object::env_object(): rect{Rectangle{0,0,100,50}}, sides{true, false, false, false}, id{255}, type{BLOCK}, color{DARKGRAY}, label{""}
+env_object::env_object(): rect{Rectangle{0,0,100,50}}, sides{true, false, false, false}, spriteId{255}, type{BLOCK}, color{DARKGRAY}, label{"block"}, func{STATIC}
 {}
 
-env_object::env_object(Rectangle rect): env_object()
+env_object::env_object(Rectangle rect, unsigned short uuId): env_object()
 {
     this->rect = rect;
+    this->uuId = uuId;
 }
 
 void env_object::setSides(bool a, bool b, bool c, bool d)
@@ -24,60 +25,58 @@ void DrawEnvObject(const env_object o)
     if (o.type == BLOCK)
     {
     	// dev texture id (colored rects)
-        if (o.id == 255)
+        if (o.spriteId == 255)
         {
-        	// draw slightly "lighter" color for the center of the rectangle
-			//Rectangle center{o.rect.x + 10, o.rect.y + 10, o.rect.width - 20, o.rect.height - 20};
-			// ALPHA VERSION
-			//Color light{o.color.r, o.color.g, o.color.b, (int)(o.color.a * 0.9f)};
 			// COLOR CHANGE VERSION
-			const unsigned int cOff = 20;
+			unsigned char cOff = 40;
+			unsigned char mid = 128;
+			unsigned char maxx = 255;
 
 			Color alt;
 			// COLOR AWARE CHANGING (SOME DARKER SOME LIGHTER)
 			if (ENV_RENDER_TYPE == 0)
 			{
-				alt = Color{	(o.color.r > 128) ? o.color.r - cOff : o.color.r + cOff,
-								(o.color.g > 128) ? o.color.g - cOff : o.color.g + cOff,
-								(o.color.b > 128) ? o.color.b - cOff : o.color.b + cOff,
+				alt = Color{	(o.color.r > mid) ? (unsigned char)(o.color.r - cOff) : (unsigned char)(o.color.r + cOff),
+								(o.color.g > mid) ? (unsigned char)(o.color.g - cOff) : (unsigned char)(o.color.g + cOff),
+								(o.color.b > mid) ? (unsigned char)(o.color.b - cOff) : (unsigned char)(o.color.b + cOff),
 								o.color.a};
 			}
 			else if (ENV_RENDER_TYPE == 1)
 			{
 			// CENTERS ARE DARKER
-				alt = Color{	(o.color.r > cOff) ? o.color.r - cOff : 0,
-								(o.color.g > cOff) ? o.color.g - cOff : 0,
-								(o.color.b > cOff) ? o.color.b - cOff : 0,
+				alt = Color{	(o.color.r > cOff) ? (unsigned char)(o.color.r - cOff) : (unsigned char)0,
+								(o.color.g > cOff) ? (unsigned char)(o.color.g - cOff) : (unsigned char)0,
+								(o.color.b > cOff) ? (unsigned char)(o.color.b - cOff) : (unsigned char)0,
 								o.color.a};
 			}
 			else
 			{
 			// CENTERS ARE LIGHTER
-				alt = Color{	(o.color.r < 255 - cOff) ? o.color.r + cOff : 255,
-								(o.color.g < 255 - cOff) ? o.color.g + cOff : 255,
-								(o.color.b < 255 - cOff) ? o.color.b + cOff : 255,
+				alt = Color{	(o.color.r < maxx - cOff) ? (unsigned char)(o.color.r + cOff) : maxx,
+								(o.color.g < maxx - cOff) ? (unsigned char)(o.color.g + cOff) : maxx,
+								(o.color.b < maxx - cOff) ? (unsigned char)(o.color.b + cOff) : maxx,
 								o.color.a};
 			}
 
             DrawRectangleRec(o.rect, alt);
 
 			// draw each side independently based on the value of o.sides[].
-			Color col;
+			float lineWidth = 15;
 			if (o.sides[0])
 			{
-				DrawLineEx(Vector2{o.rect.x, o.rect.y + 5}, Vector2{o.rect.x + o.rect.width, o.rect.y + 5}, 10, o.color);
+				DrawLineEx(Vector2{o.rect.x, o.rect.y + lineWidth/2}, Vector2{o.rect.x + o.rect.width, o.rect.y + lineWidth/2}, lineWidth, o.color);
 			}
 			if (o.sides[1])
 			{
-				DrawLineEx(Vector2{o.rect.x + o.rect.width - 5, o.rect.y}, Vector2{o.rect.x + o.rect.width - 5, o.rect.y + o.rect.height}, 10, o.color);
+				DrawLineEx(Vector2{o.rect.x + o.rect.width - lineWidth/2, o.rect.y}, Vector2{o.rect.x + o.rect.width - lineWidth/2, o.rect.y + o.rect.height}, lineWidth, o.color);
 			}
 			if (o.sides[2])
 			{
-				DrawLineEx(Vector2{o.rect.x + o.rect.width, o.rect.y + o.rect.height - 5}, Vector2{o.rect.x, o.rect.y + o.rect.height - 5}, 10, o.color);
+				DrawLineEx(Vector2{o.rect.x + o.rect.width, o.rect.y + o.rect.height - lineWidth/2}, Vector2{o.rect.x, o.rect.y + o.rect.height - lineWidth/2}, lineWidth, o.color);
 			}
 			if (o.sides[3])
 			{
-				DrawLineEx(Vector2{o.rect.x + 5, o.rect.y + o.rect.height}, Vector2{o.rect.x + 5, o.rect.y}, 10, o.color);
+				DrawLineEx(Vector2{o.rect.x + lineWidth/2, o.rect.y + o.rect.height}, Vector2{o.rect.x + lineWidth/2, o.rect.y}, lineWidth, o.color);
 			}
         }
     }
@@ -96,8 +95,8 @@ void DrawEnvList(const env_list l)
 
 /// STRUCT ENV_LEVEL
 
-env_level::env_level(): id{0}, label{"SAMPLE TEXT"}, env_objects{0}
+env_level::env_level(): id{(unsigned short)0}, label{"SAMPLE TEXT"}, player_start{Vector2{100,100}}, env_objects{0}
 {}
 
-env_level::env_level(unsigned short id, std::string label, env_list env_objects): id{id}, label{label}, env_objects{env_objects}
+env_level::env_level(unsigned short id, std::string label, env_list env_objects): id{id}, label{label}, player_start{Vector2{100,100}}, env_objects{env_objects}
 {}

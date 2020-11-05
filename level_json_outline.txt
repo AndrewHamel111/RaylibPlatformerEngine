@@ -1,0 +1,57 @@
+{
+	"id" : 0,
+	"label" : "Level 1",
+	"objects" : [
+		{
+			"uuId" : 0
+			"spriteId" : 255
+			"label" : "block",
+			"rect" : [
+				0,
+				600,
+				800
+				100
+			],
+			"sides" : [
+				TRUE,
+				TRUE,
+				TRUE,
+				TRUE
+			],
+			"color" : [
+				20,
+				20,
+				20,
+				255
+			],
+			"type" : 0,
+			"func" : 0	
+		},
+		{
+			"uuId" : 1
+			"spriteId" : 255
+			"label" : "block",
+			"rect" : [
+				300,
+				500,
+				200
+				100
+			],
+			"sides" : [
+				TRUE,
+				FALSE,
+				FALSE,
+				FALSE
+			],
+			"color" : [
+				50,
+				50,
+				50,
+				255
+			],
+			"type" : 0,
+			"func" : 0	
+		}
+	]
+
+}

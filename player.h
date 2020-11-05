@@ -2,14 +2,26 @@
 #define PLAYER_H_
 
 //{ DEFINE
-#define PLAYER_FLAG_COUNT 6
+#define PLAYER_FLAG_COUNT 7
 
+/// speed values (normal)
 #define PLAYER_BASE_ACCELERATION 1.5
 #define PLAYER_DECELERATION 0.9
 #define PLAYER_MAX_VELOCITY 10
+
+/// speed values (sprinting)
+#define PLAYER_SPRINT_ACCELERATION 2
+#define PLAYER_SPRINT_DECELERATION 1.15
+#define PLAYER_SPRINT_VELOCITY 13
+#define PLAYER_WALL_JUMP_SPRINT 1.3
+
+/// gravity and jump
 #define PLAYER_GRAVITY 1
 #define PLAYER_JUMP_VELOCITY 15
 #define PLAYER_WALL_JUMP_MODIFIER 0.95
+
+/// other
+#define PLAYER_HITBOX_PERCENTAGE 0.15
 
 #ifndef RAYLIB_H_
 	#define RAYLIB_H_
@@ -32,6 +44,10 @@
 
 //}
 
+enum LineCheckDirection {
+	UP, RIGHT, LEFT, DOWN
+};
+
 class player
 {
 	// FIELDS
@@ -51,13 +67,14 @@ class player
 	Vector2{-51, 1}			Vector2{0, 1}		Vector2{51, 1}
 	*/
 	std::vector<Vector2> hitbox_anchors; /**< std::vector of anchors to check collisions with. */
+	Vector2 hitbox_corners[4];
 
 	// METHODS
 
 
 	// OTHER
 
-	enum PLAYER_FLAG { ON_WALL_LEFT, ON_WALL_RIGHT, IN_CEILING, IN_FLOOR, IS_JUMPING, ON_GROUND};
+	enum PLAYER_FLAG { ON_WALL_LEFT, ON_WALL_RIGHT, IN_CEILING, IN_FLOOR, IS_JUMPING, ON_GROUND, HOLDING_JUMP};
 
 
 public:
@@ -81,7 +98,7 @@ public:
 	void setPos(float, float);
 
 	void setHitboxAnchors(std::vector<Vector2>);
-
+	bool LineCheck(LineCheckDirection, int, env_object);
 
                             /// UPDATE AND DRAWING METHODS
 	void move();  /**< apply any motions from input (clip into walls) */
@@ -92,11 +109,5 @@ public:
 
 	void DrawPlayer();
 };
-
-enum LineCheckDirection {
-	UP, RIGHT, LEFT, DOWN
-};
-
-void LineCheck(LineCheckDirection dir, player p, int lineSegments, env_list obj);
 
 #endif

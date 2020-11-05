@@ -1,0 +1,60 @@
+{
+    "id": 0,
+    "label": "Level 0",
+    "objects": [
+        {
+            "color": [
+                80,
+                80,
+                80,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                0.0,
+                600.0,
+                800.0,
+                100.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                80,
+                80,
+                80,
+                255
+            ],
+            "func": 0,
+            "label": "I'm sorry, but your princess\nis in another castle.",
+            "rect": [
+                300.0,
+                200.0,
+                200.0,
+                200.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 1,
+            "uuId": 1
+        }
+    ],
+    "player_start": [
+        100.0,
+        100.0
+    ]
+}

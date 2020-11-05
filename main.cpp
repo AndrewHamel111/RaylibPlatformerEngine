@@ -1,17 +1,36 @@
+/// TODO
+/// - implement LineCheck function for collision checking
+/// -
+/// - use nlohmann/json for the following
+/// 	- procedure for writing a level to a json
+///		- procedure for reading a level from a json
+///		- consider storing many levels in a json?
+/// - create system to read levels from file
+/// - create level editor
+
+
 #include "raylib.h"
 #define NEARBLACK CLITERAL(Color){ 20, 20, 20, 255}
 #define MUSTARD CLITERAL(Color){ 203, 182, 51, 255}
+
+#define DEV_TEST_LEVEL
 
 #include "constants.h"
 
 #include "environment.h"
 #include "player.h"
 
+#include "files.h"
+
+// DEV SHIT
+#include <iostream>
+
 void InitializeLevel(int level, env_list* env);
 void InitializeLevels(std::vector<env_level>* levels);
 
 void UpdateLevel(env_level* level);
 void DrawLevel(env_level level);
+void ResetLevel(player*, env_level);
 
 int main()
 {
@@ -34,8 +53,20 @@ int main()
 	std::vector<env_level> levels;
 	unsigned short level = 0; /**< acts as an index to std::vector<> levels. level 0 is an interactive menu, level 1 marks the first level in the game. */
 
+	// if we're in DEV_TEST mode then it will simply load test_level.json in the levels directory and play that. in this case pressing r will also "restart" the level
+	#ifdef DEV_TEST_LEVEL
+
+	levels.push_back(LoadLevelFromFile("test_level.json"));
+
+	#else
+
 	InitializeLevels(&levels);
-	//}
+
+	#endif // DEV_TEST_LEVEL
+
+	ResetLevel(&p1, levels[level]);
+
+	/// DEV SHIT
 
 	/// set fps of window
     SetTargetFPS(TARGET_FPS);
@@ -71,6 +102,13 @@ int main()
         if (IsKeyPressed(KEY_R))
         {
             camera.zoom = 1.0f;
+            #ifdef DEV_TEST_LEVEL
+
+			levels.clear();
+			levels.push_back(LoadLevelFromFile("levels/test_level.json"));
+			ResetLevel(&p1, levels[0]);
+
+            #endif // DEV_TEST_LEVEL
         }
 		//}
 
@@ -113,7 +151,7 @@ int main()
     return 0;
 }
 
-void InitializeLevel(int level, env_list* env)
+void InitializeLevel(unsigned short level, env_list* env)
 {
     env->clear();
     env_object obj;
@@ -121,54 +159,54 @@ void InitializeLevel(int level, env_list* env)
     switch(level)
     {
     case 0:
-        obj = env_object{Rectangle{-1000,600, 2800, 100}};
+        obj = env_object{Rectangle{0,600, 800, 100}, 0};
         obj.type = BLOCK;
         env->push_back(obj);
 
-        obj = env_object{Rectangle{350,300,200,300}};
-        obj.type = BLOCK;
+        obj = env_object{Rectangle{300,200,200,200}, 1};
+        obj.type = TEXT;
+        obj.label = "I'm sorry, but your princess\nis in another castle.";
+        env->push_back(obj);
+        break;
+    case 1:
+        obj = env_object{Rectangle{-1000,600, 2800, 100}, 0};
         env->push_back(obj);
 
-        obj = env_object{Rectangle{500,500,200,100}};
-        obj.type = BLOCK;
+        obj = env_object{Rectangle{350,300,200,300}, 1};
         env->push_back(obj);
 
-        obj = env_object{Rectangle{200,400,200,100}};
-        obj.type = BLOCK;
+        obj = env_object{Rectangle{500,500,200,100}, 2};
         env->push_back(obj);
 
-
-        obj = env_object{Rectangle{-400,300, 200,300}};
-        obj.setSides(true, true, true, false);
-        obj.color = RED;
-        obj.type = BLOCK;
+        obj = env_object{Rectangle{200,400,200,100}, 3};
         env->push_back(obj);
 
-        obj = env_object{Rectangle{0,100, 200,300}};
+        obj = env_object{Rectangle{-400,300, 200,300}, 4};
+        obj.setSides(true, true, false, false);
+        obj.color = GREEN;
+        env->push_back(obj);
+
+        obj = env_object{Rectangle{0,100, 200,300}, 5};
         obj.setSides(true, true, true, true);
-        obj.color = RED;
-        obj.type = BLOCK;
+        obj.color = GREEN;
         env->push_back(obj);
 
-        obj = env_object{Rectangle{450,200, 100,100}};
-        obj.type = BLOCK;
+        obj = env_object{Rectangle{450,200, 100,100}, 6};
         env->push_back(obj);
 
-        obj = env_object{Rectangle{-400,0, 200,100}};
+        obj = env_object{Rectangle{-400,0, 200,100}, 7};
         obj.setSides(true, true, true, true);
-        obj.type = BLOCK;
         env->push_back(obj);
-
 
         break;
     default:
-        obj = env_object{Rectangle{0,600, 800, 100}};
+        obj = env_object{Rectangle{0,600, 800, 100}, 0};
         obj.type = BLOCK;
         env->push_back(obj);
 
-        obj = env_object{Rectangle{300,200,200,200}};
+        obj = env_object{Rectangle{300,200,200,200}, 1};
         obj.type = TEXT;
-        obj.label = "I'm sorry, but your princess\nis in another castle.";
+        obj.label = "I'm sorry, but your princess is in another castle.";
         env->push_back(obj);
         break;
     }
@@ -181,7 +219,7 @@ void InitializeLevels(std::vector<env_level>* levels)
     env_list env;
     env_level lev;
 
-    for(int i = 0; i < 2; i++)
+    for(unsigned short i = 0; i < 3; i++)
     {
         InitializeLevel(i, &env);
         lev = env_level{i, "Level " + std::to_string(i), env};
@@ -205,4 +243,10 @@ void UpdateLevel(env_level* level)
 void DrawLevel(env_level level)
 {
     DrawEnvList(level.env_objects);
+}
+
+void ResetLevel(player* p, env_level level)
+{
+	p->acc = p->vel = Vector2{0,0};
+	p->pos = level.player_start;
 }

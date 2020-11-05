@@ -47,6 +47,11 @@ Vector2 operator*(const float& c, const Vector2& x)
 	return Vector2{c * x.x, c * x.y};
 }
 
+Vector2 operator*(const Vector2& x, const float& c)
+{
+	return c * x;
+}
+
 // proposed change to - operator uses a new scalar operator on Vector2.
 Vector2 operator-(const Vector2& a, const Vector2& b)
 {
