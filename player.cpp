@@ -118,6 +118,24 @@ void player::move()
 			_flag[HOLDING_JUMP] = true;
 		}
 	}
+	else if (!IsKeyPressed(KEY_SPACE))
+	{
+		if (_flag[ON_WALL_LEFT] || _flag[ON_WALL_RIGHT])
+		{
+			// if the user hangs too long they will lose the ability until they separate from the wall
+			if (_flag[ON_WALL_LEFT])
+				_value[ON_WALL_LEFT]++;
+			else if (_flag[ON_WALL_RIGHT])
+				_value[ON_WALL_RIGHT]++;
+
+			// slow fall speed drastically to allow for time to walljump
+			// left wall requires valid left wall hangtime, right wall requires "" ""
+			if ((_flag[ON_WALL_LEFT] && _value[ON_WALL_LEFT] < PLAYER_WALL_HANG_TIME * TARGET_FPS) || (_flag[ON_WALL_RIGHT] && _value[ON_WALL_RIGHT] < PLAYER_WALL_HANG_TIME * TARGET_FPS))
+			{
+				vel.y = std::min(vel.y, PLAYER_WALL_SLIDE_SPEED);
+			}
+		}
+	}
 
 	// cancel jump hold if we let go
 	if (_flag[HOLDING_JUMP] && _flag[IS_JUMPING] && !IsKeyDown(KEY_SPACE))
@@ -172,26 +190,6 @@ void player::check(env_list env)
 			continue;
 		}
 
-        //i = hitbox_anchors.begin();
-        //_i = 0;
-		//bool anchor_flags[8] = {false};
-
-        // for each player hitbox anchor
-        /*
-        while(i != hitbox_anchors.end())
-        {
-        	// trip the corresponding flags
-			if (this->pos + *i < envI->rect)
-			{
-				anchor_flags[_i] = true;
-			}
-
-			_i++;
-			i++;
-        }
-        */
-
-        //if (envI->sides[2] && ((anchor_flags[0] && anchor_flags[1]) || (anchor_flags[7] && anchor_flags[0])))
         if (envI->sides[2] && LineCheck(UP, lineSegmentCount, *envI))
 		{
 			// IN CEILING
@@ -203,7 +201,6 @@ void player::check(env_list env)
 				this->vel.y = 0;
 			}
 		}
-		//if (envI->sides[3] && ((anchor_flags[1] && anchor_flags[2]) || (anchor_flags[2] && anchor_flags[3])))
         if (envI->sides[3] && LineCheck(RIGHT, lineSegmentCount, *envI))
 		{
 			// WALL ON RIGHT
@@ -217,7 +214,6 @@ void player::check(env_list env)
 
 			temp_flag_ON_WALL_RIGHT = true;
 		}
-		//if (envI->sides[0] && ((anchor_flags[3] && anchor_flags[4]) || (anchor_flags[4] && anchor_flags[5])))
         if (envI->sides[0] && LineCheck(DOWN, lineSegmentCount, *envI))
 		{
 			// IN FLOOR
@@ -231,7 +227,6 @@ void player::check(env_list env)
 
 			temp_flag_ON_GROUND = true;
 		}
-		//if (envI->sides[1] && ((anchor_flags[5] && anchor_flags[6]) || (anchor_flags[6] && anchor_flags[7])))
         if (envI->sides[1] && LineCheck(LEFT, lineSegmentCount, *envI))
 		{
 			// WALL ON LEFT
@@ -251,8 +246,6 @@ void player::check(env_list env)
 
     /// UPDATE PLAYER STATE FLAGS
 
-    // TODO add a grace period for wall jumps (player can hang on wall for a moment, perhaps slowly sliding down
-
     if (temp_flag_ON_GROUND && this->vel.y == 0)
 	{
 		_flag[IS_JUMPING] = false;
@@ -267,7 +260,10 @@ void player::check(env_list env)
 		_flag[ON_WALL_RIGHT] = true;
 	}
 	else
+	{
 		_flag[ON_WALL_RIGHT] = false;
+		_value[ON_WALL_RIGHT] = 0;
+	}
 
     if (temp_flag_ON_WALL_LEFT)
 	{
@@ -275,7 +271,10 @@ void player::check(env_list env)
 		_flag[ON_WALL_LEFT] = true;
 	}
 	else
+	{
 		_flag[ON_WALL_LEFT] = false;
+		_value[ON_WALL_LEFT] = 0;
+	}
 
 }
 
@@ -331,7 +330,7 @@ bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 	switch(dir)
 	{
 	case UP: // top left to top right
-		for(int i = 0; i < lineSegments; i++)
+		for(int i = 0; i < lineSegments && (float)collisionCounter/lineSegments < hitPercentage; i++)
 		{
 			// player's position + the offset to reach the appropriate corner (top left) + the offset from where we are in the iteration
 			Vector2 hitPoint = this->pos + this->hitbox_corners[0] + Vector2{(float)i/(lineSegments - 1)*this->hitboxSize.x, 0};
@@ -340,7 +339,7 @@ bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 		}
 		break;
 	case RIGHT: // top right to bottom right
-		for(int i = 0; i < lineSegments; i++)
+		for(int i = 0; i < lineSegments && (float)collisionCounter/lineSegments < hitPercentage; i++)
 		{
 			Vector2 hitPoint = this->pos + this->hitbox_corners[1] + Vector2{0, (float)i/(lineSegments - 1)*this->hitboxSize.y};
 			if (hitPoint < obj.rect && this->pos.x < obj.rect.x)
@@ -348,7 +347,7 @@ bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 		}
 		break;
 	case DOWN: // bottom right to bottom left
-		for(int i = 0; i < lineSegments; i++)
+		for(int i = 0; i < lineSegments && (float)collisionCounter/lineSegments < hitPercentage; i++)
 		{
 			Vector2 hitPoint = this->pos + this->hitbox_corners[2] - Vector2{(float)i/(lineSegments - 1)*this->hitboxSize.x, 0};
 			if (hitPoint < obj.rect && this->pos.y < (obj.rect.y + this->hitboxSize.y/2))
@@ -356,7 +355,7 @@ bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 		}
 		break;
 	case LEFT: // bottom left to top right
-		for(int i = 0; i < lineSegments; i++)
+		for(int i = 0; i < lineSegments && (float)collisionCounter/lineSegments < hitPercentage; i++)
 		{
 			Vector2 hitPoint = this->pos + this->hitbox_corners[3] - Vector2{0, (float)i/(lineSegments - 1)*this->hitboxSize.y};
 			if (hitPoint < obj.rect && this->pos.x > (obj.rect.x + obj.rect.width))

@@ -13,7 +13,7 @@
 #define NEARBLACK CLITERAL(Color){ 20, 20, 20, 255}
 #define MUSTARD CLITERAL(Color){ 203, 182, 51, 255}
 
-#define DEV_TEST_LEVEL
+//#define DEV_TEST_LEVEL
 
 #include "constants.h"
 
@@ -39,7 +39,13 @@ int main()
     const int screenWidth = 800;
     const int screenHeight = 600;
 
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+	#ifdef DEV_LEVEL_TEST
+	const std::string test_level_path = "test_level.json";
+    const std::string window_label = "Testing " + test_level_path;
+	#else
+    const std::string window_label = "Platformer Engine";
+	#endif // DEV_LEVEL_TEST
+    InitWindow(screenWidth, screenHeight, window_label.c_str());
 
 	/////////////////////////////////////////////////////////////
     // TODO: Load resources / Initialize variables at this point
@@ -54,9 +60,9 @@ int main()
 	unsigned short level = 0; /**< acts as an index to std::vector<> levels. level 0 is an interactive menu, level 1 marks the first level in the game. */
 
 	// if we're in DEV_TEST mode then it will simply load test_level.json in the levels directory and play that. in this case pressing r will also "restart" the level
-	#ifdef DEV_TEST_LEVEL
+	#ifdef DEV_LEVEL_TEST
 
-	levels.push_back(LoadLevelFromFile("test_level.json"));
+	levels.push_back(LoadLevelFromFile(test_level_path));
 
 	#else
 
@@ -102,10 +108,10 @@ int main()
         if (IsKeyPressed(KEY_R))
         {
             camera.zoom = 1.0f;
-            #ifdef DEV_TEST_LEVEL
+            #ifdef DEV_LEVEL_TEST
 
 			levels.clear();
-			levels.push_back(LoadLevelFromFile("levels/test_level.json"));
+			levels.push_back(LoadLevelFromFile(test_level_path));
 			ResetLevel(&p1, levels[0]);
 
             #endif // DEV_TEST_LEVEL
