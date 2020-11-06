@@ -50,24 +50,25 @@ std::vector<env_level> LoadLevelsFromFolder(std::string folder)
 	char ** files = GetDirectoryFiles(folder.c_str(), &count);
 	// files[0] and files[1] are the current and parent directories, so we start our search at files[2]
 
-	if (count < 1)
+	if (count < 3)
 		throw std::string("Error Code 01: No files found in folder \"levels\"!");
-		
+
 	std::vector<env_level> levels;
-	for(int i = 2; i < count + 2; i++)
+	for(int i = 2; i < count; i++)
 	{
 		try
 		{
-			levels.push_back(LoadLevelFromFile(folder + std::string(files[i])));
+			levels.push_back(LoadLevelFromFile(folder + "/" + std::string(files[i])));
 		}
 		catch (JSONLevelException except)
 		{
 			throw except;
-		}		
+		}
 	}
 
 	// sort the vector using env_level.id
 	std::sort(levels.begin(), levels.end());
+	ClearDirectoryFiles();
 
 	return levels;
 }

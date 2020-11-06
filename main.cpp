@@ -48,7 +48,7 @@ int main()
     // load all levels in the levels folder
     try
     {
-        levels = LoadLevelsFromFolder("levels/");
+        levels = LoadLevelsFromFolder("levels");
     }
     catch (JSONLevelException except)
     {
@@ -108,7 +108,7 @@ int main()
         if (IsKeyPressed(KEY_R))
         {
             camera.zoom = 1.0f;
-            
+
             #ifdef DEV_LEVEL_TEST
 			level = LoadLevelFromFile(file_name);
 			ResetLevel(&p1, level);
@@ -124,6 +124,19 @@ int main()
             SetWindowTitle("Level Tester");
         }
         UpdateLevel(&level);
+        if (IsFileDropped())
+		{
+			int count;
+			char** files = GetDroppedFiles(&count);
+			if (count > 0)
+				file_name = files[0];
+
+			level = LoadLevelFromFile(file_name);
+			ClearDroppedFiles();
+			SetWindowTitle(GetFileName(file_name.c_str()));
+			ResetLevel(&p1, level);
+			levelIsLoaded = true;
+		}
         #else
 		UpdateLevel(&levels[level]);
         #endif
@@ -139,9 +152,9 @@ int main()
             {
                 DrawTextRec(GetFontDefault(), "DRAG AND DROP A LEVEL ON THIS WINDOW TO LOAD IT", Rectangle{200, 150, 400, 400}, 30, 1.0, true, LIGHTGRAY);
 
+                /*
                 if (IsFileDropped())
                 {
-                    ClearDroppedFiles();
                     int count;
                     char** files = GetDroppedFiles(&count);
                     if (count > 0)
@@ -153,6 +166,7 @@ int main()
 			        ResetLevel(&p1, level);
                     levelIsLoaded = true;
                 }
+                */
 
                 EndDrawing();
                 continue;
