@@ -71,6 +71,7 @@ int main()
 	/// TEMP VARS FOR CURRENT BLOCK
 	float blockWidth = 100;
 	float blockHeight = 100;
+	bool blockSides[4] = {true, false, false, false};
 	Color blockColor = RandomColor();
 
 	/// set fps of window
@@ -117,6 +118,11 @@ int main()
 		blockHeight += EDITOR_RESIZE_SPEED * (IsKeyPressed(KEY_DOWN) - IsKeyPressed(KEY_UP));
 		if (blockHeight < 25) blockHeight = 25;
 
+		if (IsKeyPressed(KEY_I)) blockSides[0] = !blockSides[0];
+		if (IsKeyPressed(KEY_L)) blockSides[1] = !blockSides[1];
+		if (IsKeyPressed(KEY_K)) blockSides[2] = !blockSides[2];
+		if (IsKeyPressed(KEY_J)) blockSides[3] = !blockSides[3];
+
 		// mouse wheel zooms in and out
 
         /// TODO guard this action with a prompt (so the user can't just instantly lose
@@ -151,7 +157,15 @@ int main()
 				{
 					// draw block preview
 					Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
+					if (IsKeyDown(KEY_LEFT_CONTROL))
+					{
+						//v.x = blockWidth*((int)v.x/(int)blockWidth);
+						//v.y = blockWidth*((int)v.y/(int)blockWidth);
+						v.x = 5*((int)v.x/(int)5);
+						v.y = 5*((int)v.y/(int)5);
+					}
 					env_object obj = env_object(Rectangle{v.x, v.y, blockWidth, blockHeight});
+					for(int i = 0; i < 4; i++) obj.sides[i] = blockSides[i];
 					obj.color = blockColor;
 
 					DrawEnvObject(obj);
@@ -160,6 +174,30 @@ int main()
 					{
 						level.env_objects.push_back(obj);
 						blockColor = RandomColor();
+					}
+				}
+				else if (editorFlag == (short)DELETE)
+				{
+					auto it = level.env_objects.begin();
+					Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
+					auto obj = level.env_objects.end();
+
+					for (; it != level.env_objects.end() && obj == level.env_objects.end(); it++)
+					{
+						if (v < it->rect)
+							obj = it;
+					}
+
+					if (obj != level.env_objects.end())
+					{
+						env_object obj_clone = *obj;
+						obj_clone.color = LIGHTGRAY;
+						DrawEnvObject(obj_clone);
+
+						if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+						{
+							level.env_objects.erase(obj);
+						}
 					}
 				}
 
