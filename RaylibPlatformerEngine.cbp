@@ -24,6 +24,11 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 			</Target>
+			<Target title="Tester">
+				<Option output="RaylibPlatformerEngine" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
@@ -34,8 +39,14 @@
 		<Unit filename="Makefile">
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="button.cpp" />
-		<Unit filename="button.h" />
+		<Unit filename="button.cpp">
+			<Option target="Release" />
+			<Option target="Editor" />
+		</Unit>
+		<Unit filename="button.h">
+			<Option target="Release" />
+			<Option target="Editor" />
+		</Unit>
 		<Unit filename="constants.h">
 			<Option target="Release" />
 		</Unit>
@@ -45,14 +56,24 @@
 		<Unit filename="dool.h">
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="editor.cpp">
+			<Option target="Release" />
+			<Option target="Editor" />
+		</Unit>
 		<Unit filename="environment.cpp">
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="environment.h">
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="files.cpp" />
-		<Unit filename="files.h" />
+		<Unit filename="files.cpp">
+			<Option target="Release" />
+			<Option target="Editor" />
+		</Unit>
+		<Unit filename="files.h">
+			<Option target="Release" />
+			<Option target="Editor" />
+		</Unit>
 		<Unit filename="main.cpp">
 			<Option target="Release" />
 		</Unit>

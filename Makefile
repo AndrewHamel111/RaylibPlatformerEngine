@@ -15,6 +15,8 @@ Release:
 	$(CC) -o main.exe $(files) $(CFLAGS) $(LDFLAGS)
 	main.exe
 
-Editor:
+Tester:
 	$(CC) -o level_test.exe $(files) $(CFLAGS) -DDEV_LEVEL_TEST $(LDFLAGS)
+
+Editor:
 	$(CC) -o editor.exe $(files_e) $(CFLAGS) $(LDFLAGS)
