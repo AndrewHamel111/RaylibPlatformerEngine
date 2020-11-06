@@ -1,0 +1,22 @@
+drag and drop files into the programs to open them, they can run alongside each other no problem. only BLOCK, DELETE, and SAVE actually function on the buttons.
+
+```
+**EDITOR**
+Use mouse wheel to zoom the camera and WASD to scroll the camera. R resets the position and zoom if you get lost.
+
+STARTING THE EDITOR
+Use one of the levels from levels/ as a template (the first one is two blocks you can easily delete, but try to use where the starting platform is as a hint to where the spawn should be) and make any changes you like. Drag and drop levels/level1.json for a simple starting plate, or levels/test_level.json for some inspiration.
+
+DONT FORGET TO SAVE
+Clicking the save button in the bottom right updates the output.json file. You do not need to close the editor or the level tester at any time. If you have already opened output.json in the tester, simply pressing R inside the tester will reload the file showing any changes you made.
+
+BLOCK MODE
+Click to create blocks in the world. You can hold CTRL to get some snapping to make precision a little easer. Use the Arrow Keys to change the size of the block, and I J K L to toggle the solid sides of the block (the solid line indicates that that side of the block does collision)
+
+DELETE MODE
+Simply click on blocks to delete them. That's it.
+
+**LEVEL TESTER**
+Simply run the exe and drag and drop any of the json files into the level tester to play the level. Pressing R inside the tester will respawn your player and fix the camera. The levels you make in the editor are saved to "output.json" so check this one out to see your level in action,
+
+For now, colors are randomized because it's fun and you can only scale blocks 25 pixels at a time. The game features wall jumps and sprint mechanics so I hope to see some interesting playgrounds from yall :)```
