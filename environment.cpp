@@ -5,6 +5,11 @@
 env_object::env_object(): rect{Rectangle{0,0,100,50}}, sides{true, false, false, false}, spriteId{255}, type{BLOCK}, color{DARKGRAY}, label{"block"}, func{STATIC}
 {}
 
+env_object::env_object(Rectangle rect): env_object()
+{
+    this->rect = rect;
+}
+
 env_object::env_object(Rectangle rect, unsigned short uuId): env_object()
 {
     this->rect = rect;
@@ -105,3 +110,8 @@ env_level::env_level(): id{(unsigned short)0}, label{"SAMPLE TEXT"}, player_star
 
 env_level::env_level(unsigned short id, std::string label, env_list env_objects): id{id}, label{label}, player_start{Vector2{100,100}}, env_objects{env_objects}
 {}
+
+Color RandomColor()
+{
+	return Color{rand() % 255, rand() % 255, rand() % 255, 255};
+}

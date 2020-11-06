@@ -8,9 +8,11 @@
 #define DEV_SHOW_MOUSE_POS
 
 #define CAMERA_SCROLL_SPEED 6.0f
+#define EDITOR_RESIZE_SPEED 25.0f
 
 #include "environment.h"
 #include "operators.h"
+#include "button.h"
 
 #include "files.h"
 
@@ -38,6 +40,38 @@ int main()
     std::string window_label = "Level Tester";
     env_level level;
 
+    /// LOAD BUTTONS AND ASSIGN SOURCE/DEST RECTS
+	Texture2D buttonTex = LoadTexture("sprites/buttons.png");
+	bool buttonValues[8] = {false};
+	short editorFlag = -1;
+	enum BUTTON_SOURCE_RECT {
+		BLOCK, SIDES, DELETE, PAINT, TEMP, TEMP1, TEMP2, SAVE
+	};
+	Rectangle buttonSourceRect[] = {
+		Rectangle{0, 14,180,80},
+		Rectangle{180, 14,180,80},
+		Rectangle{360, 14,180,80},
+		Rectangle{540, 14,180,80},
+		Rectangle{720, 14,180,80},
+		Rectangle{720 + 180, 14,180,80},
+		Rectangle{720 + 360, 14,180,80},
+		Rectangle{720 + 540, 14,180,80}
+	};
+	Rectangle buttonDestRect[] = {
+		Rectangle{810,10,180,80},
+		Rectangle{1010,10,180,80},
+		Rectangle{810,110,180,80},
+		Rectangle{1010,110,180,80},
+		Rectangle{810,210,180,80},
+		Rectangle{1010,210,180,80},
+		Rectangle{810,310,180,80},
+		Rectangle{1010,310,180,80}
+	};
+
+	/// TEMP VARS FOR CURRENT BLOCK
+	float blockWidth = 100;
+	float blockHeight = 100;
+	Color blockColor = RandomColor();
 
 	/// set fps of window
     SetTargetFPS(90);
@@ -77,6 +111,12 @@ int main()
 		// WASD scrolls camera
 		camera.target = camera.target + (scrollSpeed * Vector2{(IsKeyDown(KEY_D) - IsKeyDown(KEY_A)), (IsKeyDown(KEY_S) - IsKeyDown(KEY_W))});
 
+		// arrow keys resize block
+		blockWidth += EDITOR_RESIZE_SPEED * (IsKeyPressed(KEY_RIGHT) - IsKeyPressed(KEY_LEFT));
+		if (blockWidth < 25) blockWidth = 25;
+		blockHeight += EDITOR_RESIZE_SPEED * (IsKeyPressed(KEY_DOWN) - IsKeyPressed(KEY_UP));
+		if (blockHeight < 25) blockHeight = 25;
+
 		// mouse wheel zooms in and out
 
         /// TODO guard this action with a prompt (so the user can't just instantly lose
@@ -107,12 +147,51 @@ int main()
 					DrawLevel(level);
                 //}
 
+				if (editorFlag == (short)BLOCK)
+				{
+					// draw block preview
+					Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
+					env_object obj = env_object(Rectangle{v.x, v.y, blockWidth, blockHeight});
+					obj.color = blockColor;
+
+					DrawEnvObject(obj);
+
+					if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && GetMousePosition() < Rectangle{0,0,800,600})
+					{
+						level.env_objects.push_back(obj);
+						blockColor = RandomColor();
+					}
+				}
+
 			EndMode2D();
 
             // draw edit panel
-            DrawRectangle(800, 0, 400, 600, RAYWHITE);
+            DrawRectangle(800, 0, 400, 600, Color{30,30,30,200});
 
 			// draw buttons
+			/// TODO CLEAN UP THIS LOGIC
+			for (int i = 0; i < 8; i++)
+			{
+				buttonValues[i] = ImageButtonSink(buttonDestRect[i], buttonTex, buttonSourceRect[i]);
+			}
+			if (buttonValues[0])
+			{
+				editorFlag = (short)BLOCK;
+			}
+			if (buttonValues[1])
+			{
+				editorFlag = (short)SIDES;
+			}
+			if (buttonValues[2])
+			{
+				editorFlag = (short)DELETE;
+			}
+			if (buttonValues[3])
+			{
+				editorFlag = (short)PAINT;
+			}
+
+			if (buttonValues[SAVE]) SaveLevelToFile(level,"output.json");
 
 			// draw grid -+ buttons (alternative square brackets)
 
@@ -122,10 +201,9 @@ int main()
 
 			// name field, save and load buttons
 
-
             #ifdef DEV_SHOW_MOUSE_POS
 			Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-			DrawText(FormatText("x=%4.2f\ny=%4.2f", v.x, v.y), GetMouseX(), GetMouseY() + 20, 20, NEARBLACK);
+			DrawText(FormatText("x=%4.2f\ny=%4.2f", v.x, v.y), GetMouseX(), GetMouseY() - 25, 20, NEARBLACK);
             #endif
 
         EndDrawing();

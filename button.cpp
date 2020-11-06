@@ -50,6 +50,30 @@ bool ImageButtonEx(Rectangle bounds, Texture2D atlas, Rectangle source)
 	return q;
 }
 
+bool ImageButtonSink(Rectangle bounds, Texture2D atlas, Rectangle source)
+{
+	Vector2 m = GetMousePosition();
+	Color c = WHITE;
+	bool q = false;
+
+	if (m < bounds)
+	{
+		c = LIGHTGRAY;
+
+		if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+		{
+			source.y -= 9;
+			q = true;
+		}
+
+	}
+
+	// draw the button
+	DrawTextureRec(atlas, source, Vector2{bounds.x,bounds.y}, c);
+
+	return q;
+}
+
 bool TextButton(Rectangle bounds, std::string text, Color buttonColor, Color textColor)
 {
 	Vector2 m = GetMousePosition();

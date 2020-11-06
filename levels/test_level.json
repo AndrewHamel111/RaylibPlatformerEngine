@@ -360,31 +360,6 @@
         255
       ],
       "func": 0,
-      "label": "Liam likes cock.",
-      "rect": [
-        300,
-        100,
-        200,
-        200
-      ],
-      "sides": [
-        true,
-        true,
-        true,
-        true
-      ],
-      "spriteId": 255,
-      "type": 1,
-      "uuId": 13
-    },
-    {
-      "color": [
-        20,
-        20,
-        20,
-        255
-      ],
-      "func": 0,
       "label": "You'll need to \"SHIFT\" to make this one!",
       "rect": [
         -750,

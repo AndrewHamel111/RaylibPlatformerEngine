@@ -55,6 +55,8 @@ struct env_level {
 void DrawEnvObject(const env_object);
 void DrawEnvList(const env_list);
 
+Color RandomColor();
+
 bool operator<(const env_level& a, const env_level& b);
 
 #endif
