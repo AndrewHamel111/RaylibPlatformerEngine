@@ -26,9 +26,50 @@ env_level LoadLevelFromFile(std::string fileName)
 	is >> j;
 	is.close();
 
-	env_level level = GetLevelFromJSON(j);
+	try
+	{
+		env_level level = GetLevelFromJSON(j);
+		return level;
+	}
+	catch (JSONLevelException except)
+	{
+		// pass the exception on to the caller, since I handle it differently when called from LoadLevelsFromFolder or just from the main method.
+		throw except;
+	}
+}
 
-	return level;
+/**
+ * @brief Retrieve a list of levels from a particular folder
+ * @param folder A std::string path to the folder ending with a '/'.
+ * @returns A std::vector<env_level> with the levels ordered by id.
+ * @throw JSONLevelException in the event that one of the files loaded was not a valid json level
+ **/
+std::vector<env_level> LoadLevelsFromFolder(std::string folder)
+{
+	int count;
+	char ** files = GetDirectoryFiles(folder.c_str(), &count);
+	// files[0] and files[1] are the current and parent directories, so we start our search at files[2]
+
+	if (count < 1)
+		throw std::string("Error Code 01: No files found in folder \"levels\"!");
+		
+	std::vector<env_level> levels;
+	for(int i = 2; i < count + 2; i++)
+	{
+		try
+		{
+			levels.push_back(LoadLevelFromFile(folder + std::string(files[i])));
+		}
+		catch (JSONLevelException except)
+		{
+			throw except;
+		}		
+	}
+
+	// sort the vector using env_level.id
+	std::sort(levels.begin(), levels.end());
+
+	return levels;
 }
 
 /////////////////

@@ -1,5 +1,5 @@
 files_game = dool.cpp environment.cpp main.cpp operators.cpp player.cpp button.cpp files.cpp
-files_editor = dool.cpp environment.cpp main.cpp operators.cpp player.cpp button.cpp files.cpp
+files_editor = dool.cpp environment.cpp editor.cpp operators.cpp player.cpp button.cpp files.cpp
 files = $(addprefix $(CURRENT_DIRECTORY), $(files_game))
 files_e = $(addprefix $(CURRENT_DIRECTORY), $(files_editor))
 

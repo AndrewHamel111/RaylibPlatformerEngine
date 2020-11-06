@@ -93,6 +93,11 @@ void DrawEnvList(const env_list l)
 		DrawEnvObject(*(i++));
 }
 
+bool operator<(const env_level& a, const env_level& b)
+{
+	return a.id < b.id;
+}
+
 /// STRUCT ENV_LEVEL
 
 env_level::env_level(): id{(unsigned short)0}, label{"SAMPLE TEXT"}, player_start{Vector2{100,100}}, env_objects{0}

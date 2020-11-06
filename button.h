@@ -3,6 +3,8 @@
 
 #include "raylib.h"
 #include "operators.h"
+#include <string>
+#include <cstring>
 
 #define SLIDER_HANDLE_HEIGHT 30
 #define SLIDER_HEIGHT 20
@@ -28,6 +30,15 @@ bool ImageButtonSpriteSwap(Rectangle bounds, Texture2D atlas, Rectangle source, 
 * A replacement for raygui::GuiImageButtonEx (which was not very good at all).
 */
 bool ImageButtonEx(Rectangle bounds, Texture2D atlas, Rectangle source);
+
+/**
+* @brief Draws a button at the bounds, displaying the specified text and returns true when clicked.
+* @param bounds The bounds of the button {x,y,width,height} where x,y denote the top left corner
+* @param text Label to print on the button
+* @param buttonColor Color of the button itself (defaults to RAYWHITE)
+* @param textColor Color of the text (defaults to NEARBLACK)
+*/ 
+bool TextButton(Rectangle bounds, std::string text, Color buttonColor = RAYWHITE, Color textColor = Color{20,20,20,255});
 
 /**
 * @brief Creates an invisible button that returns true when clicked.
@@ -58,4 +69,10 @@ float SliderBar(Vector2 start, float length, float* percent, float scale = 1.0);
 */
 float SliderBarCenter(Vector2 center, float length, float* percent, float scale = 1.0);
 
+/**
+ * NOT IMPLEMENTED YET
+ * DO NOT USE
+ * 
+ */
+bool SimpleTextBox(Rectangle r, char*, int max_field_length);
 #endif

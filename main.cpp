@@ -1,19 +1,14 @@
 /// TODO
-/// - implement LineCheck function for collision checking
-/// -
-/// - use nlohmann/json for the following
-/// 	- procedure for writing a level to a json
-///		- procedure for reading a level from a json
-///		- consider storing many levels in a json?
-/// - create system to read levels from file
 /// - create level editor
+/// - when in the level testing mode, instead of trying to load
+///     some preset value it waits for the user to drag and drop a level on the editor.
 
 
 #include "raylib.h"
 #define NEARBLACK CLITERAL(Color){ 20, 20, 20, 255}
 #define MUSTARD CLITERAL(Color){ 203, 182, 51, 255}
 
-//#define DEV_TEST_LEVEL
+#define DEV_SHOW_MOUSE_POS
 
 #include "constants.h"
 
@@ -24,9 +19,6 @@
 
 // DEV SHIT
 #include <iostream>
-
-void InitializeLevel(int level, env_list* env);
-void InitializeLevels(std::vector<env_level>* levels);
 
 void UpdateLevel(env_level* level);
 void DrawLevel(env_level level);
@@ -39,40 +31,44 @@ int main()
     const int screenWidth = 800;
     const int screenHeight = 600;
 
+	player p1(Vector2{0,0});
+
 	#ifdef DEV_LEVEL_TEST
-	const std::string test_level_path = "test_level.json";
-    const std::string window_label = "Testing " + test_level_path;
+
+    bool levelIsLoaded = false;
+    std::string file_name;
+    std::string window_label = "Level Tester";
+    env_level level;
+
 	#else
-    const std::string window_label = "Platformer Engine";
+
+    std::string window_label = "Platformer Engine";
+	std::vector<env_level> levels;
+	unsigned short level = 0; /**< acts as an index to std::vector<> levels. level 0 is an interactive menu, level 1 marks the first level in the game. */
+    // load all levels in the levels folder
+    try
+    {
+        levels = LoadLevelsFromFolder("levels/");
+    }
+    catch (JSONLevelException except)
+    {
+        /// TODO handle the case where there is an invalid level in levels/
+        exit(0);
+    }
+    catch (std::string msg)
+    {
+        /// TODO handle the case where the folder has no files in it whatsoever
+        exit(0);
+    }
+	ResetLevel(&p1, levels[level]);
+
 	#endif // DEV_LEVEL_TEST
+
     InitWindow(screenWidth, screenHeight, window_label.c_str());
 
 	/////////////////////////////////////////////////////////////
     // TODO: Load resources / Initialize variables at this point
     /////////////////////////////////////////////////////////////
-
-	//{ INIT PLAYER
-	player p1(Vector2{screenWidth/5, screenWidth/2});
-	//}
-
-	//{ init env_list (truly init per level)
-	std::vector<env_level> levels;
-	unsigned short level = 0; /**< acts as an index to std::vector<> levels. level 0 is an interactive menu, level 1 marks the first level in the game. */
-
-	// if we're in DEV_TEST mode then it will simply load test_level.json in the levels directory and play that. in this case pressing r will also "restart" the level
-	#ifdef DEV_LEVEL_TEST
-
-	levels.push_back(LoadLevelFromFile(test_level_path));
-
-	#else
-
-	InitializeLevels(&levels);
-
-	#endif // DEV_TEST_LEVEL
-
-	ResetLevel(&p1, levels[level]);
-
-	/// DEV SHIT
 
 	/// set fps of window
     SetTargetFPS(TARGET_FPS);
@@ -94,13 +90,17 @@ int main()
         // TODO: Update variables / Implement example logic at this point
         //----------------------------------------------------------------------------------
 
+        #ifdef DEV_LEVEL_TEST
+        if (levelIsLoaded)
+            p1.update(level.env_objects);
+        #else
 		p1.update(levels[level].env_objects);
+        #endif
 
-		//{ CAMERA UPDATE
+		/// CAMERA UPDATE
         camera.zoom += ((float)GetMouseWheelMove()*0.005f);
         camera.target = p1.pos + Vector2{0, p1.hitboxSize.y / 2};
         camera.offset = Vector2{400, 300 + p1.hitboxSize.y / 2};
-        //camera.rotation += 0.5f;
 
         if (camera.zoom > 3.0f) camera.zoom = 3.0f;
         else if (camera.zoom < 0.25f) camera.zoom = 0.25f;
@@ -108,19 +108,25 @@ int main()
         if (IsKeyPressed(KEY_R))
         {
             camera.zoom = 1.0f;
+            
             #ifdef DEV_LEVEL_TEST
-
-			levels.clear();
-			levels.push_back(LoadLevelFromFile(test_level_path));
-			ResetLevel(&p1, levels[0]);
-
+			level = LoadLevelFromFile(file_name);
+			ResetLevel(&p1, level);
             #endif // DEV_TEST_LEVEL
         }
-		//}
 
-		//{ LEVEL UPDATE
+		/// LEVEL UPDATE
+        #ifdef DEV_LEVEL_TEST
+        if (IsKeyPressed(KEY_ESCAPE))
+        {
+            levelIsLoaded = false;
+            file_name = "";
+            SetWindowTitle("Level Tester");
+        }
+        UpdateLevel(&level);
+        #else
 		UpdateLevel(&levels[level]);
-		//}
+        #endif
 
         // Draw
         //----------------------------------------------------------------------------------
@@ -128,19 +134,47 @@ int main()
 
             ClearBackground(RAYWHITE);
 
+            #ifdef DEV_LEVEL_TEST
+            if (!levelIsLoaded)
+            {
+                DrawTextRec(GetFontDefault(), "DRAG AND DROP A LEVEL ON THIS WINDOW TO LOAD IT", Rectangle{200, 150, 400, 400}, 30, 1.0, true, LIGHTGRAY);
+
+                if (IsFileDropped())
+                {
+                    ClearDroppedFiles();
+                    int count;
+                    char** files = GetDroppedFiles(&count);
+                    if (count > 0)
+                        file_name = files[0];
+
+                    level = LoadLevelFromFile(file_name);
+                    ClearDroppedFiles();
+                    SetWindowTitle(GetFileName(file_name.c_str()));
+			        ResetLevel(&p1, level);
+                    levelIsLoaded = true;
+                }
+
+                EndDrawing();
+                continue;
+            }
+            #endif
             BeginMode2D(camera);
 
-                //{ LEVEL DRAW
+                #ifdef DEV_LEVEL_TEST
+                DrawLevel(level);
+                #else
                 DrawLevel(levels[level]);
-                //}
+                #endif
 
 				/// draw player
 				p1.DrawPlayer();
 
 			EndMode2D();
 
+            #ifdef DEV_SHOW_MOUSE_POS
 			Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-			DrawText(FormatText("%.2f %.2f", v.x, v.y), GetMouseX(), GetMouseY() + 25, 20, NEARBLACK);
+			DrawText(FormatText("x=%4.2f\ny=%4.2f", v.x, v.y), GetMouseX(), GetMouseY() + 20, 20, NEARBLACK);
+            #endif
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -155,82 +189,6 @@ int main()
     //--------------------------------------------------------------------------------------
 
     return 0;
-}
-
-void InitializeLevel(unsigned short level, env_list* env)
-{
-    env->clear();
-    env_object obj;
-
-    switch(level)
-    {
-    case 0:
-        obj = env_object{Rectangle{0,600, 800, 100}, 0};
-        obj.type = BLOCK;
-        env->push_back(obj);
-
-        obj = env_object{Rectangle{300,200,200,200}, 1};
-        obj.type = TEXT;
-        obj.label = "I'm sorry, but your princess\nis in another castle.";
-        env->push_back(obj);
-        break;
-    case 1:
-        obj = env_object{Rectangle{-1000,600, 2800, 100}, 0};
-        env->push_back(obj);
-
-        obj = env_object{Rectangle{350,300,200,300}, 1};
-        env->push_back(obj);
-
-        obj = env_object{Rectangle{500,500,200,100}, 2};
-        env->push_back(obj);
-
-        obj = env_object{Rectangle{200,400,200,100}, 3};
-        env->push_back(obj);
-
-        obj = env_object{Rectangle{-400,300, 200,300}, 4};
-        obj.setSides(true, true, false, false);
-        obj.color = GREEN;
-        env->push_back(obj);
-
-        obj = env_object{Rectangle{0,100, 200,300}, 5};
-        obj.setSides(true, true, true, true);
-        obj.color = GREEN;
-        env->push_back(obj);
-
-        obj = env_object{Rectangle{450,200, 100,100}, 6};
-        env->push_back(obj);
-
-        obj = env_object{Rectangle{-400,0, 200,100}, 7};
-        obj.setSides(true, true, true, true);
-        env->push_back(obj);
-
-        break;
-    default:
-        obj = env_object{Rectangle{0,600, 800, 100}, 0};
-        obj.type = BLOCK;
-        env->push_back(obj);
-
-        obj = env_object{Rectangle{300,200,200,200}, 1};
-        obj.type = TEXT;
-        obj.label = "I'm sorry, but your princess is in another castle.";
-        env->push_back(obj);
-        break;
-    }
-}
-
-void InitializeLevels(std::vector<env_level>* levels)
-{
-    levels->clear();
-
-    env_list env;
-    env_level lev;
-
-    for(unsigned short i = 0; i < 3; i++)
-    {
-        InitializeLevel(i, &env);
-        lev = env_level{i, "Level " + std::to_string(i), env};
-        levels->push_back(lev);
-    }
 }
 
 void UpdateLevel(env_level* level)
