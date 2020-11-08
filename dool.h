@@ -1,7 +1,8 @@
 #ifndef DOOL_H_
 #define DOOL_H_
 
-struct dool{
+struct dool
+{
 	bool x;
 	bool y;
 

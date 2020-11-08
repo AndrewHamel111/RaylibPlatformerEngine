@@ -2,8 +2,8 @@
 #define OPERATORS_H_
 
 #ifndef RAYLIB_H_
-	#define RAYLIB_H_
-	#include "raylib.h"
+#define RAYLIB_H_
+#include "raylib.h"
 #endif
 
 #include <cmath>

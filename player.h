@@ -28,8 +28,8 @@
 #define PLAYER_HITBOX_PERCENTAGE 0.15
 
 #ifndef RAYLIB_H_
-	#define RAYLIB_H_
-	#include "raylib.h"
+#define RAYLIB_H_
+#include "raylib.h"
 #endif
 
 #include "constants.h"
@@ -43,12 +43,13 @@
 #include <iostream>
 
 #ifndef NEARBLACK
-	#define NEARBLACK CLITERAL(Color){ 20, 20, 20, 255}
+#define NEARBLACK CLITERAL(Color){ 20, 20, 20, 255}
 #endif
 
 //}
 
-enum LineCheckDirection {
+enum LineCheckDirection
+{
 	UP, RIGHT, LEFT, DOWN
 };
 
@@ -89,13 +90,14 @@ public:
 	Vector2 hitboxSize; /**< Width and height of the player's hitbox. */
 
 	unsigned short coins;
+	bool coinCollected;
 	Color color;
 
-                            /// CONSTRUCTORS
+	/// CONSTRUCTORS
 	player();  /**< Default constructor initializes player to the center of the screen with no velocity and default acc. */
 	player(Vector2);  /**< Position constructor only specifies the starting position of the player. */
 
-                            /// ACCESS METHODS
+	/// ACCESS METHODS
 	/// DEPRECATED, SINCE POS, VEL, ACC ARE NOW PUBLIC
 	Vector2 getPos() const;
 	Vector2 getVel() const;
@@ -107,7 +109,7 @@ public:
 	void setHitboxAnchors(std::vector<Vector2>);
 	bool LineCheck(LineCheckDirection, int, env_object);
 
-                            /// UPDATE AND DRAWING METHODS
+	/// UPDATE AND DRAWING METHODS
 	void move();  /**< apply any motions from input (clip into walls) */
 	void check(env_list);  /**< check for any collisions and adjust player's flags accordingly. */
 

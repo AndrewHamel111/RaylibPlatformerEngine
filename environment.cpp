@@ -7,13 +7,13 @@ env_object::env_object(): rect{Rectangle{0,0,100,50}}, sides{true, false, false,
 
 env_object::env_object(Rectangle rect): env_object()
 {
-    this->rect = rect;
+	this->rect = rect;
 }
 
 env_object::env_object(Rectangle rect, unsigned short uuId): env_object()
 {
-    this->rect = rect;
-    this->uuId = uuId;
+	this->rect = rect;
+	this->uuId = uuId;
 }
 
 env_object::env_object(Rectangle rect, ENV_OBJECT_TYPE type): env_object()
@@ -41,11 +41,11 @@ void env_object::setSides(bool a, bool b, bool c, bool d)
 
 void DrawEnvObject(const env_object o)
 {
-    if (o.type == BLOCK)
-    {
-    	// dev texture id (colored rects)
-        if (o.spriteId == 255)
-        {
+	if (o.type == BLOCK)
+	{
+		// dev texture id (colored rects)
+		if (o.spriteId == 255)
+		{
 			// COLOR CHANGE VERSION
 			unsigned char cOff = 40;
 			unsigned char mid = 128;
@@ -56,28 +56,28 @@ void DrawEnvObject(const env_object o)
 			if (ENV_RENDER_TYPE == 0)
 			{
 				alt = Color{	(o.color.r > mid) ? (unsigned char)(o.color.r - cOff) : (unsigned char)(o.color.r + cOff),
-								(o.color.g > mid) ? (unsigned char)(o.color.g - cOff) : (unsigned char)(o.color.g + cOff),
-								(o.color.b > mid) ? (unsigned char)(o.color.b - cOff) : (unsigned char)(o.color.b + cOff),
-								o.color.a};
+											(o.color.g > mid) ? (unsigned char)(o.color.g - cOff) : (unsigned char)(o.color.g + cOff),
+											(o.color.b > mid) ? (unsigned char)(o.color.b - cOff) : (unsigned char)(o.color.b + cOff),
+											o.color.a};
 			}
 			else if (ENV_RENDER_TYPE == 1)
 			{
-			// CENTERS ARE DARKER
+				// CENTERS ARE DARKER
 				alt = Color{	(o.color.r > cOff) ? (unsigned char)(o.color.r - cOff) : (unsigned char)0,
-								(o.color.g > cOff) ? (unsigned char)(o.color.g - cOff) : (unsigned char)0,
-								(o.color.b > cOff) ? (unsigned char)(o.color.b - cOff) : (unsigned char)0,
-								o.color.a};
+											(o.color.g > cOff) ? (unsigned char)(o.color.g - cOff) : (unsigned char)0,
+											(o.color.b > cOff) ? (unsigned char)(o.color.b - cOff) : (unsigned char)0,
+											o.color.a};
 			}
 			else
 			{
-			// CENTERS ARE LIGHTER
+				// CENTERS ARE LIGHTER
 				alt = Color{	(o.color.r < maxx - cOff) ? (unsigned char)(o.color.r + cOff) : maxx,
-								(o.color.g < maxx - cOff) ? (unsigned char)(o.color.g + cOff) : maxx,
-								(o.color.b < maxx - cOff) ? (unsigned char)(o.color.b + cOff) : maxx,
-								o.color.a};
+											(o.color.g < maxx - cOff) ? (unsigned char)(o.color.g + cOff) : maxx,
+											(o.color.b < maxx - cOff) ? (unsigned char)(o.color.b + cOff) : maxx,
+											o.color.a};
 			}
 
-            DrawRectangleRec(o.rect, alt);
+			DrawRectangleRec(o.rect, alt);
 
 			// draw each side independently based on the value of o.sides[].
 			float lineWidth = 15;
@@ -97,12 +97,12 @@ void DrawEnvObject(const env_object o)
 			{
 				DrawLineEx(Vector2{o.rect.x + lineWidth/2, o.rect.y + o.rect.height}, Vector2{o.rect.x + lineWidth/2, o.rect.y}, lineWidth, o.color);
 			}
-        }
-    }
-    else if (o.type == TEXT)
-    {
-        DrawTextRec(GetFontDefault(), o.label.c_str(), o.rect, 20, 1.0, true, o.color);
-    }
+		}
+	}
+	else if (o.type == TEXT)
+	{
+		DrawTextRec(GetFontDefault(), o.label.c_str(), o.rect, 20, 1.0, true, o.color);
+	}
 }
 
 void DrawEnvList(const env_list l)

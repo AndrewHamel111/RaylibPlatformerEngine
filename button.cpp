@@ -90,9 +90,9 @@ bool TextButton(Rectangle bounds, std::string text, Color buttonColor, Color tex
 		unsigned char maxx = 255;
 
 		c = Color{	(o.r > mid) ? (unsigned char)(o.r - cOff) : (unsigned char)(o.r + cOff),
-					(o.g > mid) ? (unsigned char)(o.g - cOff) : (unsigned char)(o.g + cOff),
-					(o.b > mid) ? (unsigned char)(o.b - cOff) : (unsigned char)(o.b + cOff),
-					o.a};
+								(o.g > mid) ? (unsigned char)(o.g - cOff) : (unsigned char)(o.g + cOff),
+								(o.b > mid) ? (unsigned char)(o.b - cOff) : (unsigned char)(o.b + cOff),
+								o.a};
 
 		if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
 			q = true;
@@ -125,9 +125,9 @@ float SliderBar(Vector2 start, float length, float* percent, Color handleColor, 
 	}
 	Color col;
 
-	  ////////////
+	////////////
 	//// UPDATE ////
-	  ////////////
+	////////////
 
 	if (isHovering && IsMouseButtonDown(MOUSE_LEFT_BUTTON))
 	{
@@ -148,9 +148,9 @@ float SliderBar(Vector2 start, float length, float* percent, Color handleColor, 
 	else
 		col = handleColor;
 
-	  //////////
+	//////////
 	//// DRAW ////
-	  //////////
+	//////////
 
 	Vector2 handlePosition = start;
 	// offset
@@ -215,6 +215,8 @@ bool SimpleTextBoxUpdate(Rectangle r, char* c, int max_field_length, bool* focus
 	}
 
 	if (!(*focus)) return false;
+
+	if (IsKeyPressed(KEY_ESCAPE)) return *focus = false;
 
 	int field_length = strlen(c);
 
@@ -292,10 +294,10 @@ bool SimpleTextBoxUpdate(Rectangle r, char* c, int max_field_length, bool* focus
 				case KEY_ZERO:
 					c[field_length] = ')';
 					break;
-					/*
+				/*
 				case KEY_A: case KEY_B: case KEY_C: case KEY_D: case KEY_E: case KEY_F: case KEY_G: case KEY_H: case KEY_I: case KEY_J: case KEY_K: case KEY_L: case KEY_M: case KEY_N: case KEY_O: case KEY_P: case KEY_Q: case KEY_R: case KEY_S: case KEY_T: case KEY_U: case KEY_V: case KEY_W: case KEY_X: case KEY_Y: case KEY_Z:
-					c[field_length] = key;
-					break;*/
+				c[field_length] = key;
+				break;*/
 				default:
 					c[field_length] = key;
 					break;

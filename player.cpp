@@ -2,32 +2,32 @@
 
 /// CONSTRUCTORS
 
-player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, hitboxSize{Vector2{100,100}}, coins{0}, color{RandomColor()}
+player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, hitboxSize{Vector2{100,100}}, coins{0}, coinCollected{false}, color{RandomColor()}
 {
 	// DEFAULT CONSTRUCTOR
 
-    // ADD CORNERS AND EDGES TO ANCHORS
-    /// TODO change hitbox anchors to be corners of hitbox (propagate change to LineCheck)
-    this->hitbox_anchors.clear();
-    this->hitbox_anchors.push_back(Vector2{0, -101});
-    this->hitbox_anchors.push_back(Vector2{51, -101});
-    this->hitbox_anchors.push_back(Vector2{51, -50});
-    this->hitbox_anchors.push_back(Vector2{51, 1});
-    this->hitbox_anchors.push_back(Vector2{0, 1});
-    this->hitbox_anchors.push_back(Vector2{-51, 1});
-    this->hitbox_anchors.push_back(Vector2{-51, -50});
-    this->hitbox_anchors.push_back(Vector2{-51, -101});
+	// ADD CORNERS AND EDGES TO ANCHORS
+	/// TODO change hitbox anchors to be corners of hitbox (propagate change to LineCheck)
+	this->hitbox_anchors.clear();
+	this->hitbox_anchors.push_back(Vector2{0, -101});
+	this->hitbox_anchors.push_back(Vector2{51, -101});
+	this->hitbox_anchors.push_back(Vector2{51, -50});
+	this->hitbox_anchors.push_back(Vector2{51, 1});
+	this->hitbox_anchors.push_back(Vector2{0, 1});
+	this->hitbox_anchors.push_back(Vector2{-51, 1});
+	this->hitbox_anchors.push_back(Vector2{-51, -50});
+	this->hitbox_anchors.push_back(Vector2{-51, -101});
 
-    // top left, top right, bottom right, bottom left
-    this->hitbox_corners[0] = Vector2{-50, -101};
-    this->hitbox_corners[1] = Vector2{51, -100};
-    this->hitbox_corners[2] = Vector2{50, 1};
-    this->hitbox_corners[3] = Vector2{-51, 0};
+	// top left, top right, bottom right, bottom left
+	this->hitbox_corners[0] = Vector2{-50, -101};
+	this->hitbox_corners[1] = Vector2{51, -100};
+	this->hitbox_corners[2] = Vector2{50, 1};
+	this->hitbox_corners[3] = Vector2{-51, 0};
 }
 
 player::player(Vector2 pos): player()
 {
-    this->pos = pos;
+	this->pos = pos;
 	// POSITION CONSTRUCTOR
 }
 
@@ -93,11 +93,11 @@ void player::move()
 	if (abs(vel.x + acc.x ) < maxVel)// || abs(vel.x + acc.x) < PLAYER_MAX_VELOCITY)
 		vel.x += acc.x;
 	//else
-		//vel.x = maxVel * (vel.x > 0) ? 1 : -1;
+	//vel.x = maxVel * (vel.x > 0) ? 1 : -1;
 
 	if (abs(vel.y + acc.y) < PLAYER_TERMINAL_VELOCITY)
 		vel.y += acc.y;
-		//vel.y = PLAYER_TERMINAL_VELOCITY * (vel.y > 0) ? 1 : -1;
+	//vel.y = PLAYER_TERMINAL_VELOCITY * (vel.y > 0) ? 1 : -1;
 
 	// add jump (when applicable)
 	if (IsKeyPressed(KEY_SPACE) && !_flag[IS_JUMPING])
@@ -173,32 +173,44 @@ void player::move()
 void player::check(env_list env)
 {
 	// iterators and a counter
-    auto envI = env.begin();
+	auto envI = env.begin();
 
-    bool temp_flag_ON_GROUND = false;
-    bool temp_flag_ON_WALL_LEFT = false;
-    bool temp_flag_ON_WALL_RIGHT = false;
+	bool temp_flag_ON_GROUND = false;
+	bool temp_flag_ON_WALL_LEFT = false;
+	bool temp_flag_ON_WALL_RIGHT = false;
 
-    const int lineSegmentCount = 10;
+	const int lineSegmentCount = 10;
 
-    // for each env_object
-    while (envI != env.end())
-    {
-    	if (envI->type == TEXT)
+	// for each env_object
+	while (envI != env.end())
+	{
+		if (envI->type == TEXT)
 		{
+			envI++;
+			continue;
+		}
+		else if (envI->type == COIN)
+		{
+			if (abs(this->pos.x - (envI->rect.x + envI->rect.width/2)) < PLAYER_COIN_RADIUS && abs(this->pos.y - (envI->rect.y + envI->rect.height/2)) < PLAYER_COIN_RADIUS)
+			{
+				envI->isCollected = true;
+				this->coinCollected = true;
+				this->coins++;
+			}
+
 			envI++;
 			continue;
 		}
 
 		// don't bother with collision check if our center is totally inside of the current object,
 		// since it's most likely a semisolid that the player is "in front of"
-        if ((this->pos + Vector2{0, -50}) < envI->rect)
+		if ((this->pos + Vector2{0, -50}) < envI->rect)
 		{
 			envI++;
 			continue;
 		}
 
-        if (envI->sides[2] && LineCheck(UP, lineSegmentCount, *envI))
+		if (envI->sides[2] && LineCheck(UP, lineSegmentCount, *envI))
 		{
 			// IN CEILING
 
@@ -209,7 +221,7 @@ void player::check(env_list env)
 				this->vel.y = 0;
 			}
 		}
-        if (envI->sides[3] && LineCheck(RIGHT, lineSegmentCount, *envI))
+		if (envI->sides[3] && LineCheck(RIGHT, lineSegmentCount, *envI))
 		{
 			// WALL ON RIGHT
 
@@ -222,7 +234,7 @@ void player::check(env_list env)
 
 			temp_flag_ON_WALL_RIGHT = true;
 		}
-        if (envI->sides[0] && LineCheck(DOWN, lineSegmentCount, *envI))
+		if (envI->sides[0] && LineCheck(DOWN, lineSegmentCount, *envI))
 		{
 			// IN FLOOR
 
@@ -235,7 +247,7 @@ void player::check(env_list env)
 
 			temp_flag_ON_GROUND = true;
 		}
-        if (envI->sides[1] && LineCheck(LEFT, lineSegmentCount, *envI))
+		if (envI->sides[1] && LineCheck(LEFT, lineSegmentCount, *envI))
 		{
 			// WALL ON LEFT
 
@@ -249,12 +261,11 @@ void player::check(env_list env)
 			temp_flag_ON_WALL_LEFT = true;
 		}
 
-        envI++;
-    }
+		envI++;
+	}
 
-    /// UPDATE PLAYER STATE FLAGS
-
-    if (temp_flag_ON_GROUND && this->vel.y == 0)
+	/// UPDATE PLAYER STATE FLAGS
+	if (temp_flag_ON_GROUND && this->vel.y == 0)
 	{
 		_flag[IS_JUMPING] = false;
 		_flag[ON_GROUND] = true;
@@ -262,7 +273,8 @@ void player::check(env_list env)
 	else
 		_flag[ON_GROUND] = false;
 
-    if (temp_flag_ON_WALL_RIGHT)
+	/// RIGHT WALL
+	if (temp_flag_ON_WALL_RIGHT)
 	{
 		_flag[IS_JUMPING] = false;
 		_flag[ON_WALL_RIGHT] = true;
@@ -273,7 +285,8 @@ void player::check(env_list env)
 		_value[ON_WALL_RIGHT] = 0;
 	}
 
-    if (temp_flag_ON_WALL_LEFT)
+	/// LEFT WALL
+	if (temp_flag_ON_WALL_LEFT)
 	{
 		_flag[IS_JUMPING] = false;
 		_flag[ON_WALL_LEFT] = true;
@@ -307,7 +320,7 @@ void player::DrawPlayer()
 /*	Vector2{-51, -101}		Vector2{0, -101} 	Vector2{51, -101}
 	Vector2{-51, -50}							Vector2{51, -50}
 	Vector2{-51, 1}			Vector2{0, 1}		Vector2{51, 1} */
-	/// TODO improve this shit because it's certainly not divine intellect
+/// TODO improve this shit because it's certainly not divine intellect
 bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 {
 	// never use less than 5 line segments (would be very inaccurate if we did)
