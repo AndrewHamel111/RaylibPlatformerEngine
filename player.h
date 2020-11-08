@@ -26,6 +26,7 @@
 
 /// other
 #define PLAYER_HITBOX_PERCENTAGE 0.15
+#define PLAYER_COIN_RADIUS 50
 
 #ifndef RAYLIB_H_
 #define RAYLIB_H_
@@ -90,7 +91,6 @@ public:
 	Vector2 hitboxSize; /**< Width and height of the player's hitbox. */
 
 	unsigned short coins;
-	bool coinCollected;
 	Color color;
 
 	/// CONSTRUCTORS
@@ -111,11 +111,13 @@ public:
 
 	/// UPDATE AND DRAWING METHODS
 	void move();  /**< apply any motions from input (clip into walls) */
-	void check(env_list);  /**< check for any collisions and adjust player's flags accordingly. */
+	void check(env_list*);  /**< check for any collisions and adjust player's flags accordingly. */
 
-	void update(env_list); /**< update method for the player simply calls the above methods in the correct order. Distributes the parameters out accordingly. */
+	void update(env_list*); /**< update method for the player simply calls the above methods in the correct order. Distributes the parameters out accordingly. */
 
 	void DrawPlayer();
 };
+
+bool coinDist(Vector2 plV, Rectangle coinRect);
 
 #endif

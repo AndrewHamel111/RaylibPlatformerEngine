@@ -2,7 +2,7 @@
 
 /// CONSTRUCTORS
 
-player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, hitboxSize{Vector2{100,100}}, coins{0}, coinCollected{false}, color{RandomColor()}
+player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, hitboxSize{Vector2{100,100}}, coins{0}, color{RandomColor()}
 {
 	// DEFAULT CONSTRUCTOR
 
@@ -170,10 +170,10 @@ void player::move()
 	}
 }
 
-void player::check(env_list env)
+void player::check(env_list* env)
 {
 	// iterators and a counter
-	auto envI = env.begin();
+	auto envI = env->begin();
 
 	bool temp_flag_ON_GROUND = false;
 	bool temp_flag_ON_WALL_LEFT = false;
@@ -182,19 +182,18 @@ void player::check(env_list env)
 	const int lineSegmentCount = 10;
 
 	// for each env_object
-	while (envI != env.end())
+	while (envI != env->end())
 	{
 		if (envI->type == TEXT)
 		{
 			envI++;
 			continue;
 		}
-		else if (envI->type == COIN)
+		if (envI->type == COIN)
 		{
-			if (abs(this->pos.x - (envI->rect.x + envI->rect.width/2)) < PLAYER_COIN_RADIUS && abs(this->pos.y - (envI->rect.y + envI->rect.height/2)) < PLAYER_COIN_RADIUS)
+			if (coinDist(this->pos, envI->rect))
 			{
 				envI->isCollected = true;
-				this->coinCollected = true;
 				this->coins++;
 			}
 
@@ -299,7 +298,7 @@ void player::check(env_list env)
 
 }
 
-void player::update(env_list env)
+void player::update(env_list* env)
 {
 	move();
 	check(env);
@@ -313,7 +312,7 @@ void player::DrawPlayer()
 	// dev stand-in for a real render of sorts
 	Rectangle r = Rectangle{pos.x - w/2, pos.y - h, w, h};
 	DrawRectangleRec(r, color);
-	//DrawText(FormatText("%d", coins), (int)pos.x - 46, (int)pos.y - 100, 30, NEARBLACK);
+	DrawText(FormatText("%d", coins), (int)pos.x - 44, (int)pos.y - 95, 30, NEARBLACK);
 }
 
 
@@ -370,4 +369,15 @@ bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 	if ((float)collisionCounter/lineSegments >= hitPercentage)
 		return true;
 	return false;
+}
+
+bool coinDist(Vector2 plV, Rectangle coinRect)
+{
+	plV = plV - Vector2{0, 50};
+	float a = plV.x - (coinRect.x + coinRect.width/2);
+	float b = plV.y - (coinRect.y + coinRect.height/2);
+	if (a < 0) a *= (-1);
+	if (b < 0) b *= (-1);
+
+	return a < PLAYER_COIN_RADIUS && b < PLAYER_COIN_RADIUS;
 }

@@ -32,7 +32,7 @@ struct env_object
 	Color color;
 	std::string label;
 
-	bool isCollected = false; /**< only for use by COIN */
+	bool isCollected; /**< only for use by COIN */
 
 	env_object();
 	env_object(Rectangle);

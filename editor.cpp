@@ -1,5 +1,7 @@
 /// TODO
 /// - create level editor (this will be the main file for the editor)
+/// - CREATE FUNCTION env_level::AddObject(env_object) THAT ASSIGNS UUID'S CORRECTLY
+/// - ALSO FUNCTION env_level::AddEnvList(env_list) THAT CALLS ::AddObject using iterator
 
 #include "raylib.h"
 #define NEARBLACK CLITERAL(Color){ 20, 20, 20, 255}
@@ -49,10 +51,21 @@ int main()
 	bool xJumpToFocus = false;
 	bool yJumpToFocus = false;
 
+	/// BACKGROUND RECTS
+	Rectangle editPanel = Rectangle{800, 0, 400, 600};
+	Rectangle colorPanelRect = Rectangle{520, 140, 265, 140};
+	Rectangle barRect = Rectangle{30,510,740, 70};
+
 	/// LOAD BUTTONS AND ASSIGN SOURCE/DEST RECTS, EDITOR FLAGS
 	Texture2D buttonTex = LoadTexture("sprites/buttons.png");
 	bool buttonValues[8] = {false};
 	short editorFlag = -1;
+	enum INSERT_MODE_SELECTION
+	{
+		INSERT_BLOCK, INSERT_TEXT, INSERT_COIN
+	};
+	INSERT_MODE_SELECTION insertSelection = INSERT_BLOCK;
+	bool insertBar = true;
 	enum BUTTON_SOURCE_RECT
 	{
 		INSERT, DELETE, SIDES, PAINT, COPY, CUT, JUMPTO, JUMPTO_FIELD, TEXTBOX_ONE, TEXTBOX_TWO, TEMP4, SAVE
@@ -225,6 +238,7 @@ int main()
 
 		ClearBackground(WHITE);
 
+
 		BeginMode2D(camera);
 
 		//{ LEVEL DRAW
@@ -232,7 +246,13 @@ int main()
 			DrawLevel(level);
 		//}
 
-		if (levelIsLoaded && GetMousePosition() < Rectangle{0,0,800,600})
+		Vector2 m = GetMousePosition();
+		bool __boundsCheck = m < Rectangle{0,0,800,600} && !(m < editPanel);
+		if (editorFlag == (short)PAINT)
+			__boundsCheck &= !(m < colorPanelRect);
+		else if (editorFlag == (short)INSERT)
+			__boundsCheck &= !(m < barRect);
+		if (levelIsLoaded && __boundsCheck)
 		{
 			if (editorFlag == (short)INSERT)
 			{
@@ -244,11 +264,28 @@ int main()
 					v.y = 25*((int)v.y/(int)25);
 				}
 				env_object obj = env_object(Rectangle{v.x, v.y, blockWidth, blockHeight});
-				obj.setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
-				obj.color = blockColor;
+				if (insertSelection == INSERT_BLOCK)
+				{
+					/// CREATE BLOCK PREVIEW
+					obj.setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
+					obj.color = blockColor;
+					obj.type == BLOCK;
+				}
+				else if (insertSelection == INSERT_COIN)
+				{
+					/// CREATE COIN PREVIEW
+					obj.rect = Rectangle{obj.rect.x, obj.rect.y, 100, 100};
+					obj.color = Color{245, 224, 66, 200};
+					obj.setSides(false, false, false, false);
+					obj.type = COIN;
+					obj.func = STATIC;
+					obj.isCollected = false;
+				}
 
+				/// DRAW PREVIEW
 				DrawEnvObject(obj);
 
+				/// CREATE OBJECT BASED ON PREVIEW
 				if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
 				{
 					level.env_objects.push_back(obj);
@@ -374,6 +411,7 @@ int main()
 						blockSides[3] = obj->sides[3];
 
 						editorFlag = (short)INSERT;
+						insertSelection = (obj->type == BLOCK) ? INSERT_BLOCK : (obj->type == COIN) ? INSERT_COIN : INSERT_BLOCK;
 					}
 				}
 			}
@@ -413,6 +451,7 @@ int main()
 						level.env_objects.erase(obj);
 
 						editorFlag = (short)INSERT;
+						insertSelection = (obj->type == BLOCK) ? INSERT_BLOCK : (obj->type == COIN) ? INSERT_COIN : INSERT_BLOCK;
 					}
 				}
 			}
@@ -426,8 +465,40 @@ int main()
 			DrawTextRec(GetFontDefault(), "DRAG AND DROP A LEVEL TO EDIT OR TYPE A NAME AND PRESS ENTER", Rectangle{200,200,400,400}, 40, 1.0f, true, LIGHTGRAY);
 		}
 
+		if (editorFlag == (short)INSERT && insertBar)
+		{
+			DrawRectangleRec(barRect, Color{30,30,30,200});
+
+			// draw block icon
+			Rectangle blockR = Rectangle{barRect.x + 10, barRect.y + 10, 50, 50};
+			env_object block;
+			block.rect = blockR;
+			block.type = BLOCK;
+			block.color = blockColor;
+			block.setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
+			DrawEnvObject(block);
+			if(HiddenButton(blockR))
+			{
+				// block insert
+				insertSelection = INSERT_BLOCK;
+			}
+
+			// draw coin icon
+			Rectangle _blockR = Rectangle{barRect.x + 10 + 60, barRect.y + 10, 50, 50};
+			env_object _block;
+			_block.rect = _blockR;
+			_block.color = Color{245, 224, 66, 200};
+			_block.type = COIN;
+			DrawEnvObject(_block);
+			if (HiddenButton(_blockR))
+			{
+				// coin insert
+				insertSelection = INSERT_COIN;
+			}
+		}
+
 		// draw edit panel
-		DrawRectangle(800, 0, 400, 600, Color{30,30,30,200});
+		DrawRectangleRec(editPanel, Color{30,30,30,200});
 
 		// draw buttons
 		/// TODO CLEAN UP THIS LOGIC
@@ -464,7 +535,6 @@ int main()
 		if (editorFlag == (short)PAINT)
 		{
 			/// DRAW COLOR PANEL
-			Rectangle colorPanelRect = Rectangle{520, 140, 265, 140};
 			DrawRectangleRec(colorPanelRect, Color{0,0,0,40});
 
 			blockColor = Color{(unsigned char)(rPercent * 255), (unsigned char)(gPercent * 255), (unsigned char)(bPercent * 255), (unsigned char)(aPercent * 255)};
@@ -529,7 +599,8 @@ int main()
 
 #ifdef DEV_SHOW_MOUSE_POS
 		Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-		DrawText(FormatText("x=%4.2f\ny=%4.2f", v.x, v.y), GetMouseX(), GetMouseY() - 25, 20, NEARBLACK);
+		//DrawText(FormatText("x=%4.2f\ny=%4.2f", v.x, v.y), GetMouseX(), GetMouseY() - 25, 20, NEARBLACK);
+		DrawText(FormatText("x=%3d\ny=%3d", GetMouseX(), GetMouseY()), GetMouseX(), GetMouseY() - 25, 20, NEARBLACK);
 #endif
 
 		EndDrawing();

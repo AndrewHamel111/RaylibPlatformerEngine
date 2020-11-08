@@ -129,8 +129,8 @@ json GetJSONOfEnvList(env_list env)
 		obj["rect"] = json::array({ it->rect.x, it->rect.y, it->rect.width, it->rect.height });
 		obj["sides"] = json::array({ it->sides[0], it->sides[1], it->sides[2], it->sides[3] });
 		obj["color"] = json::array({ it->color.r, it->color.g, it->color.b, it->color.a });
-		obj["type"] = it->type;
-		obj["func"] = it->func;
+		obj["type"] = (int)it->type;
+		obj["func"] = (int)it->func;
 
 		j.push_back(obj);
 		it++;
@@ -169,8 +169,8 @@ env_list GetEnvListFromJSON(json j)
 
 		obj.color = Color{it->at("color")[0], it->at("color")[1], it->at("color")[2], it->at("color")[3]};
 
-		obj.type = it->at("type");
-		obj.func = it->at("func");
+		obj.type = (ENV_OBJECT_TYPE)it->at("type");
+		obj.func = (ENV_OBJECT_FUNCTION)it->at("func");
 
 		env.push_back(obj);
 		it++;

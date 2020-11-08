@@ -1,6 +1,6 @@
 {
     "id": 0,
-    "label": "Level 1",
+    "label": "playground_02",
     "objects": [
         {
             "color": [
@@ -1197,6 +1197,256 @@
                 false,
                 false,
                 false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                578.0,
+                500.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                1230.0,
+                368.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2158.0,
+                218.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                1192.0,
+                -422.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                752.0,
+                -258.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                636.0,
+                -1294.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -238.0,
+                -1272.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -538.0,
+                -702.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -2250.0,
+                -462.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                158,
+                117,
+                98,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -2464.97314453125,
+                724.270263671875,
+                400.0,
+                75.0
+            ],
+            "sides": [
+                true,
+                true,
+                true,
+                true
             ],
             "spriteId": 255,
             "type": 0,

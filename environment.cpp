@@ -2,7 +2,7 @@
 
 /// STRUCT ENV_OBJECT
 
-env_object::env_object(): rect{Rectangle{0,0,100,50}}, sides{true, false, false, false}, spriteId{255}, type{BLOCK}, color{DARKGRAY}, label{"block"}, func{STATIC}
+env_object::env_object(): rect{Rectangle{0,0,100,50}}, sides{true, false, false, false}, spriteId{255}, type{BLOCK}, color{DARKGRAY}, label{"block"}, isCollected{false}, func{STATIC}
 {}
 
 env_object::env_object(Rectangle rect): env_object()
@@ -102,6 +102,10 @@ void DrawEnvObject(const env_object o)
 	else if (o.type == TEXT)
 	{
 		DrawTextRec(GetFontDefault(), o.label.c_str(), o.rect, 20, 1.0, true, o.color);
+	}
+	else if (o.type == COIN)
+	{
+		DrawRectangleRec(o.rect, o.color);
 	}
 }
 

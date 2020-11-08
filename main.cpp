@@ -20,6 +20,9 @@
 // DEV SHIT
 #include <iostream>
 
+/// Sound and Texture Declarations
+Sound coinSound;
+
 void UpdateLevel(env_level* level);
 void DrawLevel(env_level level);
 void ResetLevel(player*, env_level);
@@ -65,6 +68,8 @@ int main()
 #endif // DEV_LEVEL_TEST
 
 	InitWindow(screenWidth, screenHeight, window_label.c_str());
+	InitAudioDevice();
+	SetMasterVolume(0.5f);
 
 	/////////////////////////////////////////////////////////////
 	// TODO: Load resources / Initialize variables at this point
@@ -84,7 +89,7 @@ int main()
 
 
 	/// Load sounds
-	Sound coinSound = LoadSound("snd/coin.ogg");
+	coinSound = LoadSound("snd/coin.ogg");
 
 	//--------------------------------------------------------------------------------------
 
@@ -99,10 +104,10 @@ int main()
 #ifdef DEV_LEVEL_TEST
 		if (levelIsLoaded)
 		{
-			p1.update(level.env_objects);
+			p1.update(&level.env_objects);
 		}
 #else
-		p1.update(levels[level].env_objects);
+		p1.update(&levels[level].env_objects);
 #endif
 
 		/// CAMERA UPDATE
@@ -192,6 +197,7 @@ int main()
 
 	// TODO: Unload all loaded resources at this point
 
+	CloseAudioDevice();
 	CloseWindow();        // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
 
@@ -200,8 +206,8 @@ int main()
 
 void UpdateLevel(env_level* level)
 {
-	auto i = level->env_objects.begin(), iE = level->env_objects.end();
-	while(i != iE)
+	auto i = level->env_objects.begin();
+	for(; i != level->env_objects.end(); i++)
 	{
 		if (i->func != STATIC)
 		{
@@ -209,10 +215,11 @@ void UpdateLevel(env_level* level)
 		}
 		if (i->type == COIN && i->isCollected)
 		{
-			*level.env_objects.erase(i);
+			level->env_objects.erase(i);
 			PlaySound(coinSound);
 		}
-		i++;
+		// since erasing changes the def'n of end()
+		if (i == level->env_objects.end()) return;
 	}
 }
 
