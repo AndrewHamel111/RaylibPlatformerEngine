@@ -1,0 +1,160 @@
+{
+    "id": 0,
+    "label": "playground_03",
+    "objects": [
+        {
+            "color": [
+                80,
+                80,
+                80,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                0.0,
+                0.0,
+                200.0,
+                100.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                94,
+                38,
+                151,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                200.0,
+                0.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                true,
+                true,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 120
+        },
+        {
+            "color": [
+                17,
+                123,
+                48,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -100.0,
+                0.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 120
+        },
+        {
+            "color": [
+                1,
+                161,
+                56,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -100.0,
+                100.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 120
+        },
+        {
+            "color": [
+                39,
+                27,
+                54,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                200.0,
+                100.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                true,
+                true,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 120
+        },
+        {
+            "color": [
+                20,
+                236,
+                221,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                0.0,
+                100.0,
+                200.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                true,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 120
+        }
+    ],
+    "player_start": [
+        100.0,
+        -100.0
+    ]
+}

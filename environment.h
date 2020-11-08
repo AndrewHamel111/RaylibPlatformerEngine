@@ -9,7 +9,7 @@
 #include <string>
 
 enum ENV_OBJECT_TYPE {
-    BLOCK, TEXT
+    BLOCK, TEXT, COIN
 };
 
 enum ENV_OBJECT_FUNCTION {
@@ -32,6 +32,7 @@ struct env_object {
 	env_object();
 	env_object(Rectangle);
 	env_object(Rectangle, unsigned short);
+	env_object(Rectangle, ENV_OBJECT_TYPE);
 
 	void setSides(bool, bool, bool, bool);
 };

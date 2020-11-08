@@ -1,0 +1,35 @@
+{
+    "id": 0,
+    "label": "Jews Ain't Loya",
+    "objects": [
+        {
+            "color": [
+                80,
+                80,
+                80,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                0.0,
+                0.0,
+                200.0,
+                100.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        }
+    ],
+    "player_start": [
+        100.0,
+        -100.0
+    ]
+}

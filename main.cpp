@@ -172,6 +172,7 @@ int main()
             #ifdef DEV_SHOW_MOUSE_POS
 			Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
 			DrawText(FormatText("x=%4.2f\ny=%4.2f", v.x, v.y), GetMouseX(), GetMouseY() + 20, 20, NEARBLACK);
+			DrawText(FormatText("x=%3.2f\ny=%3.2f",p1.vel.x, p1.vel.y),0,0, 40, BLACK);
             #endif
 
         EndDrawing();

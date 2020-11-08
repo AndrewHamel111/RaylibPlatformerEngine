@@ -67,7 +67,7 @@ bool HiddenButton(Rectangle bounds);
 * The function changes the value pointed to by percent, but also returns a scaled version of the percentage
 * (which by default will be the same as the value stored at the pointer).
 */
-float SliderBar(Vector2 start, float length, float* percent, float scale = 1.0);
+float SliderBar(Vector2 start, float length, float* percent, Color handleColor = RAYWHITE, float scale = 1.0, bool horizontal = true);
 
 /**
 * @brief Specialization of SliderBar that takes the center of the bar instead, to take some of the weight off UI design.
@@ -77,12 +77,27 @@ float SliderBar(Vector2 start, float length, float* percent, float scale = 1.0);
 * @param scale multiplier applied to the regular percentage
 * @returns the percentage of the bar that is full times the optional parameter scale = 1.0
 */
-float SliderBarCenter(Vector2 center, float length, float* percent, float scale = 1.0);
+float SliderBarCenter(Vector2 center, float length, float* percent, Color handleColor = RAYWHITE, float scale = 1.0, bool horizontal = true);
 
 /**
- * NOT IMPLEMENTED YET
- * DO NOT USE
- *
+ * @brief Called in the update portion of the gameloop, updates the char* value based on user input.
+ * @param r Bounds of the text field.
+ * @param c Pointer to the string being changed.
+ * @param max_field_length Maximum length of the string.
+ * @param focus Pointer to a bool stored somewhere in main.
+ * @returns True when enter is pressed, signifying the changes to the string have ended.
+ * @details Keys pressed will only update the string if the field has focus. This is indicated by the bool pointer parameter, and the field is given a blue outline when it is selected so the user knows which box is selected. This field will lose focus when enter is pressed or the mouse is clicked outside the bounds of the field.
  */
-bool SimpleTextBox(Rectangle r, char*, int max_field_length);
+bool SimpleTextBoxUpdate(Rectangle r, char* c, int max_field_length, bool* focus);
+
+/**
+ * @brief Called in the update portion of the gameloop, updates the char* value based on user input.
+ * @param r Bounds of the text field.
+ * @param c Pointer to the string being changed.
+ * @param max_field_length Maximum length of the string.
+ * @param focus Pointer to a bool stored somewhere in main.
+ * @returns True when enter is pressed, signifying the changes to the string have ended.
+ * @details Keys pressed will only update the string if the field has focus. This is indicated by the bool pointer parameter, and the field is given a blue outline when it is selected so the user knows which box is selected. This field will lose focus when enter is pressed or the mouse is clicked outside the bounds of the field.
+ */
+bool SimpleTextBoxDraw(Rectangle r, char* c, int max_field_length, bool* focus);
 #endif

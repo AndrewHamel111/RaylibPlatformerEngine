@@ -17,6 +17,8 @@
 
 /// gravity and jump
 #define PLAYER_GRAVITY 1
+#define PLAYER_TERMINAL_VELOCITY 30
+
 #define PLAYER_JUMP_VELOCITY 15
 #define PLAYER_WALL_JUMP_MODIFIER 0.95
 #define PLAYER_WALL_SLIDE_SPEED 2.0f
@@ -86,6 +88,9 @@ public:
 
 	Vector2 hitboxSize; /**< Width and height of the player's hitbox. */
 
+	unsigned short coins;
+	Color color;
+
                             /// CONSTRUCTORS
 	player();  /**< Default constructor initializes player to the center of the screen with no velocity and default acc. */
 	player(Vector2);  /**< Position constructor only specifies the starting position of the player. */
@@ -105,7 +110,6 @@ public:
                             /// UPDATE AND DRAWING METHODS
 	void move();  /**< apply any motions from input (clip into walls) */
 	void check(env_list);  /**< check for any collisions and adjust player's flags accordingly. */
-	void correct();	/**< use flags from check to correct the player's state */
 
 	void update(env_list); /**< update method for the player simply calls the above methods in the correct order. Distributes the parameters out accordingly. */
 

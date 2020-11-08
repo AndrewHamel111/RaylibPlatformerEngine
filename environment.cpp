@@ -16,6 +16,20 @@ env_object::env_object(Rectangle rect, unsigned short uuId): env_object()
     this->uuId = uuId;
 }
 
+env_object::env_object(Rectangle rect, ENV_OBJECT_TYPE type): env_object()
+{
+	switch(type)
+	{
+	case BLOCK:
+		break;
+	case TEXT:
+		break;
+	case COIN:
+		color = Color{245, 224, 66, 200};
+		break;
+	}
+}
+
 void env_object::setSides(bool a, bool b, bool c, bool d)
 {
 	// TODO make better

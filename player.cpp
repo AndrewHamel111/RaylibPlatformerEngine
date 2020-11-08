@@ -2,11 +2,12 @@
 
 /// CONSTRUCTORS
 
-player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, hitboxSize{Vector2{100,100}}
+player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, hitboxSize{Vector2{100,100}}, coins{0}, color{RandomColor()}
 {
 	// DEFAULT CONSTRUCTOR
 
     // ADD CORNERS AND EDGES TO ANCHORS
+    /// TODO change hitbox anchors to be corners of hitbox (propagate change to LineCheck)
     this->hitbox_anchors.clear();
     this->hitbox_anchors.push_back(Vector2{0, -101});
     this->hitbox_anchors.push_back(Vector2{51, -101});
@@ -18,10 +19,10 @@ player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, h
     this->hitbox_anchors.push_back(Vector2{-51, -101});
 
     // top left, top right, bottom right, bottom left
-    this->hitbox_corners[0] = Vector2{-51, -101};
-    this->hitbox_corners[1] = Vector2{51, -101};
-    this->hitbox_corners[2] = Vector2{51, 1};
-    this->hitbox_corners[3] = Vector2{-51, 1};
+    this->hitbox_corners[0] = Vector2{-50, -101};
+    this->hitbox_corners[1] = Vector2{51, -100};
+    this->hitbox_corners[2] = Vector2{50, 1};
+    this->hitbox_corners[3] = Vector2{-51, 0};
 }
 
 player::player(Vector2 pos): player()
@@ -78,18 +79,25 @@ void player::move()
 	}
 
 	// set acc based on input
+	/*
 	if (IsKeyDown(KEY_D))
 		acc.x = accel;
 	else if (IsKeyDown(KEY_A))
 		acc.x = (-1) * accel;
 	else
 		acc.x = 0;
+		*/
+	acc.x = accel * (IsKeyDown(KEY_D) - IsKeyDown(KEY_A));
 
 	// apply acc (when applicable)
-	if (abs(vel.x) < maxVel)// || abs(vel.x + acc.x) < PLAYER_MAX_VELOCITY)
+	if (abs(vel.x + acc.x ) < maxVel)// || abs(vel.x + acc.x) < PLAYER_MAX_VELOCITY)
 		vel.x += acc.x;
+	//else
+		//vel.x = maxVel * (vel.x > 0) ? 1 : -1;
 
-	vel.y += acc.y;
+	if (abs(vel.y + acc.y) < PLAYER_TERMINAL_VELOCITY)
+		vel.y += acc.y;
+		//vel.y = PLAYER_TERMINAL_VELOCITY * (vel.y > 0) ? 1 : -1;
 
 	// add jump (when applicable)
 	if (IsKeyPressed(KEY_SPACE) && !_flag[IS_JUMPING])
@@ -171,7 +179,7 @@ void player::check(env_list env)
     bool temp_flag_ON_WALL_LEFT = false;
     bool temp_flag_ON_WALL_RIGHT = false;
 
-    const int lineSegmentCount = 20;
+    const int lineSegmentCount = 10;
 
     // for each env_object
     while (envI != env.end())
@@ -278,17 +286,10 @@ void player::check(env_list env)
 
 }
 
-void player::correct()
-{
-	// TODO : this will take a lot of work lmfao
-	// might just be a part of the check function
-}
-
 void player::update(env_list env)
 {
 	move();
 	check(env);
-	//correct();
 }
 
 void player::DrawPlayer()
@@ -298,26 +299,15 @@ void player::DrawPlayer()
 
 	// dev stand-in for a real render of sorts
 	Rectangle r = Rectangle{pos.x - w/2, pos.y - h, w, h};
-	DrawRectangleRec(r, Color{20,20,20,60});
-
-	//std::string s = "vel " + std::to_string(vel.x) + " " + std::to_string(vel.y) +"\nacc " + std::to_string(acc.x) + " " + std::to_string(acc.y);
-	//DrawText(s.c_str(), 0, 0, 20, NEARBLACK);
-
-	//if (_flag[ON_GROUND]) DrawText("GROUNDED", 0, 200, 20, NEARBLACK);
-
-	//{ DRAW HITBOX POINTS
-
-	//auto i = hitbox_anchors.begin(), iE = hitbox_anchors.end();
-	//while(i != iE)
-        //DrawCircleV(pos + *(i++),2, BLUE);
-
-	//}
+	DrawRectangleRec(r, color);
+	//DrawText(FormatText("%d", coins), (int)pos.x - 46, (int)pos.y - 100, 30, NEARBLACK);
 }
 
 
 /*	Vector2{-51, -101}		Vector2{0, -101} 	Vector2{51, -101}
 	Vector2{-51, -50}							Vector2{51, -50}
 	Vector2{-51, 1}			Vector2{0, 1}		Vector2{51, 1} */
+	/// TODO improve this shit because it's certainly not divine intellect
 bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 {
 	// never use less than 5 line segments (would be very inaccurate if we did)
@@ -333,7 +323,7 @@ bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 		for(int i = 0; i < lineSegments && (float)collisionCounter/lineSegments < hitPercentage; i++)
 		{
 			// player's position + the offset to reach the appropriate corner (top left) + the offset from where we are in the iteration
-			Vector2 hitPoint = this->pos + this->hitbox_corners[0] + Vector2{(float)i/(lineSegments - 1)*this->hitboxSize.x, 0};
+			Vector2 hitPoint = this->pos + this->hitbox_corners[0] + Vector2{(float)i/(lineSegments - 1)*(this->hitboxSize.x - 1), 0};
 			if (hitPoint < obj.rect && this->pos.y > (obj.rect.y + obj.rect.height)) ///TODO double check this if
 				collisionCounter++;
 		}
@@ -341,7 +331,7 @@ bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 	case RIGHT: // top right to bottom right
 		for(int i = 0; i < lineSegments && (float)collisionCounter/lineSegments < hitPercentage; i++)
 		{
-			Vector2 hitPoint = this->pos + this->hitbox_corners[1] + Vector2{0, (float)i/(lineSegments - 1)*this->hitboxSize.y};
+			Vector2 hitPoint = this->pos + this->hitbox_corners[1] + Vector2{0, (float)i/(lineSegments - 1)*(this->hitboxSize.y - 1)};
 			if (hitPoint < obj.rect && this->pos.x < obj.rect.x)
 				collisionCounter++;
 		}
@@ -349,7 +339,7 @@ bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 	case DOWN: // bottom right to bottom left
 		for(int i = 0; i < lineSegments && (float)collisionCounter/lineSegments < hitPercentage; i++)
 		{
-			Vector2 hitPoint = this->pos + this->hitbox_corners[2] - Vector2{(float)i/(lineSegments - 1)*this->hitboxSize.x, 0};
+			Vector2 hitPoint = this->pos + this->hitbox_corners[2] - Vector2{(float)i/(lineSegments - 1)*(this->hitboxSize.x - 1), 0};
 			if (hitPoint < obj.rect && this->pos.y < (obj.rect.y + this->hitboxSize.y/2))
 				collisionCounter++;
 		}
@@ -357,7 +347,7 @@ bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 	case LEFT: // bottom left to top right
 		for(int i = 0; i < lineSegments && (float)collisionCounter/lineSegments < hitPercentage; i++)
 		{
-			Vector2 hitPoint = this->pos + this->hitbox_corners[3] - Vector2{0, (float)i/(lineSegments - 1)*this->hitboxSize.y};
+			Vector2 hitPoint = this->pos + this->hitbox_corners[3] - Vector2{0, (float)i/(lineSegments - 1)*(this->hitboxSize.y - 1)};
 			if (hitPoint < obj.rect && this->pos.x > (obj.rect.x + obj.rect.width))
 				collisionCounter++;
 		}
