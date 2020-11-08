@@ -320,6 +320,48 @@ bool SimpleTextBoxUpdate(Rectangle r, char* c, int max_field_length, bool* focus
 	return false;
 }
 
+bool NumberBoxUpdate(Rectangle r, char* c, int max_field_length, bool* focus)
+{
+	if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+	{
+		if (GetMousePosition() < r)
+			*focus = true;
+		else
+			*focus = false;
+	}
+
+	if (!(*focus)) return false;
+
+	int field_length = strlen(c);
+
+	if (IsKeyPressed(KEY_ENTER))
+	{
+		*focus = false;
+		if (field_length > 0)
+			return true;
+	}
+
+	// update char* accordingly
+	for(int key = KEY_ZERO; key <= KEY_NINE; key++)
+	{
+		if (IsKeyPressed(key) && field_length < max_field_length)
+		{
+			c[field_length] = key;
+
+			c[field_length + 1] = '\0';
+			field_length++;
+		}
+	}
+
+	if (IsKeyPressed(KEY_BACKSPACE) && field_length > 0)
+	{
+		c[field_length - 1] = '\0';
+		field_length--;
+	}
+
+	return false;
+}
+
 bool SimpleTextBoxDraw(Rectangle r, char* c, int max_field_length, bool* focus)
 {
 	const int fontSize = 30;

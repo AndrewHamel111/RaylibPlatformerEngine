@@ -44,22 +44,26 @@ int main()
     int xResizeCounter = 0;
     int yResizeCounter = 0;
 
+    char xJumpToStr[6] = {'\0'};
+    char yJumpToStr[6] = {'\0'};
+    bool xJumpToFocus = false;
+    bool yJumpToFocus = false;
 
     /// LOAD BUTTONS AND ASSIGN SOURCE/DEST RECTS, EDITOR FLAGS
 	Texture2D buttonTex = LoadTexture("sprites/buttons.png");
 	bool buttonValues[8] = {false};
 	short editorFlag = -1;
 	enum BUTTON_SOURCE_RECT {
-		BLOCK, DELETE, SIDES, PAINT, TEMP, TEMP1, TEMP2, TEMP3, TEXTBOX_ONE, TEXTBOX_TWO, TEMP4, SAVE
+		INSERT, DELETE, SIDES, PAINT, COPY, CUT, JUMPTO, JUMPTO_FIELD, TEXTBOX_ONE, TEXTBOX_TWO, TEMP4, SAVE
 	};
 	Rectangle buttonSourceRect[] = {
-		Rectangle{0, 14,180,80},	// BLOCK
+		Rectangle{0, 14,180,80},	// INSERT
 		Rectangle{180, 14,180,80},	// DELETE
 		Rectangle{360, 14,180,80},	// SIDES
 		Rectangle{540, 14,180,80},	// PAINT
-		Rectangle{720, 14,180,80}, // TEMP
-		Rectangle{720 + 180, 14,180,80}, // TEMP1
-		Rectangle{720 + 360, 14,180,80}, // TEMP2
+		Rectangle{720, 14,180,80}, // COPY
+		Rectangle{720 + 180, 14,180,80}, // CUT
+		Rectangle{720 + 360, 14,180,80}, // JUMPTO
 		Rectangle{0, 14,180,80}, // TEMP3
 		Rectangle{0, 14,180,80}, // TEXTBOX SPACER
 		Rectangle{0, 14,180,80}, // TEXTBOX SPACER
@@ -71,11 +75,11 @@ int main()
 		Rectangle{1010,10,180,80},
 		Rectangle{810,110,180,80},
 		Rectangle{1010,110,180,80},
-		Rectangle{0,0,0,0},
-		Rectangle{0,0,0,0},
-		Rectangle{0,0,0,0},
-		Rectangle{0,0,0,0},
-		Rectangle{0,0,0,0},
+		Rectangle{810,210,180,80},
+		Rectangle{1010,210,180,80},
+		Rectangle{1010,310,180,80},
+		Rectangle{810,310,80,80},
+		Rectangle{910,310,80,80},
 		Rectangle{0,0,0,0},
 		Rectangle{0,0,0,0},
 		Rectangle{1010, 510, 180 ,80},
@@ -119,7 +123,7 @@ int main()
         // TODO: Update variables / Implement example logic at this point
         //----------------------------------------------------------------------------------
 
-        camera.zoom += ((float)GetMouseWheelMove()*0.005f);
+        camera.zoom += ((float)GetMouseWheelMove()*0.025f);
         //camera.rotation += 0.5f;
 
         if (camera.zoom > 3.0f) camera.zoom = 3.0f;
@@ -202,6 +206,15 @@ int main()
 			}
 		}
 
+		/*
+		/// JUMP TO field updates
+		NumberBoxUpdate(buttonDestRect[JUMPTO_FIELD], xJumpToStr, 5, &xJumpToFocus);
+		Rectangle _r = buttonDestRect[JUMPTO_FIELD];
+		_r.x += 100;
+		NumberBoxUpdate(_r, yJumpToStr, 5, &yJumpToFocus);
+		/// END JUMP TO fields
+		*/
+
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
@@ -215,105 +228,179 @@ int main()
 					DrawLevel(level);
                 //}
 
-				if (editorFlag == (short)BLOCK)
+                if (levelIsLoaded && GetMousePosition() < Rectangle{0,0,800,600})
 				{
-					// draw block preview
-					Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-					if (IsKeyDown(KEY_LEFT_CONTROL))
+					if (editorFlag == (short)INSERT)
 					{
-						v.x = 25*((int)v.x/(int)25);
-						v.y = 25*((int)v.y/(int)25);
-					}
-					env_object obj = env_object(Rectangle{v.x, v.y, blockWidth, blockHeight});
-					obj.setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
-					obj.color = blockColor;
+						// draw block preview
+						Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
+						if (IsKeyDown(KEY_LEFT_CONTROL))
+						{
+							v.x = 25*((int)v.x/(int)25);
+							v.y = 25*((int)v.y/(int)25);
+						}
+						env_object obj = env_object(Rectangle{v.x, v.y, blockWidth, blockHeight});
+						obj.setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
+						obj.color = blockColor;
 
-					DrawEnvObject(obj);
-
-					if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && GetMousePosition() < Rectangle{0,0,800,600})
-					{
-						level.env_objects.push_back(obj);
-						blockColor = Color{(unsigned char)(rPercent * 255), (unsigned char)(gPercent * 255), (unsigned char)(bPercent * 255), (unsigned char)(aPercent * 255)};
-					}
-				}
-				else if (editorFlag == (short)DELETE)
-				{
-					auto it = level.env_objects.begin();
-					Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-					auto obj = level.env_objects.end();
-
-					for (; it != level.env_objects.end() && obj == level.env_objects.end(); it++)
-					{
-						if (v < it->rect)
-							obj = it;
-					}
-
-					if (obj != level.env_objects.end())
-					{
-						env_object obj_clone = *obj;
-						obj_clone.color = LIGHTGRAY;
-						DrawEnvObject(obj_clone);
+						DrawEnvObject(obj);
 
 						if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
 						{
-							level.env_objects.erase(obj);
+							level.env_objects.push_back(obj);
+							blockColor = Color{(unsigned char)(rPercent * 255), (unsigned char)(gPercent * 255), (unsigned char)(bPercent * 255), (unsigned char)(aPercent * 255)};
 						}
 					}
-				}
-				else if (editorFlag == (short)PAINT)
-				{
-					auto it = level.env_objects.begin();
-					Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-					auto obj = level.env_objects.end();
-
-					for (; it != level.env_objects.end() && obj == level.env_objects.end(); it++)
+					else if (editorFlag == (short)DELETE)
 					{
-						if (v < it->rect)
-							obj = it;
-					}
+						auto it = level.env_objects.end() - 1;
+						Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
+						auto obj = level.env_objects.begin() - 1;
 
-					if (obj != level.env_objects.end())
-					{
-						env_object obj_clone = *obj;
-						obj_clone.color = blockColor;
-						DrawEnvObject(obj_clone);
-
-						if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+						// iterate from the end of the list, since objects near the end of the list appear at the front
+						for (; it != level.env_objects.begin() - 1 && obj == level.env_objects.begin() - 1; it--)
 						{
-							obj->color = blockColor;
+							if (v < it->rect)
+								obj = it;
 						}
-						else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON))
+
+						if (obj != level.env_objects.begin() - 1)
 						{
-							blockColor = obj->color;
-							rPercent = (float)blockColor.r / 255.0f;
-							gPercent = (float)blockColor.g / 255.0f;
-							bPercent = (float)blockColor.b / 255.0f;
-							aPercent = (float)blockColor.a / 255.0f;
+							env_object obj_clone = *obj;
+							obj_clone.color = Color{255, 211, 209, 255};
+							DrawEnvObject(obj_clone);
+
+							if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+							{
+								level.env_objects.erase(obj);
+							}
 						}
 					}
-				}
-				else if (editorFlag == (short)SIDES)
-				{
-					auto it = level.env_objects.begin();
-					Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-					auto obj = level.env_objects.end();
-
-					for (; it != level.env_objects.end() && obj == level.env_objects.end(); it++)
+					else if (editorFlag == (short)PAINT)
 					{
-						if (v < it->rect)
-							obj = it;
-					}
+						auto it = level.env_objects.end() - 1;
+						Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
+						auto obj = level.env_objects.begin() - 1;
 
-					if (obj != level.env_objects.end())
-					{
-						env_object obj_clone = *obj;
-						obj_clone.color = blockColor;
-						obj_clone.setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
-						DrawEnvObject(obj_clone);
-
-						if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+						// iterate from the end of the list, since objects near the end of the list appear at the front
+						for (; it != level.env_objects.begin() - 1 && obj == level.env_objects.begin() - 1; it--)
 						{
-							obj->setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
+							if (v < it->rect)
+								obj = it;
+						}
+
+						if (obj != level.env_objects.begin() - 1)
+						{
+							env_object obj_clone = *obj;
+							obj_clone.color = blockColor;
+							DrawEnvObject(obj_clone);
+
+							if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+							{
+								obj->color = blockColor;
+							}
+							else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON))
+							{
+								blockColor = obj->color;
+								rPercent = (float)blockColor.r / 255.0f;
+								gPercent = (float)blockColor.g / 255.0f;
+								bPercent = (float)blockColor.b / 255.0f;
+								aPercent = (float)blockColor.a / 255.0f;
+							}
+						}
+					}
+					else if (editorFlag == (short)SIDES)
+					{
+						auto it = level.env_objects.end() - 1;
+						Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
+						auto obj = level.env_objects.begin() - 1;
+
+						// iterate from the end of the list, since objects near the end of the list appear at the front
+						for (; it != level.env_objects.begin() - 1 && obj == level.env_objects.begin() - 1; it--)
+						{
+							if (v < it->rect)
+								obj = it;
+						}
+
+						if (obj != level.env_objects.begin() - 1)
+						{
+							env_object obj_clone = *obj;
+							obj_clone.color = LIGHTGRAY;
+							obj_clone.setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
+							DrawEnvObject(obj_clone);
+
+							if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+							{
+								obj->setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
+							}
+						}
+					}
+					else if (editorFlag == (short)COPY)
+					{
+						auto it = level.env_objects.end() - 1;
+						Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
+						auto obj = level.env_objects.begin() - 1;
+
+						// iterate from the end of the list, since objects near the end of the list appear at the front
+						for (; it != level.env_objects.begin() - 1 && obj == level.env_objects.begin() - 1; it--)
+						{
+							if (v < it->rect)
+								obj = it;
+						}
+
+						if (obj != level.env_objects.begin() - 1)
+						{
+							env_object obj_clone = *obj;
+							obj_clone.color = Color{233, 255, 186, 255};
+							DrawEnvObject(obj_clone);
+
+							if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+							{
+								blockWidth = obj->rect.width;
+								blockHeight = obj->rect.height;
+								blockColor = obj->color;
+								blockSides[0] = obj->sides[0];
+								blockSides[1] = obj->sides[1];
+								blockSides[2] = obj->sides[2];
+								blockSides[3] = obj->sides[3];
+
+								editorFlag = (short)INSERT;
+							}
+						}
+					}
+					else if (editorFlag == (short)CUT)
+					{
+						auto it = level.env_objects.end() - 1;
+						Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
+						auto obj = level.env_objects.begin() - 1;
+
+						// iterate from the end of the list, since objects near the end of the list appear at the front
+						for (; it != level.env_objects.begin() - 1 && obj == level.env_objects.begin() - 1; it--)
+						{
+							if (v < it->rect)
+								obj = it;
+						}
+
+						if (obj != level.env_objects.begin() - 1)
+						{
+							env_object obj_clone = *obj;
+							obj_clone.color = Color{255, 242, 209, 255};
+							DrawEnvObject(obj_clone);
+
+							if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+							{
+								blockWidth = obj->rect.width;
+								blockHeight = obj->rect.height;
+								blockColor = obj->color;
+								blockSides[0] = obj->sides[0];
+								blockSides[1] = obj->sides[1];
+								blockSides[2] = obj->sides[2];
+								blockSides[3] = obj->sides[3];
+
+								level.env_objects.erase(obj);
+
+								editorFlag = (short)INSERT;
+							}
 						}
 					}
 				}
@@ -331,13 +418,13 @@ int main()
 
 			// draw buttons
 			/// TODO CLEAN UP THIS LOGIC
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < 6; i++)
 			{
 				buttonValues[i] = ImageButtonSink(buttonDestRect[i], buttonTex, buttonSourceRect[i]);
 			}
 			if (buttonValues[0])
 			{
-				editorFlag = (short)BLOCK;
+				editorFlag = (short)INSERT;
 			}
 			if (buttonValues[1])
 			{
@@ -350,6 +437,14 @@ int main()
 			if (buttonValues[3])
 			{
 				editorFlag = (short)PAINT;
+			}
+			if (buttonValues[4])
+			{
+				editorFlag = (short)COPY;
+			}
+			if (buttonValues[5])
+			{
+				editorFlag = (short)CUT;
 			}
 
 			// draw the color panel
@@ -385,10 +480,21 @@ int main()
 
 			// draw block size -+ buttons (alternative arrow keys)
 
-			// jump to coordinates button
+			/*
+			/// JUMP TO
+			if (ImageButtonSink(buttonDestRect[JUMPTO], buttonTex, buttonSourceRect[JUMPTO]))
+			{
+				camera.target = Vector2{atoi(xJumpToStr), atoi(yJumpToStr)};
+			}
 
-			// name field, save and load buttons
+			SimpleTextBoxDraw(buttonDestRect[JUMPTO_FIELD], xJumpToStr, 5, &xJumpToFocus);
+			Rectangle __r = buttonDestRect[JUMPTO_FIELD];
+			__r.x += 100;
+			SimpleTextBoxDraw(__r, yJumpToStr, 5, &yJumpToFocus);
+			/// END JUMP TO
+			*/
 
+			/// SAVE BUTTONS
 			if (ImageButtonSink(buttonDestRect[SAVE], buttonTex, buttonSourceRect[SAVE]))
 			{
 				file_name = FormatText("%s.json", fileNameString);
@@ -406,6 +512,7 @@ int main()
 			}
 
 			SimpleTextBoxDraw(fileNameRectSmall, fileNameString, 30, &fileNameFocus);
+			/// END SAVE BUTTONS
 
             #ifdef DEV_SHOW_MOUSE_POS
 			Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);

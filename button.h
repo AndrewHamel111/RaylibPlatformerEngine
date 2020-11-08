@@ -91,6 +91,17 @@ float SliderBarCenter(Vector2 center, float length, float* percent, Color handle
 bool SimpleTextBoxUpdate(Rectangle r, char* c, int max_field_length, bool* focus);
 
 /**
+ * @brief Specializes SimpleTextBoxUpdate by restricting the values populating char* c to numeric values. This does not verify that the initial value of c is a valid numeric form.
+ * @param r Bounds of the text field.
+ * @param c Pointer to the string being changed.
+ * @param max_field_length Maximum length of the string.
+ * @param focus Pointer to a bool stored somewhere in main.
+ * @returns True when enter is pressed, signifying the changes to the string have ended.
+ * @details Keys pressed will only update the string if the field has focus. This is indicated by the bool pointer parameter, and the field is given a blue outline when it is selected so the user knows which box is selected. This field will lose focus when enter is pressed or the mouse is clicked outside the bounds of the field.
+ */
+bool NumberBoxUpdate(Rectangle r, char* c, int max_field_length, bool* focus);
+
+/**
  * @brief Called in the update portion of the gameloop, updates the char* value based on user input.
  * @param r Bounds of the text field.
  * @param c Pointer to the string being changed.
