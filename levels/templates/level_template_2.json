@@ -1,0 +1,61 @@
+{
+	"id" : 0,
+	"label" : "Level 1",
+	"player_start" : [
+		100.0,
+		100.0
+	],
+	"objects" : [
+		{
+			"uuId" : 0,
+			"spriteId" : 255,
+			"label" : "block",
+			"rect" : [
+				0,
+				600,
+				800,
+				100
+			],
+			"sides" : [
+				true,
+				true,
+				true,
+				true
+			],
+			"color" : [
+				20,
+				20,
+				20,
+				255
+			],
+			"type" : 0,
+			"func" : 0	
+		},
+		{
+			"uuId" : 1,
+			"spriteId" : 255,
+			"label" : "block",
+			"rect" : [
+				300,
+				500,
+				200,
+				100
+			],
+			"sides" : [
+				true,
+				false,
+				false,
+				false
+			],
+			"color" : [
+				50,
+				50,
+				50,
+				255
+			],
+			"type" : 0,
+			"func" : 0	
+		}
+	]
+
+}

@@ -63,14 +63,10 @@ class player
 	float _value[PLAYER_FLAG_COUNT] = {0};
 
 	// TODO fuck this
-	// write a method that checks the perimeter of the hitbox one side at a time for collisions
-	// the method takes a parameter that determines how many checks it should perform to form a line
-	// i.e. lineCheck(10) checks 10 places equally spaced between the corners (these checks should occur
-	// using the same bounds as the default hitbox_anchors, provided here for reference.
-	/* (this is a representation in a more graphical fashion of the corners)
+	/*
 	Vector2{-51, -101}		Vector2{0, -101} 	Vector2{51, -101}
-	Vector2{-51, -50}							Vector2{51, -50}
-	Vector2{-51, 1}			Vector2{0, 1}		Vector2{51, 1}
+	Vector2{-51, -50}												Vector2{51, -50}
+	Vector2{-51, 1}				Vector2{0, 1}			Vector2{51, 1}
 	*/
 	std::vector<Vector2> hitbox_anchors; /**< std::vector of anchors to check collisions with. */
 	Vector2 hitbox_corners[4];
