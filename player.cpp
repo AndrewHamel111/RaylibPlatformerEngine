@@ -2,7 +2,7 @@
 
 /// CONSTRUCTORS
 
-player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, hitboxSize{Vector2{100,100}}, coins{0}, color{RandomColor()}
+player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, externAcc{Vector2{0,0}}, hitboxSize{Vector2{100,100}}, coins{0}, color{RandomColor()}
 {
 	// DEFAULT CONSTRUCTOR
 
@@ -78,26 +78,27 @@ void player::move()
 		wall_jump = PLAYER_WALL_JUMP_MODIFIER;
 	}
 
-	// set acc based on input
-	/*
-	if (IsKeyDown(KEY_D))
-		acc.x = accel;
-	else if (IsKeyDown(KEY_A))
-		acc.x = (-1) * accel;
-	else
-		acc.x = 0;
-		*/
 	acc.x = accel * (IsKeyDown(KEY_D) - IsKeyDown(KEY_A));
 
 	// apply acc (when applicable)
-	if (abs(vel.x + acc.x ) < maxVel)// || abs(vel.x + acc.x) < PLAYER_MAX_VELOCITY)
+	// TODO FIX THIS CUM
+	if (abs(vel.x + acc.x ) < maxVel)
 		vel.x += acc.x;
-	//else
-	//vel.x = maxVel * (vel.x > 0) ? 1 : -1;
 
-	if (abs(vel.y + acc.y) < PLAYER_TERMINAL_VELOCITY)
+	if (vel.y + acc.y < PLAYER_TERMINAL_VELOCITY)
 		vel.y += acc.y;
-	//vel.y = PLAYER_TERMINAL_VELOCITY * (vel.y > 0) ? 1 : -1;
+
+	// apply externAcc after the max checks
+	// TODO O NO
+	if (IsKeyDown(KEY_SPACE))
+		vel.x += externAcc.x;* BOOST_JUMP_BONUS;
+	else
+		vel.x += externAcc.x;
+
+	if (IsKeyDown(KEY_SPACE))
+		vel.y += externAcc.y * BOOST_JUMP_BONUS;
+	else
+		vel.y += externAcc.y;
 
 	// add jump (when applicable)
 	if (IsKeyPressed(KEY_SPACE) && !_flag[IS_JUMPING])
@@ -168,13 +169,34 @@ void player::move()
 			vel.x = (abs(vel.x) > decel) ? vel.x + decel : 0;
 		}
 	}
-}
+
+	// decelerate externAcc
+	externAcc.x = externAcc.y = 0;
+	/// THIS IS CONSQUENCE! WHY! GO TO COLLEGE, FUCK!
+	/// this is dumb stupid code and more importantly dumb stupid code that DOES NOT WORK.
+	/*
+	float d = PLAYER_DECELERATION / 3;
+	if (externAcc.x != 0)
+	{
+		if (externAcc.x > 0)
+			externAcc.x = (abs(externAcc.x) > d) ? externAcc.x - d : 0;
+		else
+			externAcc.x = (abs(externAcc.x) > d) ? externAcc.x + d : 0;
+	}
+
+	if (externAcc.y != 0)
+	{
+		if (externAcc.y > 0)
+			externAcc.y = (abs(externAcc.y) > d) ? externAcc.y - d : 0;
+		else
+			externAcc.y = (abs(externAcc.y) > d) ? externAcc.y + d : 0;
+	}
+	*/
+
+}/// end player::move
 
 void player::check(env_list* env)
 {
-	// iterators and a counter
-	auto envI = env->begin();
-
 	bool temp_flag_ON_GROUND = false;
 	bool temp_flag_ON_WALL_LEFT = false;
 	bool temp_flag_ON_WALL_RIGHT = false;
@@ -182,86 +204,107 @@ void player::check(env_list* env)
 	const int lineSegmentCount = 10;
 
 	// for each env_object
-	while (envI != env->end())
+	for (auto envI = env->begin(); envI != env->end(); envI++)
 	{
+		/// IGNORE COLLISION FOR TEXT
 		if (envI->type == TEXT)
 		{
-			envI++;
 			continue;
 		}
-		if (envI->type == COIN)
+		/// COLLECTION LOGIC FOR COIN
+		else if (envI->type == COIN)
 		{
 			if (coinDist(this->pos, envI->rect))
 			{
 				envI->isCollected = true;
 				this->coins++;
 			}
-
-			envI++;
 			continue;
 		}
-
-		// don't bother with collision check if our center is totally inside of the current object,
-		// since it's most likely a semisolid that the player is "in front of"
-		if ((this->pos + Vector2{0, -50}) < envI->rect)
+		/// BOOST LOGIC FOR BOOST OBJ
+		else if (envI->type == BOOST)
 		{
-			envI++;
+			// we use an additive method so that if the player is influenced by a sideways and an upwards boost they can both be applied
+			Vector2 center{this->pos.x, this->pos.y - this->hitboxSize.y/2};
+			if (center < envI->rect)
+			{
+				if (envI->sides[0])// && this->externAcc.y > (-1) * BOOST_MAX_ACCEL)
+					this->externAcc.y -= BOOST_BASE_VALUE;
+				else if (envI->sides[2])// && this->externAcc.y < BOOST_MAX_ACCEL)
+					this->externAcc.y += BOOST_BASE_VALUE;
+
+				if (envI->sides[1])// && this->externAcc.y < BOOST_MAX_ACCEL)
+					this->externAcc.x += BOOST_BASE_VALUE;
+				else if (envI->sides[3])// && this->externAcc.y > (-1) * BOOST_MAX_ACCEL)
+					this->externAcc.x -= BOOST_BASE_VALUE;
+			}
+
+			// TODO add a player flag to indicate the player is being boosted (unique animation perhaps)
+
 			continue;
 		}
-
-		if (envI->sides[2] && LineCheck(UP, lineSegmentCount, *envI))
+		else if (envI->type == BLOCK)
 		{
-			// IN CEILING
+			// don't bother with collision check if our center is totally inside of the current object,
+			// since it's most likely a semisolid that the player is "in front of"
+			if ((this->pos + Vector2{0, -50}) < envI->rect)
+				continue;
 
-			// if still moving upward set vel to 0
-			if (this->vel.y < 0)
+			// TODO consider adding a check to exclude objects that are super far away
+
+			// perform line checks on each side of the player's hitbox
+				/// IN CEILING
+			if (envI->sides[2] && LineCheck(UP, lineSegmentCount, *envI))
 			{
-				this->pos.y = envI->rect.y + envI->rect.height + this->hitboxSize.y;
-				this->vel.y = 0;
+				// if still moving upward set vel to 0
+				if (this->vel.y < 0)
+				{
+					this->pos.y = envI->rect.y + envI->rect.height + this->hitboxSize.y;
+					this->vel.y = 0;
+				}
 			}
-		}
-		if (envI->sides[3] && LineCheck(RIGHT, lineSegmentCount, *envI))
-		{
-			// WALL ON RIGHT
-
-			// if still moving right set vel to 0
-			if (this->vel.x > 0)
+				/// WALL ON RIGHT
+			if (envI->sides[3] && LineCheck(RIGHT, lineSegmentCount, *envI))
 			{
-				this->pos.x = envI->rect.x - this->hitboxSize.x/2;
-				this->vel.x = 0;
+				// if still moving right set vel to 0
+				if (this->vel.x > 0)
+				{
+					this->pos.x = envI->rect.x - this->hitboxSize.x/2;
+					this->vel.x = 0;
+				}
+
+				temp_flag_ON_WALL_RIGHT = true;
 			}
-
-			temp_flag_ON_WALL_RIGHT = true;
-		}
-		if (envI->sides[0] && LineCheck(DOWN, lineSegmentCount, *envI))
-		{
-			// IN FLOOR
-
-			// if still falling set vel to 0
-			if (this->vel.y > 0)
+				/// IN FLOOR
+			if (envI->sides[0] && LineCheck(DOWN, lineSegmentCount, *envI))
 			{
-				this->pos.y = envI->rect.y;
-				this->vel.y = 0;
+				// if still falling set vel to 0
+				if (this->vel.y > 0)
+				{
+					this->pos.y = envI->rect.y;
+					this->vel.y = 0;
+				}
+
+				temp_flag_ON_GROUND = true;
 			}
-
-			temp_flag_ON_GROUND = true;
-		}
-		if (envI->sides[1] && LineCheck(LEFT, lineSegmentCount, *envI))
-		{
-			// WALL ON LEFT
-
-			// if still moving right set vel to 0
-			if (this->vel.x < 0)
+				/// WALL ON LEFT
+			if (envI->sides[1] && LineCheck(LEFT, lineSegmentCount, *envI))
 			{
-				this->pos.x = envI->rect.x + envI->rect.width + this->hitboxSize.x/2;
-				this->vel.x = 0;
+				// if still moving right set vel to 0
+				if (this->vel.x < 0)
+				{
+					this->pos.x = envI->rect.x + envI->rect.width + this->hitboxSize.x/2;
+					this->vel.x = 0;
+				}
+
+				temp_flag_ON_WALL_LEFT = true;
 			}
 
-			temp_flag_ON_WALL_LEFT = true;
-		}
+			continue;
+		} /// end BLOCK case
 
-		envI++;
-	}
+
+	}// end for loop
 
 	/// UPDATE PLAYER STATE FLAGS
 	if (temp_flag_ON_GROUND && this->vel.y == 0)

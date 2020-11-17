@@ -44,6 +44,8 @@
 		<Unit filename="Makefile">
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="animation.cpp" />
+		<Unit filename="animation.h" />
 		<Unit filename="button.cpp">
 			<Option target="Release" />
 			<Option target="Editor" />

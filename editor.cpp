@@ -62,7 +62,7 @@ int main()
 	short editorFlag = -1;
 	enum INSERT_MODE_SELECTION
 	{
-		INSERT_BLOCK, INSERT_TEXT, INSERT_COIN
+		INSERT_BLOCK, INSERT_TEXT, INSERT_COIN, INSERT_BOOST
 	};
 	INSERT_MODE_SELECTION insertSelection = INSERT_BLOCK;
 	bool insertBar = true;
@@ -239,7 +239,7 @@ int main()
 		ClearBackground(WHITE);
 
 
-		BeginMode2D(camera);
+		BeginMode2D(camera); /// BEGIN MODE 2D
 
 		//{ LEVEL DRAW
 		if (levelIsLoaded)
@@ -263,7 +263,9 @@ int main()
 					v.x = 25*((int)v.x/(int)25);
 					v.y = 25*((int)v.y/(int)25);
 				}
+
 				env_object obj = env_object(Rectangle{v.x, v.y, blockWidth, blockHeight});
+
 				if (insertSelection == INSERT_BLOCK)
 				{
 					/// CREATE BLOCK PREVIEW
@@ -280,6 +282,13 @@ int main()
 					obj.type = COIN;
 					obj.func = STATIC;
 					obj.isCollected = false;
+				}
+				else if (insertSelection == INSERT_BOOST)
+				{
+					/// CREATE BOOST PREVIEW
+					obj.color = Color{100,100,100,50};
+					obj.type = BOOST;
+					obj.setSides(blockSides[0],blockSides[1],blockSides[2],blockSides[3]);
 				}
 
 				/// DRAW PREVIEW
@@ -411,7 +420,14 @@ int main()
 						blockSides[3] = obj->sides[3];
 
 						editorFlag = (short)INSERT;
-						insertSelection = (obj->type == BLOCK) ? INSERT_BLOCK : (obj->type == COIN) ? INSERT_COIN : INSERT_BLOCK;
+						if (obj->type == BLOCK)
+							insertSelection = INSERT_BLOCK;
+						else if (obj->type == COIN)
+							insertSelection = INSERT_COIN;
+						else if (obj->type == BOOST)
+							insertSelection = INSERT_BOOST;
+						else	// select block by default
+							insertSelection = INSERT_BLOCK;
 					}
 				}
 			}
@@ -451,13 +467,20 @@ int main()
 						level.env_objects.erase(obj);
 
 						editorFlag = (short)INSERT;
-						insertSelection = (obj->type == BLOCK) ? INSERT_BLOCK : (obj->type == COIN) ? INSERT_COIN : INSERT_BLOCK;
+						if (obj->type == BLOCK)
+							insertSelection = INSERT_BLOCK;
+						else if (obj->type == COIN)
+							insertSelection = INSERT_COIN;
+						else if (obj->type == BOOST)
+							insertSelection = INSERT_BOOST;
+						else	// select block by default
+							insertSelection = INSERT_BLOCK;
 					}
 				}
 			}
 		}
 
-		EndMode2D();
+		EndMode2D(); /// END MODE 2D
 
 		// if level is not loaded put some instructions
 		if(!levelIsLoaded)
@@ -465,6 +488,7 @@ int main()
 			DrawTextRec(GetFontDefault(), "DRAG AND DROP A LEVEL TO EDIT OR TYPE A NAME AND PRESS ENTER", Rectangle{200,200,400,400}, 40, 1.0f, true, LIGHTGRAY);
 		}
 
+		/// DRAW INSERT BAR (ON BOTTOM)
 		if (editorFlag == (short)INSERT && insertBar)
 		{
 			DrawRectangleRec(barRect, Color{30,30,30,200});
@@ -494,6 +518,21 @@ int main()
 			{
 				// coin insert
 				insertSelection = INSERT_COIN;
+			}
+
+			// draw boost icon
+			_blockR = Rectangle{barRect.x + 10 + 120, barRect.y + 10, 50, 50};
+			_block.setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
+			_block.rect = _blockR;
+			_block.color = Color{100, 100, 100, 200};
+			_block.type = BOOST;
+
+			DrawEnvObject(_block);
+
+			if (HiddenButton(_blockR))
+			{
+				// coin insert
+				insertSelection = INSERT_BOOST;
 			}
 		}
 
@@ -562,20 +601,6 @@ int main()
 		// draw grid -+ buttons (alternative square brackets)
 
 		// draw block size -+ buttons (alternative arrow keys)
-
-		/*
-		/// JUMP TO
-		if (ImageButtonSink(buttonDestRect[JUMPTO], buttonTex, buttonSourceRect[JUMPTO]))
-		{
-			camera.target = Vector2{atoi(xJumpToStr), atoi(yJumpToStr)};
-		}
-
-		SimpleTextBoxDraw(buttonDestRect[JUMPTO_FIELD], xJumpToStr, 5, &xJumpToFocus);
-		Rectangle __r = buttonDestRect[JUMPTO_FIELD];
-		__r.x += 100;
-		SimpleTextBoxDraw(__r, yJumpToStr, 5, &yJumpToFocus);
-		/// END JUMP TO
-		*/
 
 		/// SAVE BUTTONS
 		if (ImageButtonSink(buttonDestRect[SAVE], buttonTex, buttonSourceRect[SAVE]))

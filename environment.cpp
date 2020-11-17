@@ -2,7 +2,7 @@
 
 /// STRUCT ENV_OBJECT
 
-env_object::env_object(): rect{Rectangle{0,0,100,50}}, sides{true, false, false, false}, spriteId{255}, type{BLOCK}, color{DARKGRAY}, label{"block"}, isCollected{false}, func{STATIC}
+env_object::env_object(): rect{Rectangle{0,0,100,50}}, sides{true, false, false, false}, spriteId{255}, type{BLOCK}, color{DARKGRAY}, label{"block"}, isCollected{false}, boostAcc{Vector2{0,0}}, boostMag{1.0f}, func{STATIC}
 {}
 
 env_object::env_object(Rectangle rect): env_object()
@@ -37,6 +37,20 @@ void env_object::setSides(bool a, bool b, bool c, bool d)
 	sides[1] = b;
 	sides[2] = c;
 	sides[3] = d;
+
+	boostAcc.x = boostAcc.y = 0;
+
+	if (type == BOOST)
+	{
+		if (sides[0])
+			boostAcc.y -= BOOST_BASE_VALUE;
+		else if (sides[2])
+			boostAcc.y += BOOST_BASE_VALUE;
+		if (sides[1])
+			boostAcc.x += BOOST_BASE_VALUE;
+		else if (sides[3])
+			boostAcc.x -= BOOST_BASE_VALUE;
+	}
 }
 
 void DrawEnvObject(const env_object o)
@@ -107,6 +121,63 @@ void DrawEnvObject(const env_object o)
 	{
 		DrawRectangleRec(o.rect, o.color);
 	}
+	else if (o.type == BOOST)
+	{
+		// DEV SHIT. temp semitrans rectangle for boost and some arrows
+		DrawRectangleRec(o.rect, Color{100,100,100,80});
+
+		// arrows
+		if (o.sides[0])
+			DrawArrow(Vector2{o.rect.x + o.rect.width/2, o.rect.y + 5}, 30, 0);
+		if (o.sides[1])
+			DrawArrow(Vector2{o.rect.x + o.rect.width - 5, o.rect.y + o.rect.height/2}, 30, 1);
+		if (o.sides[2])
+			DrawArrow(Vector2{o.rect.x + o.rect.width/2, o.rect.y + o.rect.height - 5}, 30, 2);
+		if (o.sides[3])
+			DrawArrow(Vector2{o.rect.x + 5, o.rect.y + o.rect.height/2}, 30, 3);
+	}
+}
+
+void DrawArrow(Vector2 point, float length, int dir) // up, right, down, left
+{
+	Color col{100,100,100,200};
+
+	Vector2 p2;
+	Vector2 p3;
+	Rectangle rect;
+
+	float triangleL = length/3;	// long length of triangle
+	float rectL = 2*length/3;		// long length of rectangle
+	float triangleS = 20;		// short length of triangle
+	float rectS = triangleS/3;	// short length of rectangle
+
+	if (dir == 0)
+	{
+		p2 = Vector2{point.x - triangleS/2, point.y + triangleL};
+		p3 = Vector2{point.x + triangleS/2, point.y + triangleL};
+		rect = Rectangle{point.x - rectS/2, point.y + triangleL, rectS, rectL};
+	}
+	else if (dir == 1)
+	{
+		p2 = Vector2{point.x - triangleL, point.y - triangleS/2};
+		p3 = Vector2{point.x - triangleL, point.y + triangleS/2};
+		rect = Rectangle{point.x - triangleL - rectL, point.y - rectS/2, rectL, rectS};
+	}
+	else if (dir == 2)
+	{
+		p2 = Vector2{point.x + triangleS/2, point.y - triangleL};
+		p3 = Vector2{point.x - triangleS/2, point.y - triangleL};
+		rect = Rectangle{point.x - rectS/2, point.y - triangleL - rectL, rectS, rectL};
+	}
+	else // if (dir == 3)
+	{
+		p2 = Vector2{point.x + triangleL, point.y + triangleS/2};
+		p3 = Vector2{point.x + triangleL, point.y - triangleS/2};
+		rect = Rectangle{point.x + triangleL, point.y - rectS/2, rectL, rectS};
+	}
+
+	DrawTriangle(point, p2, p3, col);
+	DrawRectangleRec(rect, col);
 }
 
 void DrawEnvList(const env_list l)

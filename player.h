@@ -1,7 +1,6 @@
 #ifndef PLAYER_H_
 #define PLAYER_H_
 
-//{ DEFINE
 #define PLAYER_FLAG_COUNT 7
 
 /// speed values (normal)
@@ -24,6 +23,10 @@
 #define PLAYER_WALL_SLIDE_SPEED 2.0f
 #define PLAYER_WALL_HANG_TIME 0.4f
 
+/// boost blocks
+#define BOOST_MAX_ACCEL 3
+#define BOOST_JUMP_BONUS 2
+
 /// other
 #define PLAYER_HITBOX_PERCENTAGE 0.15
 #define PLAYER_COIN_RADIUS 50
@@ -36,6 +39,7 @@
 #include "constants.h"
 #include "environment.h"
 #include "operators.h"
+#include "animation.h"
 
 #include <cmath>
 #include <string>
@@ -46,8 +50,6 @@
 #ifndef NEARBLACK
 #define NEARBLACK CLITERAL(Color){ 20, 20, 20, 255}
 #endif
-
-//}
 
 enum LineCheckDirection
 {
@@ -83,6 +85,7 @@ public:
 	Vector2 pos; /**< Position of the player. pos = (x,y) where x should be the horizontal center and y is the lowest point (feet) */
 	Vector2 vel; /**< Current velocity of the player.*/
 	Vector2 acc; /**< Acceleration of the player. This may be affected by powerups, holding shift, etc.*/
+	Vector2 externAcc; /**< A secondary acceleration applied from external forces that overrides player max_vel. See BOOST case in player::check for an idea. */
 
 	Vector2 hitboxSize; /**< Width and height of the player's hitbox. */
 
