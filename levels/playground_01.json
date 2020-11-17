@@ -513,56 +513,6 @@
             "label": "block",
             "rect": [
                 2050.0,
-                500.0,
-                150.0,
-                100.0
-            ],
-            "sides": [
-                true,
-                true,
-                false,
-                false
-            ],
-            "spriteId": 255,
-            "type": 3,
-            "uuId": 0
-        },
-        {
-            "color": [
-                100,
-                100,
-                100,
-                50
-            ],
-            "func": 0,
-            "label": "block",
-            "rect": [
-                2575.0,
-                500.0,
-                150.0,
-                100.0
-            ],
-            "sides": [
-                true,
-                false,
-                false,
-                true
-            ],
-            "spriteId": 255,
-            "type": 3,
-            "uuId": 0
-        },
-        {
-            "color": [
-                100,
-                100,
-                100,
-                50
-            ],
-            "func": 0,
-            "label": "block",
-            "rect": [
-                2050.0,
                 25.0,
                 150.0,
                 100.0
@@ -700,6 +650,81 @@
             ],
             "spriteId": 255,
             "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                100,
+                250,
+                100,
+                50
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2550.0,
+                500.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 4,
+            "uuId": 0
+        },
+        {
+            "color": [
+                100,
+                250,
+                100,
+                50
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2125.0,
+                500.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                true,
+                true,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 4,
+            "uuId": 0
+        },
+        {
+            "color": [
+                100,
+                250,
+                100,
+                50
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                1200.0,
+                500.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 4,
             "uuId": 0
         }
     ],

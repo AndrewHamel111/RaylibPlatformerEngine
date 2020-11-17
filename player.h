@@ -24,8 +24,11 @@
 #define PLAYER_WALL_HANG_TIME 0.4f
 
 /// boost blocks
-#define BOOST_MAX_ACCEL 3
+//#define BOOST_MAX_ACCEL 3
 #define BOOST_JUMP_BONUS 2
+
+/// launch blocks
+#define LAUNCH_JUMP_BONUS 1
 
 /// other
 #define PLAYER_HITBOX_PERCENTAGE 0.15
@@ -70,7 +73,6 @@ class player
 	Vector2{-51, -50}												Vector2{51, -50}
 	Vector2{-51, 1}				Vector2{0, 1}			Vector2{51, 1}
 	*/
-	std::vector<Vector2> hitbox_anchors; /**< std::vector of anchors to check collisions with. */
 	Vector2 hitbox_corners[4];
 
 	// METHODS
@@ -86,6 +88,7 @@ public:
 	Vector2 vel; /**< Current velocity of the player.*/
 	Vector2 acc; /**< Acceleration of the player. This may be affected by powerups, holding shift, etc.*/
 	Vector2 externAcc; /**< A secondary acceleration applied from external forces that overrides player max_vel. See BOOST case in player::check for an idea. */
+	Vector2 externVel; /**< A secondary velocity applied from external forces. See LAUNCH case in player::check for an idea. */
 
 	Vector2 hitboxSize; /**< Width and height of the player's hitbox. */
 
@@ -106,6 +109,7 @@ public:
 	void setPos(float, float);
 
 	void setHitboxAnchors(std::vector<Vector2>);
+	void setHitboxSize(Vector2);
 	bool LineCheck(LineCheckDirection, int, env_object);
 
 	/// UPDATE AND DRAWING METHODS
@@ -117,6 +121,6 @@ public:
 	void DrawPlayer();
 };
 
-bool coinDist(Vector2 plV, Rectangle coinRect);
+bool coinDist(player, Rectangle);
 
 #endif

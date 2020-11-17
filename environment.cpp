@@ -136,11 +136,28 @@ void DrawEnvObject(const env_object o)
 		if (o.sides[3])
 			DrawArrow(Vector2{o.rect.x + 5, o.rect.y + o.rect.height/2}, 30, 3);
 	}
+	else if (o.type == LAUNCH)
+	{
+		// DEV SHIT. temp semitrans rectangle for boost and some arrows
+		Color col = Color{100,250,100,80};
+		DrawRectangleRec(o.rect, col);
+		col.a = 120;
+
+		// arrows
+		if (o.sides[0])
+			DrawArrow(Vector2{o.rect.x + o.rect.width/2, o.rect.y + 5}, 30, 0, col);
+		if (o.sides[1])
+			DrawArrow(Vector2{o.rect.x + o.rect.width - 5, o.rect.y + o.rect.height/2}, 30, 1, col);
+		if (o.sides[2])
+			DrawArrow(Vector2{o.rect.x + o.rect.width/2, o.rect.y + o.rect.height - 5}, 30, 2, col);
+		if (o.sides[3])
+			DrawArrow(Vector2{o.rect.x + 5, o.rect.y + o.rect.height/2}, 30, 3, col);
+	}
 }
 
-void DrawArrow(Vector2 point, float length, int dir) // up, right, down, left
+void DrawArrow(Vector2 point, float length, int dir, Color col) // up, right, down, left
 {
-	Color col{100,100,100,200};
+	//Color col{100,100,100,200};
 
 	Vector2 p2;
 	Vector2 p3;

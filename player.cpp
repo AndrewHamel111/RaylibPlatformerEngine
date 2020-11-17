@@ -2,27 +2,13 @@
 
 /// CONSTRUCTORS
 
-player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, externAcc{Vector2{0,0}}, hitboxSize{Vector2{100,100}}, coins{0}, color{RandomColor()}
+player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, externAcc{Vector2{0,0}}, externVel{Vector2{0,0}}, coins{0}, color{RandomColor()}
 {
 	// DEFAULT CONSTRUCTOR
 
 	// ADD CORNERS AND EDGES TO ANCHORS
-	/// TODO change hitbox anchors to be corners of hitbox (propagate change to LineCheck)
-	this->hitbox_anchors.clear();
-	this->hitbox_anchors.push_back(Vector2{0, -101});
-	this->hitbox_anchors.push_back(Vector2{51, -101});
-	this->hitbox_anchors.push_back(Vector2{51, -50});
-	this->hitbox_anchors.push_back(Vector2{51, 1});
-	this->hitbox_anchors.push_back(Vector2{0, 1});
-	this->hitbox_anchors.push_back(Vector2{-51, 1});
-	this->hitbox_anchors.push_back(Vector2{-51, -50});
-	this->hitbox_anchors.push_back(Vector2{-51, -101});
-
 	// top left, top right, bottom right, bottom left
-	this->hitbox_corners[0] = Vector2{-50, -101};
-	this->hitbox_corners[1] = Vector2{51, -100};
-	this->hitbox_corners[2] = Vector2{50, 1};
-	this->hitbox_corners[3] = Vector2{-51, 0};
+	setHitboxSize(Vector2{100,100});
 }
 
 player::player(Vector2 pos): player()
@@ -88,17 +74,23 @@ void player::move()
 	if (vel.y + acc.y < PLAYER_TERMINAL_VELOCITY)
 		vel.y += acc.y;
 
-	// apply externAcc after the max checks
-	// TODO O NO
+	// apply externAcc and externVel after the max checks
+	// note that externVel basically overrides externAcc
 	if (IsKeyDown(KEY_SPACE))
-		vel.x += externAcc.x;* BOOST_JUMP_BONUS;
-	else
-		vel.x += externAcc.x;
-
-	if (IsKeyDown(KEY_SPACE))
+	{
+		vel.x += externAcc.x * BOOST_JUMP_BONUS;
 		vel.y += externAcc.y * BOOST_JUMP_BONUS;
+	}
 	else
+	{
+		vel.x += externAcc.x;
 		vel.y += externAcc.y;
+	}
+
+	if (externVel.x != 0)
+		vel.x = externVel.x;
+	if (externVel.y != 0)
+		vel.y = externVel.y;
 
 	// add jump (when applicable)
 	if (IsKeyPressed(KEY_SPACE) && !_flag[IS_JUMPING])
@@ -172,6 +164,7 @@ void player::move()
 
 	// decelerate externAcc
 	externAcc.x = externAcc.y = 0;
+	externVel.x = externVel.y = 0;
 	/// THIS IS CONSQUENCE! WHY! GO TO COLLEGE, FUCK!
 	/// this is dumb stupid code and more importantly dumb stupid code that DOES NOT WORK.
 	/*
@@ -214,7 +207,7 @@ void player::check(env_list* env)
 		/// COLLECTION LOGIC FOR COIN
 		else if (envI->type == COIN)
 		{
-			if (coinDist(this->pos, envI->rect))
+			if (coinDist(*this, envI->rect))
 			{
 				envI->isCollected = true;
 				this->coins++;
@@ -238,8 +231,29 @@ void player::check(env_list* env)
 				else if (envI->sides[3])// && this->externAcc.y > (-1) * BOOST_MAX_ACCEL)
 					this->externAcc.x -= BOOST_BASE_VALUE;
 			}
-
 			// TODO add a player flag to indicate the player is being boosted (unique animation perhaps)
+
+			continue;
+		}
+		/// LAUNCH LOGIC FOR LAUNCH OBJ
+		else if (envI->type == LAUNCH)
+		{
+			// we use an additive method so that if the player is influenced by a sideways and an upwards boost they can both be applied
+			Vector2 center{this->pos.x, this->pos.y - this->hitboxSize.y/2};
+			if (center < envI->rect)
+			{
+				if (envI->sides[0])
+					this->externVel.y -= envI->boostMag * LAUNCH_BASE_VALUE;
+				else if (envI->sides[2])
+					this->externVel.y += envI->boostMag * LAUNCH_BASE_VALUE;
+
+				if (envI->sides[1])
+					this->externVel.x += envI->boostMag * LAUNCH_BASE_VALUE;
+				else if (envI->sides[3])
+					this->externVel.x -= envI->boostMag * LAUNCH_BASE_VALUE;
+			}
+
+			// TODO add a player flag to indicate the player is being launched (unique animation perhaps)
 
 			continue;
 		}
@@ -247,8 +261,8 @@ void player::check(env_list* env)
 		{
 			// don't bother with collision check if our center is totally inside of the current object,
 			// since it's most likely a semisolid that the player is "in front of"
-			if ((this->pos + Vector2{0, -50}) < envI->rect)
-				continue;
+			//if ((this->pos + Vector2{0, 0 - 50}) < envI->rect)
+			//	continue;
 
 			// TODO consider adding a check to exclude objects that are super far away
 
@@ -349,8 +363,8 @@ void player::update(env_list* env)
 
 void player::DrawPlayer()
 {
-	float w = 100;
-	float h = 100;
+	float w = hitboxSize.x;
+	float h = hitboxSize.y;
 
 	// dev stand-in for a real render of sorts
 	Rectangle r = Rectangle{pos.x - w/2, pos.y - h, w, h};
@@ -358,6 +372,15 @@ void player::DrawPlayer()
 	DrawText(FormatText("%d", coins), (int)pos.x - 44, (int)pos.y - 95, 30, NEARBLACK);
 }
 
+void player::setHitboxSize(Vector2 hitboxSize)
+{
+	this->hitboxSize = hitboxSize;
+
+	this->hitbox_corners[0] = Vector2{0 - this->hitboxSize.x/2, 0 - hitboxSize.y - 1};
+	this->hitbox_corners[1] = Vector2{hitboxSize.x/2 + 1, 0 - hitboxSize.y};
+	this->hitbox_corners[2] = Vector2{hitboxSize.x/2, 1};
+	this->hitbox_corners[3] = Vector2{0 - hitboxSize.x/2 - 1, 0};
+}
 
 /*	Vector2{-51, -101}		Vector2{0, -101} 	Vector2{51, -101}
 	Vector2{-51, -50}							Vector2{51, -50}
@@ -414,9 +437,10 @@ bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 	return false;
 }
 
-bool coinDist(Vector2 plV, Rectangle coinRect)
+bool coinDist(player pl, Rectangle coinRect)
 {
-	plV = plV - Vector2{0, 50};
+	Vector2 plV = pl.pos;
+	plV = plV - Vector2{0, pl.hitboxSize.y/2};
 	float a = plV.x - (coinRect.x + coinRect.width/2);
 	float b = plV.y - (coinRect.y + coinRect.height/2);
 	if (a < 0) a *= (-1);

@@ -2,24 +2,34 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Tester" />
+	<File name="Makefile" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="4" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="700" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="player.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="747" topLine="9" />
+		</Cursor>
+	</File>
+	<File name="player.cpp" open="1" top="1" tabpos="4" split="0" active="1" splitpos="0" zoom_1="5" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="690" topLine="218" />
+		</Cursor>
+	</File>
 	<File name="operators.h" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="573" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="dool.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="button.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="141" topLine="0" />
+			<Cursor1 position="2854" topLine="52" />
 		</Cursor>
 	</File>
-	<File name="Makefile" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="4" zoom_2="0">
+	<File name="button.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="567" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="dool.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="9" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="116" topLine="0" />
+			<Cursor1 position="3633" topLine="72" />
 		</Cursor>
 	</File>
 	<File name="network.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -27,14 +37,9 @@
 			<Cursor1 position="299" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="editor.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
+	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="8775" topLine="275" />
-		</Cursor>
-	</File>
-	<File name="files.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="769" topLine="0" />
+			<Cursor1 position="3056" topLine="94" />
 		</Cursor>
 	</File>
 	<File name="files.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="4" zoom_2="0">
@@ -42,14 +47,9 @@
 			<Cursor1 position="4298" topLine="134" />
 		</Cursor>
 	</File>
-	<File name="environment.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="5" zoom_2="0">
+	<File name="environment.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="6" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="128" topLine="41" />
-		</Cursor>
-	</File>
-	<File name="button.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2854" topLine="52" />
+			<Cursor1 position="1425" topLine="45" />
 		</Cursor>
 	</File>
 	<File name="constants.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -59,17 +59,12 @@
 	</File>
 	<File name="environment.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="259" topLine="0" />
+			<Cursor1 position="260" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+	<File name="dool.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="9" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4593" topLine="157" />
-		</Cursor>
-	</File>
-	<File name="button.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3633" topLine="72" />
+			<Cursor1 position="116" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="operators.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="4" zoom_2="0">
@@ -77,14 +72,19 @@
 			<Cursor1 position="941" topLine="37" />
 		</Cursor>
 	</File>
-	<File name="player.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="6" zoom_2="0">
+	<File name="editor.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="7" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="677" topLine="0" />
+			<Cursor1 position="9554" topLine="295" />
 		</Cursor>
 	</File>
-	<File name="player.cpp" open="1" top="1" tabpos="4" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
+	<File name="files.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="6979" topLine="240" />
+			<Cursor1 position="769" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="dool.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="141" topLine="0" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

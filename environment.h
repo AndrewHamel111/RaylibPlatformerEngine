@@ -3,6 +3,7 @@
 
 #define ENV_RENDER_TYPE 2
 #define BOOST_BASE_VALUE 3
+#define LAUNCH_BASE_VALUE 20
 
 #include "raylib.h"
 #include "animation.h"
@@ -12,7 +13,7 @@
 
 enum ENV_OBJECT_TYPE
 {
-	BLOCK, TEXT, COIN, BOOST
+	BLOCK, TEXT, COIN, BOOST, LAUNCH
 };
 
 enum ENV_OBJECT_FUNCTION
@@ -35,8 +36,9 @@ struct env_object
 	std::string label;
 
 	bool isCollected; /**< only for use by COIN */
-	Vector2 boostAcc; /**< only for use by BOOST */
-	float boostMag; /**< only for use by BOOST */
+	/// might be deprecated
+	Vector2 boostAcc; /**< only for use by BOOST and LAUNCH */
+	float boostMag; /**< only for use by BOOST and LAUNCH */
 
 	env_object();
 	env_object(Rectangle);
@@ -64,7 +66,7 @@ struct env_level
 };
 
 void DrawEnvObject(const env_object);
-void DrawArrow(Vector2, float, int);
+void DrawArrow(Vector2, float, int, Color col = Color{100,100,100,200});
 void DrawEnvList(const env_list);
 
 Color RandomColor();

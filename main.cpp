@@ -35,6 +35,7 @@ int main()
 	const int screenHeight = 600;
 
 	player p1(Vector2{0,0});
+	p1.setHitboxSize(Vector2{50,50});
 
 #ifdef DEV_LEVEL_TEST
 
@@ -111,7 +112,7 @@ int main()
 #endif
 
 		/// CAMERA UPDATE
-		camera.zoom += ((float)GetMouseWheelMove()*0.005f);
+		camera.zoom += ((float)GetMouseWheelMove()*0.1f);
 		camera.target = p1.pos + Vector2{0, p1.hitboxSize.y / 2};
 		camera.offset = Vector2{400, 300 + p1.hitboxSize.y / 2};
 

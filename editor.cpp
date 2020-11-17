@@ -46,14 +46,17 @@ int main()
 	int xResizeCounter = 0;
 	int yResizeCounter = 0;
 
+	/*
 	char xJumpToStr[6] = {'\0'};
 	char yJumpToStr[6] = {'\0'};
 	bool xJumpToFocus = false;
 	bool yJumpToFocus = false;
+	*/
 
 	/// BACKGROUND RECTS
 	Rectangle editPanel = Rectangle{800, 0, 400, 600};
 	Rectangle colorPanelRect = Rectangle{520, 140, 265, 140};
+	Rectangle insertParameterRect = Rectangle{600, 10, 190, 80}; // used for insert parameters i.e. boost and launch box strengths TODO IMPLEMENT BOOST VERSION
 	Rectangle barRect = Rectangle{30,510,740, 70};
 
 	/// LOAD BUTTONS AND ASSIGN SOURCE/DEST RECTS, EDITOR FLAGS
@@ -62,7 +65,7 @@ int main()
 	short editorFlag = -1;
 	enum INSERT_MODE_SELECTION
 	{
-		INSERT_BLOCK, INSERT_TEXT, INSERT_COIN, INSERT_BOOST
+		INSERT_BLOCK, INSERT_TEXT, INSERT_COIN, INSERT_BOOST, INSERT_LAUNCH
 	};
 	INSERT_MODE_SELECTION insertSelection = INSERT_BLOCK;
 	bool insertBar = true;
@@ -107,6 +110,9 @@ int main()
 	char fileNameString[31] = {'\0'};
 	bool fileNameFocus = false;
 
+	/// INSERT PARAMETER VARS
+	float insertParameterBar1 = 0.1f;
+
 	/// COLOR PICKER VARS
 	float rPercent = 0.5f;
 	float gPercent = 0.5f;
@@ -139,7 +145,7 @@ int main()
 		// TODO: Update variables / Implement example logic at this point
 		//----------------------------------------------------------------------------------
 
-		camera.zoom += ((float)GetMouseWheelMove()*0.025f);
+		camera.zoom += ((float)GetMouseWheelMove()*0.1f);
 		//camera.rotation += 0.5f;
 
 		if (camera.zoom > 3.0f) camera.zoom = 3.0f;
@@ -251,7 +257,10 @@ int main()
 		if (editorFlag == (short)PAINT)
 			__boundsCheck &= !(m < colorPanelRect);
 		else if (editorFlag == (short)INSERT)
+		{
 			__boundsCheck &= !(m < barRect);
+			__boundsCheck &= !(m < insertParameterRect);
+		}
 		if (levelIsLoaded && __boundsCheck)
 		{
 			if (editorFlag == (short)INSERT)
@@ -289,6 +298,14 @@ int main()
 					obj.color = Color{100,100,100,50};
 					obj.type = BOOST;
 					obj.setSides(blockSides[0],blockSides[1],blockSides[2],blockSides[3]);
+				}
+				else if (insertSelection == INSERT_LAUNCH)
+				{
+					/// CREATE LAUNCH PREVIEW
+					obj.color = Color{100,250,100,50};
+					obj.type = LAUNCH;
+					obj.setSides(blockSides[0],blockSides[1],blockSides[2],blockSides[3]);
+					obj.boostMag = insertParameterBar1 * 8.0f * LAUNCH_BASE_VALUE;
 				}
 
 				/// DRAW PREVIEW
@@ -493,7 +510,7 @@ int main()
 		{
 			DrawRectangleRec(barRect, Color{30,30,30,200});
 
-			// draw block icon
+			/// draw block icon
 			Rectangle blockR = Rectangle{barRect.x + 10, barRect.y + 10, 50, 50};
 			env_object block;
 			block.rect = blockR;
@@ -507,7 +524,7 @@ int main()
 				insertSelection = INSERT_BLOCK;
 			}
 
-			// draw coin icon
+			/// draw coin icon
 			Rectangle _blockR = Rectangle{barRect.x + 10 + 60, barRect.y + 10, 50, 50};
 			env_object _block;
 			_block.rect = _blockR;
@@ -520,7 +537,7 @@ int main()
 				insertSelection = INSERT_COIN;
 			}
 
-			// draw boost icon
+			/// draw boost icon
 			_blockR = Rectangle{barRect.x + 10 + 120, barRect.y + 10, 50, 50};
 			_block.setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
 			_block.rect = _blockR;
@@ -533,6 +550,21 @@ int main()
 			{
 				// coin insert
 				insertSelection = INSERT_BOOST;
+			}
+
+			/// draw launch icon
+			_blockR = Rectangle{barRect.x + 10 + 180, barRect.y + 10, 50, 50};
+			_block.setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
+			_block.rect = _blockR;
+			_block.color = Color{100, 255, 100, 200};
+			_block.type = LAUNCH;
+
+			DrawEnvObject(_block);
+
+			if (HiddenButton(_blockR))
+			{
+				// coin insert
+				insertSelection = INSERT_LAUNCH;
 			}
 		}
 
@@ -568,6 +600,15 @@ int main()
 		if (buttonValues[5])
 		{
 			editorFlag = (short)CUT;
+		}
+
+		if (editorFlag == (short)INSERT && insertSelection == INSERT_LAUNCH)
+		{
+			DrawRectangleRec(insertParameterRect, Color{0,0,0,40});
+			Vector2 start{insertParameterRect.x + 20, insertParameterRect.y + 30};
+			SliderBar(start, 150, &insertParameterBar1);
+
+			DrawText("LAUNCH PAD STR.", (int)insertParameterRect.x + 20, (int)insertParameterRect.y + 55, 15, BLACK);
 		}
 
 		// draw the color panel
