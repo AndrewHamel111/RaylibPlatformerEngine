@@ -2,7 +2,7 @@
 
 /// CONSTRUCTORS
 
-player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, externAcc{Vector2{0,0}}, externVel{Vector2{0,0}}, coins{0}, color{RandomColor()}
+player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, externAcc{Vector2{0,0}}, externVel{Vector2{0,0}}, coins{0}, color{RandomColor()}, isDead{false}, godmode{false}, inEndZone{false}
 {
 	// DEFAULT CONSTRUCTOR
 
@@ -257,7 +257,38 @@ void player::check(env_list* env)
 
 			continue;
 		}
-		else if (envI->type == BLOCK)
+		else if (envI->type == HAZARD && !godmode)
+		{
+			// collide with a spike? DIE
+
+			//simplified version of block collision checking
+			if (envI->sides[2] && LineCheck(UP, lineSegmentCount/2, *envI))
+			{
+				isDead = true;
+			}
+			else if (envI->sides[3] && LineCheck(RIGHT, lineSegmentCount/2, *envI))
+			{
+				isDead = true;
+			}
+			else if (envI->sides[0] && LineCheck(DOWN, lineSegmentCount/2, *envI))
+			{
+				isDead = true;
+			}
+			else if (envI->sides[1] && LineCheck(LEFT, lineSegmentCount/2, *envI))
+			{
+				isDead = true;
+			}
+
+		}
+		else if (envI->type == GOAL)
+		{
+			Vector2 center = Vector2{this->pos.x, this->pos.y - hitboxSize.y/2};
+			if (center < envI->rect)
+				inEndZone = true;
+			else
+				inEndZone = false;
+		}
+		else if (envI->type == BLOCK || (envI->type == HAZARD && godmode))
 		{
 			// don't bother with collision check if our center is totally inside of the current object,
 			// since it's most likely a semisolid that the player is "in front of"

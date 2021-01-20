@@ -83,6 +83,7 @@ json GetJSONOfLevel(env_level level)
 	j["id"] = level.id;
 	j["label"] = level.label;
 	j["player_start"] = json::array({ level.player_start.x, level.player_start.y });
+	j["coins_required"] = level.coinsRequired;
 	j["objects"] = GetJSONOfEnvList(level.env_objects);
 
 	return j;
@@ -101,6 +102,7 @@ env_level GetLevelFromJSON(json j)
 	level.id = j["id"];
 	level.label = j["label"];
 	level.player_start = Vector2{ j["player_start"][0], j["player_start"][1] };
+	level.coinsRequired = j["coins_required"];
 	level.env_objects = GetEnvListFromJSON(j["objects"]);
 
 	/// TODO add camera controller

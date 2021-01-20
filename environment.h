@@ -10,10 +10,13 @@
 
 #include <vector>
 #include <string>
+#include <unordered_map>
+
+using RectSet = std::unordered_map<std::string, Rectangle>;
 
 enum ENV_OBJECT_TYPE
 {
-	BLOCK, TEXT, COIN, BOOST, LAUNCH, GOAL
+	BLOCK, TEXT, COIN, BOOST, LAUNCH, GOAL, HAZARD
 };
 
 enum ENV_OBJECT_FUNCTION
@@ -61,13 +64,26 @@ struct env_level
 	Vector2 player_start; /**< starting position of player */
 	env_list env_objects; /**< std::vector<env_object> of all the environment objects */
 
+	unsigned short coinsRequired; /**< required number of coins to complete the level. */
+
+	Texture2D foregroundAtlas;
+	RectSet foregroundRect;
+
+	Texture2D backgroundAtlas;
+	RectSet backgroundRect;
+
 	env_level();
 	env_level(unsigned short, std::string, env_list);
 };
 
 void DrawEnvObject(const env_object);
+
+void DrawFGEnvObject(const env_object o, Texture2D atlas, RectSet rects);
+void DrawBGEnvObject(const env_object o, Texture2D atlas, RectSet rects);
+
 void DrawArrow(Vector2, float, int, Color col = Color{100,100,100,200});
-void DrawEnvList(const env_list);
+/*void DrawEnvList(const env_list l, Texture2D bgAtlas, RectSet bgRects, Texture2D fgAtlas, RectSet fgRects);*/
+void DrawLevel(env_level level);
 
 Color RandomColor();
 

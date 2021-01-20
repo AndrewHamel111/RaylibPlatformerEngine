@@ -1,0 +1,1460 @@
+{
+    "id": 0,
+    "label": "goal_demo",
+    "objects": [
+        {
+            "color": [
+                249,
+                71,
+                23,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -106.82455444335938,
+                650.2747802734375,
+                900.0,
+                350.0
+            ],
+            "sides": [
+                true,
+                true,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                26,
+                39,
+                178,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                790.0,
+                925.0,
+                1375.0,
+                75.0
+            ],
+            "sides": [
+                true,
+                true,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                233,
+                64,
+                235,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                1765.0,
+                375.0,
+                400.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                true,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                216,
+                227,
+                155,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2165.0,
+                375.0,
+                375.0,
+                625.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                46,
+                59,
+                185,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2115.0,
+                1000.0,
+                425.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                true,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                32,
+                147,
+                38,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2540.0,
+                925.0,
+                50.0,
+                125.0
+            ],
+            "sides": [
+                true,
+                true,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                170,
+                41,
+                164,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                793.128662109375,
+                649.9999389648438,
+                125.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                235,
+                69,
+                69,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                792.7919921875,
+                787.623779296875,
+                125.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                151,
+                35,
+                94,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                988.25732421875,
+                594.0593872070313,
+                125.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                244,
+                183,
+                186,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                1241.0096435546875,
+                518.8118286132813,
+                125.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                10,
+                158,
+                120,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                1514.1978759765625,
+                461.38604736328125,
+                125.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                67,
+                91,
+                64,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2440.0,
+                300.0,
+                100.0,
+                75.0
+            ],
+            "sides": [
+                false,
+                true,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                68,
+                58,
+                86,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2440.0,
+                225.0,
+                100.0,
+                75.0
+            ],
+            "sides": [
+                false,
+                true,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                188,
+                114,
+                10,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2440.0,
+                150.0,
+                100.0,
+                75.0
+            ],
+            "sides": [
+                false,
+                true,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                114,
+                98,
+                64,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2440.0,
+                75.0,
+                100.0,
+                75.0
+            ],
+            "sides": [
+                false,
+                true,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                230,
+                18,
+                206,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2440.0,
+                0.0,
+                100.0,
+                75.0
+            ],
+            "sides": [
+                false,
+                true,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                195,
+                111,
+                230,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2440.0,
+                -75.0,
+                100.0,
+                75.0
+            ],
+            "sides": [
+                true,
+                true,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                11,
+                78,
+                57,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2040.0,
+                -75.0,
+                150.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                84,
+                53,
+                237,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2440.0,
+                -200.0,
+                100.0,
+                125.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                20,
+                197,
+                75,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                1604.7960205078125,
+                -196.54376220703125,
+                150.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                48,
+                146,
+                20,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                1443.3009033203125,
+                -476.3691101074219,
+                50.0,
+                400.0
+            ],
+            "sides": [
+                true,
+                false,
+                true,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                197,
+                79,
+                206,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                1000.8543701171875,
+                -363.4176330566406,
+                50.0,
+                400.0
+            ],
+            "sides": [
+                true,
+                false,
+                true,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                78,
+                27,
+                67,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                1194.388427734375,
+                -88.21356964111328,
+                125.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                10,
+                113,
+                97,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                712.6795043945313,
+                52.33012390136719,
+                125.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                237,
+                129,
+                103,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                267.844482421875,
+                -384.2331237792969,
+                125.0,
+                375.0
+            ],
+            "sides": [
+                false,
+                true,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                24,
+                67,
+                50,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                630.038818359375,
+                -681.6895141601563,
+                125.0,
+                375.0
+            ],
+            "sides": [
+                false,
+                true,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                108,
+                94,
+                194,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                267.7086486816406,
+                -759.0486450195313,
+                125.0,
+                375.0
+            ],
+            "sides": [
+                false,
+                true,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                205,
+                21,
+                151,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                629.708740234375,
+                -1054.01953125,
+                125.0,
+                375.0
+            ],
+            "sides": [
+                false,
+                true,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                19,
+                173,
+                39,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                267.6309814453125,
+                -808.7962036132813,
+                125.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                true,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                250,
+                224,
+                117,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -89.88358306884766,
+                -812.8931884765625,
+                275.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                true,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                102,
+                180,
+                49,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -480.0,
+                650.0,
+                375.0,
+                75.0
+            ],
+            "sides": [
+                true,
+                true,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                245,
+                99,
+                221,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -865.0,
+                725.0,
+                400.0,
+                75.0
+            ],
+            "sides": [
+                true,
+                true,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                13,
+                56,
+                145,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -1265.0,
+                725.0,
+                400.0,
+                75.0
+            ],
+            "sides": [
+                true,
+                true,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                165,
+                183,
+                58,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -1665.0,
+                725.0,
+                400.0,
+                75.0
+            ],
+            "sides": [
+                true,
+                true,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                212,
+                249,
+                98,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -2065.0,
+                725.0,
+                400.0,
+                75.0
+            ],
+            "sides": [
+                true,
+                true,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                7,
+                106,
+                7,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -610.0,
+                490.0,
+                25.0,
+                25.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                163,
+                113,
+                232,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -930.0,
+                490.0,
+                25.0,
+                25.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                171,
+                45,
+                178,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -1310.0,
+                490.0,
+                25.0,
+                25.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                20,
+                45,
+                172,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -1595.0,
+                330.0,
+                25.0,
+                25.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                143,
+                192,
+                232,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -1310.0,
+                185.0,
+                25.0,
+                25.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                5,
+                90,
+                22,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -1980.0,
+                -230.0,
+                25.0,
+                25.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                36,
+                158,
+                65,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -1605.0,
+                -355.0,
+                25.0,
+                25.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                219,
+                22,
+                103,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -1450.0,
+                15.0,
+                25.0,
+                25.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                229,
+                247,
+                175,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -1805.0,
+                -60.0,
+                25.0,
+                25.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                180,
+                118,
+                251,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -995.0,
+                -355.0,
+                275.0,
+                75.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                153,
+                190,
+                4,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -665.0,
+                -710.0,
+                50.0,
+                250.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                88,
+                106,
+                82,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -940.0,
+                -950.0,
+                50.0,
+                250.0
+            ],
+            "sides": [
+                false,
+                true,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                44,
+                92,
+                106,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -575.6629638671875,
+                -983.9999389648438,
+                225.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                578.0,
+                500.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                1230.0,
+                368.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                2158.0,
+                218.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                1192.0,
+                -422.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                752.0,
+                -258.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                636.0,
+                -1294.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -238.0,
+                -1272.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -538.0,
+                -702.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                245,
+                224,
+                66,
+                200
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -2250.0,
+                -462.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 2,
+            "uuId": 30296
+        },
+        {
+            "color": [
+                158,
+                117,
+                98,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -2464.97314453125,
+                724.270263671875,
+                400.0,
+                75.0
+            ],
+            "sides": [
+                true,
+                true,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        }
+    ],
+    "player_start": [
+        100.0,
+        100.0
+    ]
+}

@@ -94,6 +94,9 @@ public:
 
 	unsigned short coins;
 	Color color;
+	bool isDead; /**< True when player has died. Some procedures will occur in Main. */
+	bool godmode; /**< Used as an AND condition for isDead. See player::check in player.cpp */
+	bool inEndZone; /**< True when player in end zone. In main we check if we have reached the coin requirement. */
 
 	/// CONSTRUCTORS
 	player();  /**< Default constructor initializes player to the center of the screen with no velocity and default acc. */

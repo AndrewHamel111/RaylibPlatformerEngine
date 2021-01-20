@@ -1,14 +1,11 @@
 /// TODO
-/// - create level editor
-/// - when in the level testing mode, instead of trying to load
-///     some preset value it waits for the user to drag and drop a level on the editor.
-
+///
 
 #include "raylib.h"
 #define NEARBLACK CLITERAL(Color){ 20, 20, 20, 255}
 #define MUSTARD CLITERAL(Color){ 203, 182, 51, 255}
 
-#define DEV_SHOW_MOUSE_POS
+//#define DEV_SHOW_MOUSE_POS
 
 #include "constants.h"
 
@@ -24,7 +21,6 @@
 Sound coinSound;
 
 void UpdateLevel(env_level* level);
-void DrawLevel(env_level level);
 void ResetLevel(player*, env_level);
 
 int main()
@@ -37,16 +33,41 @@ int main()
 	player p1(Vector2{0,0});
 	p1.setHitboxSize(Vector2{50,50});
 
+/** Load Levels */
+#ifdef DEV_LEVEL_TEST
+	std::string window_label = "Level Tester";
+#else
+	std::string window_label = "Platformer Engine";
+#endif // DEV_LEVEL_TEST
+
+	InitWindow(screenWidth, screenHeight, window_label.c_str());
+	InitAudioDevice();
+	SetMasterVolume(0.5f);
+
+	/////////////////////////////////////////////////////////////
+	// TODO: Load resources / Initialize variables at this point
+	/////////////////////////////////////////////////////////////
+
+	/** TEXTURES
+	=============*/
+
+	Texture2D tex_terrain_bg = LoadTexture("sprites/terrain/bg.png");
+	RectSet rect_terrain_bg; /**< Mapping from string names to source rects (BACKGROUND). */
+	rect_terrain_bg.emplace("flag", Rectangle{0,0,50,50});
+
+	Texture2D tex_terrain_fg = LoadTexture("sprites/terrain/fg.png");
+	RectSet rect_terrain_fg; /**< Mapping from string names to source rects (FOREGROUND). */
+
+	/** LEVELS
+	=============*/
 #ifdef DEV_LEVEL_TEST
 
 	bool levelIsLoaded = false;
 	std::string file_name;
-	std::string window_label = "Level Tester";
 	env_level level;
 
 #else
 
-	std::string window_label = "Platformer Engine";
 	std::vector<env_level> levels;
 	unsigned short level = 0; /**< acts as an index to std::vector<> levels. level 0 is an interactive menu, level 1 marks the first level in the game. */
 	// load all levels in the levels folder
@@ -66,15 +87,29 @@ int main()
 	}
 	ResetLevel(&p1, levels[level]);
 
+	// add the atlases (default atlases as placeholder)
+	auto i = levels.begin();
+	auto iEnd = levels.end();
+	while(i != iEnd)
+	{
+		i->foregroundAtlas = tex_terrain_fg;
+		i->foregroundRect = rect_terrain_fg;
+		i->backgroundAtlas = tex_terrain_bg;
+		i->backgroundRect = rect_terrain_bg;
+
+		i++;
+	}
+
 #endif // DEV_LEVEL_TEST
 
-	InitWindow(screenWidth, screenHeight, window_label.c_str());
-	InitAudioDevice();
-	SetMasterVolume(0.5f);
+	/** SOUNDS
+	=============*/
 
-	/////////////////////////////////////////////////////////////
-	// TODO: Load resources / Initialize variables at this point
-	/////////////////////////////////////////////////////////////
+	coinSound = LoadSound("snd/coin.ogg");
+
+
+	/** SETUP
+	=============*/
 
 	/// set fps of window
 	SetTargetFPS(TARGET_FPS);
@@ -82,32 +117,55 @@ int main()
 	/// remove exit key functionality (alt-f4 will always work)
 	SetExitKey(-1);
 
+
+	/** ENVIRONMENT
+	=============*/
+
 	/// Create the camera object
 	Camera2D camera{Vector2{0,0}, Vector2{0,0}, 0, 1.0f};
 	//camera.offset = Vector2{screenWidth/2, screenHeight/2 - 50};
-
-	/// Load textures
-
-
-	/// Load sounds
-	coinSound = LoadSound("snd/coin.ogg");
 
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
 	while (!WindowShouldClose())    // Detect window close button or ESC key
 	{
+		/// TEMPORARY FLAGS
+		bool flag_drawCoinCount = false;
+
 		// Update
 		//----------------------------------------------------------------------------------
-		// TODO: Update variables / Implement example logic at this point
+		// TODO: Update variables
 		//----------------------------------------------------------------------------------
 
 #ifdef DEV_LEVEL_TEST
+		/// kill player if needed
+		if (p1.isDead)
+			ResetLevel(&p1, level);
+
+		/// check for win condition
+		if (p1.inEndZone && p1.coins >= level.coinsRequired)
+		{
+				// FOR NOW IT ENDS GAME
+				CloseAudioDevice();
+				CloseWindow();
+				return 0;
+			}
+		else if (p1.inEndZone && !(p1.coins >= level.coinsRequired)) // show the player's progress
+		{
+			flag_drawCoinCount = true;
+		}
+
 		if (levelIsLoaded)
 		{
 			p1.update(&level.env_objects);
 		}
+
 #else
+		/// kill player if needed
+		if (p1.isDead)
+			ResetLevel(&p1, levels[level]);
+
 		p1.update(&levels[level].env_objects);
 #endif
 
@@ -125,6 +183,13 @@ int main()
 
 #ifdef DEV_LEVEL_TEST
 			level = LoadLevelFromFile(file_name);
+
+			// add the atlases (DEV)
+			level.foregroundAtlas = tex_terrain_fg;
+			level.foregroundRect = rect_terrain_fg;
+			level.backgroundAtlas = tex_terrain_bg;
+			level.backgroundRect = rect_terrain_bg;
+
 			ResetLevel(&p1, level);
 #endif // DEV_TEST_LEVEL
 		}
@@ -146,6 +211,13 @@ int main()
 				file_name = files[0];
 
 			level = LoadLevelFromFile(file_name);
+
+			// add the atlases (DEV)
+			level.foregroundAtlas = tex_terrain_fg;
+			level.foregroundRect = rect_terrain_fg;
+			level.backgroundAtlas = tex_terrain_bg;
+			level.backgroundRect = rect_terrain_bg;
+
 			ClearDroppedFiles();
 			SetWindowTitle(GetFileName(file_name.c_str()));
 			ResetLevel(&p1, level);
@@ -154,6 +226,8 @@ int main()
 #else
 		UpdateLevel(&levels[level]);
 #endif
+
+
 
 		// Draw
 		//----------------------------------------------------------------------------------
@@ -183,6 +257,17 @@ int main()
 
 		EndMode2D();
 
+		if (flag_drawCoinCount)
+		{
+#ifdef DEV_LEVEL_TEST
+			auto text = FormatText("%d / %d COINS COLLECTED", (int)p1.coins, (int)level.coinsRequired);
+#else
+			auto text = FormatText("%d / %d COINS COLLECTED", (int)p1.coins, (int)levels[level].coinsRequired);
+#endif
+			int off = MeasureText(text, 30);
+			DrawText(text, screenWidth/2 - off/2, 50, 30, NEARBLACK);
+		}
+
 #ifdef DEV_SHOW_MOUSE_POS
 		Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
 		DrawText(FormatText("x=%4.2f\ny=%4.2f", v.x, v.y), GetMouseX(), GetMouseY() + 20, 20, NEARBLACK);
@@ -192,6 +277,7 @@ int main()
 
 		EndDrawing();
 		//----------------------------------------------------------------------------------
+
 	}
 
 	// De-Initialization
@@ -223,11 +309,6 @@ void UpdateLevel(env_level* level)
 		// since erasing changes the def'n of end()
 		if (i == level->env_objects.end()) return;
 	}
-}
-
-void DrawLevel(env_level level)
-{
-	DrawEnvList(level.env_objects);
 }
 
 void ResetLevel(player* p, env_level level)

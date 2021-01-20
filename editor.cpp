@@ -6,8 +6,9 @@
 #include "raylib.h"
 #define NEARBLACK CLITERAL(Color){ 20, 20, 20, 255}
 #define MUSTARD CLITERAL(Color){ 203, 182, 51, 255}
+#define COL_SPIKE CLITERAL(Color){ 102, 122, 138, 255}
 
-#define DEV_SHOW_MOUSE_POS
+//#define DEV_SHOW_MOUSE_POS
 
 #define CAMERA_SCROLL_SPEED 6.0f
 #define EDITOR_RESIZE_SPEED 25.0f
@@ -22,7 +23,6 @@
 #include <iostream>
 
 void UpdateLevel(env_level* level);
-void DrawLevel(env_level level);
 
 int main()
 {
@@ -37,72 +37,34 @@ int main()
 	// TODO: Load resources / Initialize variables at this point
 	/////////////////////////////////////////////////////////////
 
-	bool levelIsLoaded = false;
-	std::string file_name = "output.json";
-	std::string window_label = "Level Tester";
-	env_level level;
+	/** TEXTURES
+	=============*/
+
+	Texture2D tex_terrain_bg = LoadTexture("sprites/terrain/bg.png");
+	RectSet rect_terrain_bg; /**< Mapping from string names to source rects (BACKGROUND). */
+	rect_terrain_bg.emplace("flag", Rectangle{0,0,50,50});
+
+	Texture2D tex_terrain_fg = LoadTexture("sprites/terrain/fg.png");
+	RectSet rect_terrain_fg; /**< Mapping from string names to source rects (FOREGROUND). */
+
+	Texture2D buttonTex = LoadTexture("sprites/buttons.png"); /**< EDITOR ONLY */
+
+	/** SOUNDS
+	=============*/
+
+
+	/** SETUP
+	=============*/
 
 	/// COUNTERS AND TIMERS
 	int xResizeCounter = 0;
 	int yResizeCounter = 0;
 
-	/*
-	char xJumpToStr[6] = {'\0'};
-	char yJumpToStr[6] = {'\0'};
-	bool xJumpToFocus = false;
-	bool yJumpToFocus = false;
-	*/
-
 	/// BACKGROUND RECTS
-	Rectangle editPanel = Rectangle{800, 0, 400, 600};
-	Rectangle colorPanelRect = Rectangle{520, 140, 265, 140};
-	Rectangle insertParameterRect = Rectangle{600, 10, 190, 80}; // used for insert parameters i.e. boost and launch box strengths TODO IMPLEMENT BOOST VERSION
-	Rectangle barRect = Rectangle{30,510,740, 70};
-
-	/// LOAD BUTTONS AND ASSIGN SOURCE/DEST RECTS, EDITOR FLAGS
-	Texture2D buttonTex = LoadTexture("sprites/buttons.png");
-	bool buttonValues[8] = {false};
-	short editorFlag = -1;
-	enum INSERT_MODE_SELECTION
-	{
-		INSERT_BLOCK, INSERT_TEXT, INSERT_COIN, INSERT_BOOST, INSERT_LAUNCH
-	};
-	INSERT_MODE_SELECTION insertSelection = INSERT_BLOCK;
-	bool insertBar = true;
-	enum BUTTON_SOURCE_RECT
-	{
-		INSERT, DELETE, SIDES, PAINT, COPY, CUT, JUMPTO, JUMPTO_FIELD, TEXTBOX_ONE, TEXTBOX_TWO, TEMP4, SAVE
-	};
-	Rectangle buttonSourceRect[] =
-	{
-		Rectangle{0, 14,180,80},	// INSERT
-		Rectangle{180, 14,180,80},	// DELETE
-		Rectangle{360, 14,180,80},	// SIDES
-		Rectangle{540, 14,180,80},	// PAINT
-		Rectangle{720, 14,180,80}, // COPY
-		Rectangle{720 + 180, 14,180,80}, // CUT
-		Rectangle{720 + 360, 14,180,80}, // JUMPTO
-		Rectangle{0, 14,180,80}, // TEMP3
-		Rectangle{0, 14,180,80}, // TEXTBOX SPACER
-		Rectangle{0, 14,180,80}, // TEXTBOX SPACER
-		Rectangle{0, 14,180,80},	// TEMP4
-		Rectangle{720 + 540, 14,180,80} // SAVE
-	};
-	Rectangle buttonDestRect[] =
-	{
-		Rectangle{810,10,180,80},
-		Rectangle{1010,10,180,80},
-		Rectangle{810,110,180,80},
-		Rectangle{1010,110,180,80},
-		Rectangle{810,210,180,80},
-		Rectangle{1010,210,180,80},
-		Rectangle{1010,310,180,80},
-		Rectangle{810,310,80,80},
-		Rectangle{910,310,80,80},
-		Rectangle{0,0,0,0},
-		Rectangle{0,0,0,0},
-		Rectangle{1010, 510, 180,80},
-	};
+	Rectangle editPanel = Rectangle{800, 0, 400, 600}; /**< EDITOR ONLY */
+	Rectangle colorPanelRect = Rectangle{520, 140, 265, 140}; /**< EDITOR ONLY */
+	Rectangle insertParameterRect = Rectangle{600, 10, 190, 80}; /**< used for insert parameters i.e. boost and launch box strengths TODO IMPLEMENT BOOST VERSION, EDITOR ONLY */
+	Rectangle barRect = Rectangle{30,510,740, 70}; /**< EDITOR ONLY */
 
 	/// TEXT FIELD VARS
 	Rectangle fileNameRect = Rectangle{810, 410, 380, 80};
@@ -125,16 +87,77 @@ int main()
 	bool blockSides[4] = {true, false, false, false};
 	Color blockColor = Color{(unsigned char)(rPercent * 255), (unsigned char)(gPercent * 255), (unsigned char)(bPercent * 255), (unsigned char)(aPercent * 255)};
 
+	/** editor variables */
+	bool buttonValues[8] = {false}; /**< Button triggers */
+	short editorFlag = -1; /**< Determines the current action by the editor. */
+
+
+	enum INSERT_MODE_SELECTION /**< Enum for following variable */
+	{
+		INSERT_BLOCK, INSERT_TEXT, INSERT_COIN, INSERT_BOOST, INSERT_LAUNCH, INSERT_HAZARD, INSERT_GOAL
+	};
+	INSERT_MODE_SELECTION insertSelection = INSERT_BLOCK; /**< What object is created while in Insert mode. */
+
+	bool insertBar = true; /**< Toggles visibility of insertBar. */
+
+
+	/** editor buttons */
+
+	enum BUTTON_SOURCE_RECT
+	{
+		INSERT, DELETE, SIDES, PAINT, COPY, CUT, JUMPTO, JUMPTO_FIELD, TEXTBOX_ONE, TEXTBOX_TWO, TEMP4, SAVE
+	};
+
+	Rectangle buttonSourceRect[] =
+	{
+		Rectangle{0, 14,180,80},	// INSERT
+		Rectangle{180, 14,180,80},	// DELETE
+		Rectangle{360, 14,180,80},	// SIDES
+		Rectangle{540, 14,180,80},	// PAINT
+		Rectangle{720, 14,180,80}, // COPY
+		Rectangle{720 + 180, 14,180,80}, // CUT
+		Rectangle{720 + 360, 14,180,80}, // JUMPTO
+		Rectangle{0, 14,180,80}, // TEMP3
+		Rectangle{0, 14,180,80}, // TEXTBOX SPACER
+		Rectangle{0, 14,180,80}, // TEXTBOX SPACER
+		Rectangle{0, 14,180,80},	// TEMP4
+		Rectangle{720 + 540, 14,180,80} // SAVE
+	};
+
+	Rectangle buttonDestRect[] =
+	{
+		Rectangle{810,10,180,80},
+		Rectangle{1010,10,180,80},
+		Rectangle{810,110,180,80},
+		Rectangle{1010,110,180,80},
+		Rectangle{810,210,180,80},
+		Rectangle{1010,210,180,80},
+		Rectangle{1010,310,180,80},
+		Rectangle{810,310,80,80},
+		Rectangle{910,310,80,80},
+		Rectangle{0,0,0,0},
+		Rectangle{0,0,0,0},
+		Rectangle{1010, 510, 180,80},
+	};
+	/**=====================================*/
+
 	/// set fps of window
 	SetTargetFPS(90);
 
 	/// remove exit key functionality (alt-f4 will always work)
 	SetExitKey(-1);
 
+	/** ENVIRONMENT
+	=============*/
+
+	bool levelIsLoaded = false;
+	std::string file_name = "output.json";
+	std::string window_label = "Level Tester";
+	env_level level;
+
 	/// Create the camera object
 	Camera2D camera{Vector2{0,0}, Vector2{0, 0}, 0, 0.5f};
 	camera.offset = {550, 300};
-
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
@@ -204,6 +227,13 @@ int main()
 
 			level = LoadLevelFromFile(file_name);
 			ClearDroppedFiles();
+
+			// add the atlases (DEV)
+			level.foregroundAtlas = tex_terrain_fg;
+			level.foregroundRect = rect_terrain_fg;
+			level.backgroundAtlas = tex_terrain_bg;
+			level.backgroundRect = rect_terrain_bg;
+
 			SetWindowTitle(TextFormat("%s %s", "Editing ", GetFileName(file_name.c_str())));
 			levelIsLoaded = true;
 			fileNameFocus = false;
@@ -307,9 +337,26 @@ int main()
 					obj.setSides(blockSides[0],blockSides[1],blockSides[2],blockSides[3]);
 					obj.boostMag = insertParameterBar1 * 8.0f * LAUNCH_BASE_VALUE;
 				}
+				else if (insertSelection == INSERT_HAZARD)
+				{
+					/// CREATE HAZARD PREVIEW
+					obj.color = COL_SPIKE;
+					obj.type = HAZARD;
+					obj.setSides(false, false, false, false);
+				}
+				else if (insertSelection == INSERT_GOAL)
+				{
+					/// CREATE HAZARD PREVIEW
+					obj.color = WHITE;
+					obj.type = GOAL;
+					obj.setSides(false, false, false, false);
+				}
 
 				/// DRAW PREVIEW
-				DrawEnvObject(obj);
+				if (obj.type == TEXT || obj.type == GOAL)
+					DrawBGEnvObject(obj, tex_terrain_bg, rect_terrain_bg);
+				else
+					DrawFGEnvObject(obj, tex_terrain_fg, rect_terrain_fg);
 
 				/// CREATE OBJECT BASED ON PREVIEW
 				if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
@@ -517,7 +564,7 @@ int main()
 			block.type = BLOCK;
 			block.color = blockColor;
 			block.setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
-			DrawEnvObject(block);
+			DrawFGEnvObject(block, tex_terrain_fg, rect_terrain_fg);
 			if(HiddenButton(blockR))
 			{
 				// block insert
@@ -530,7 +577,7 @@ int main()
 			_block.rect = _blockR;
 			_block.color = Color{245, 224, 66, 200};
 			_block.type = COIN;
-			DrawEnvObject(_block);
+			DrawFGEnvObject(_block, tex_terrain_fg, rect_terrain_fg);
 			if (HiddenButton(_blockR))
 			{
 				// coin insert
@@ -544,7 +591,7 @@ int main()
 			_block.color = Color{100, 100, 100, 200};
 			_block.type = BOOST;
 
-			DrawEnvObject(_block);
+			DrawFGEnvObject(_block, tex_terrain_fg, rect_terrain_fg);
 
 			if (HiddenButton(_blockR))
 			{
@@ -559,12 +606,38 @@ int main()
 			_block.color = Color{100, 255, 100, 200};
 			_block.type = LAUNCH;
 
-			DrawEnvObject(_block);
+			DrawFGEnvObject(_block, tex_terrain_fg, rect_terrain_fg);
 
 			if (HiddenButton(_blockR))
 			{
 				// coin insert
 				insertSelection = INSERT_LAUNCH;
+			}
+
+			/// draw hazard icon
+			_blockR.x = barRect.x + 10 + 240;
+			_block.setSides(false,false,false,false);
+			_block.rect = _blockR;
+			_block.color = COL_SPIKE;
+			_block.type = HAZARD;
+			DrawFGEnvObject(_block, tex_terrain_fg, rect_terrain_fg);
+			if (HiddenButton(_blockR))
+			{
+				// hazard insert
+				insertSelection = INSERT_HAZARD;
+			}
+
+			/// draw goal icon
+			_blockR.x = barRect.x + 10 + 300;
+			_block.setSides(false,false,false,false);
+			_block.rect = _blockR;
+			_block.color = WHITE;
+			_block.type = GOAL;
+			DrawBGEnvObject(_block, tex_terrain_bg, rect_terrain_bg);
+			if (HiddenButton(_blockR))
+			{
+				// goal insert
+				insertSelection = INSERT_GOAL;
 			}
 		}
 
@@ -695,9 +768,4 @@ void UpdateLevel(env_level* level)
 		}
 		i++;
 	}
-}
-
-void DrawLevel(env_level level)
-{
-	DrawEnvList(level.env_objects);
 }
