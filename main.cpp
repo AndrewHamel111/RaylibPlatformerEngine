@@ -1,5 +1,10 @@
 /// TODO
-///
+/* - make spikes work
+** - create a RETRY screen
+** - main menu
+** - level select
+** - some decent levels
+*/
 
 #include "raylib.h"
 #define NEARBLACK CLITERAL(Color){ 20, 20, 20, 255}
@@ -265,7 +270,8 @@ int main()
 			auto text = FormatText("%d / %d COINS COLLECTED", (int)p1.coins, (int)levels[level].coinsRequired);
 #endif
 			int off = MeasureText(text, 30);
-			DrawText(text, screenWidth/2 - off/2, 50, 30, NEARBLACK);
+			DrawRectangle(screenWidth/2 - off/2 - 10, 40, off + 20, 50, Color{0,0,0,140});
+			DrawText(text, screenWidth/2 - off/2, 50, 30, RAYWHITE);
 		}
 
 #ifdef DEV_SHOW_MOUSE_POS

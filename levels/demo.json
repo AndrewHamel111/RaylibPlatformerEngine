@@ -1,6 +1,7 @@
 {
     "id": 1,
     "label": "demo",
+		"coins_required": 0,
     "objects": [
         {
             "color": [

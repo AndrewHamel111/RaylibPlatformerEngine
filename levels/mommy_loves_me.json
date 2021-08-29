@@ -1,136 +1,161 @@
 {
+    "coins_required": 0,
     "id": 0,
-    "label": "level_template_2",
-		"coins_required": 0,
+    "label": "mommy_loves_me",
     "objects": [
         {
             "color": [
-                20,
-                20,
-                20,
+                80,
+                80,
+                80,
                 255
             ],
             "func": 0,
             "label": "block",
             "rect": [
                 0.0,
-                600.0,
-                800.0,
+                0.0,
+                200.0,
+                100.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                94,
+                38,
+                151,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                200.0,
+                0.0,
+                100.0,
                 100.0
             ],
             "sides": [
                 true,
                 true,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 120
+        },
+        {
+            "color": [
+                17,
+                123,
+                48,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -100.0,
+                0.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 120
+        },
+        {
+            "color": [
+                1,
+                161,
+                56,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -100.0,
+                100.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
                 true,
                 true
             ],
             "spriteId": 255,
             "type": 0,
-            "uuId": 0
+            "uuId": 120
+        },
+        {
+            "color": [
+                39,
+                27,
+                54,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                200.0,
+                100.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                true,
+                true,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 120
         },
         {
             "color": [
                 20,
-                20,
-                20,
+                236,
+                221,
                 255
             ],
             "func": 0,
             "label": "block",
             "rect": [
                 0.0,
-                400.0,
+                100.0,
                 200.0,
                 100.0
             ],
             "sides": [
+                false,
+                false,
                 true,
-                false,
-                false,
                 false
             ],
             "spriteId": 255,
             "type": 0,
-            "uuId": 0
-        },
-        {
-            "color": [
-                20,
-                20,
-                20,
-                255
-            ],
-            "func": 0,
-            "label": "block",
-            "rect": [
-                600.0,
-                400.0,
-                200.0,
-                100.0
-            ],
-            "sides": [
-                true,
-                false,
-                false,
-                false
-            ],
-            "spriteId": 255,
-            "type": 0,
-            "uuId": 0
-        },
-        {
-            "color": [
-                20,
-                20,
-                20,
-                255
-            ],
-            "func": 0,
-            "label": "block",
-            "rect": [
-                300.0,
-                175.0,
-                200.0,
-                100.0
-            ],
-            "sides": [
-                true,
-                false,
-                false,
-                false
-            ],
-            "spriteId": 255,
-            "type": 0,
-            "uuId": 0
-        },
-        {
-            "color": [
-                20,
-                20,
-                20,
-                255
-            ],
-            "func": 0,
-            "label": "block",
-            "rect": [
-                300.0,
-                500.0,
-                200.0,
-                100.0
-            ],
-            "sides": [
-                true,
-                false,
-                false,
-                false
-            ],
-            "spriteId": 255,
-            "type": 0,
-            "uuId": 0
+            "uuId": 120
         }
     ],
     "player_start": [
         100.0,
-        100.0
+        -100.0
     ]
 }

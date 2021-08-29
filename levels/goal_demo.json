@@ -1,6 +1,7 @@
 {
     "id": 0,
     "label": "goal_demo",
+		"coins_required": 5,
     "objects": [
         {
             "color": [
@@ -1450,6 +1451,31 @@
             ],
             "spriteId": 255,
             "type": 0,
+            "uuId": 0
+        },
+        {
+            "color": [
+                255,
+                255,
+                255,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                225.0,
+                550.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 5,
             "uuId": 0
         }
     ],

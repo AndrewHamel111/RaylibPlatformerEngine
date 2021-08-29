@@ -1,6 +1,7 @@
 {
     "id": 0,
     "label": "grandma cooking",
+		"coins_required": 0,
     "objects": [
         {
             "color": [

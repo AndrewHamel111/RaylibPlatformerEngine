@@ -1,12 +1,19 @@
 /// TODO
-/// - create level editor (this will be the main file for the editor)
-/// - CREATE FUNCTION env_level::AddObject(env_object) THAT ASSIGNS UUID'S CORRECTLY
-/// - ALSO FUNCTION env_level::AddEnvList(env_list) THAT CALLS ::AddObject using iterator
+/* CODE CLEANUP
+** - CREATE FUNCTION env_level::AddObject(env_object) THAT ASSIGNS UUID'S CORRECTLY
+** - ALSO FUNCTION env_level::AddEnvList(env_list) THAT CALLS ::AddObject using iterator
+**
+** EDITOR FEATURES
+** - more insert options including text
+** - move level start position
+** - more details of current zoom level/tile size/perhaps a grid? (probably not)
+** - level details section with editable name, max coin count, etc.
+**/
 
 #include "raylib.h"
-#define NEARBLACK CLITERAL(Color){ 20, 20, 20, 255}
-#define MUSTARD CLITERAL(Color){ 203, 182, 51, 255}
-#define COL_SPIKE CLITERAL(Color){ 102, 122, 138, 255}
+#define NEARBLACK CLITERAL(Color){20, 20, 20, 255}
+#define MUSTARD CLITERAL(Color){203, 182, 51, 255}
+#define COL_SPIKE CLITERAL(Color){102, 122, 138, 255}
 
 //#define DEV_SHOW_MOUSE_POS
 

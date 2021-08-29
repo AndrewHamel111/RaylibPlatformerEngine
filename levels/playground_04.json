@@ -1,6 +1,7 @@
 {
     "id": 1,
     "label": "playground_04",
+		"coins_required": 0,
     "objects": [
         {
             "color": [

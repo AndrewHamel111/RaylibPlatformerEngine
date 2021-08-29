@@ -1,6 +1,7 @@
 {
     "id": 0,
     "label": "stairs",
+		"coins_required": 0,
     "objects": [
         {
             "color": [
