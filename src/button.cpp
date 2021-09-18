@@ -102,7 +102,8 @@ bool TextButton(Rectangle bounds, std::string text, Color buttonColor, Color tex
 	DrawRectangleRec(bounds, c);
 
 	/// todo fix the alignment on this text
-	DrawTextRec(GetFontDefault(), text.c_str(), bounds, fontSize, 1.0, true, textColor);
+	//DrawTextRec(GetFontDefault(), text.c_str(), bounds, fontSize, 1.0, true, textColor);
+	DrawTextPro(GetFontDefault(), text.c_str(), Vector2{bounds.x, bounds.y}, Vector2{bounds.x, bounds.y}, 0, fontSize, 1.0, textColor);
 
 	return q;
 }
@@ -391,7 +392,8 @@ bool SimpleTextBoxDraw(Rectangle r, char* c, int max_field_length, bool* focus)
 	}
 
 	// draw TEXT
-	DrawTextRec(GetFontDefault(), c, r_inner, fontSize, 1.0f, true, col2);
+	//DrawTextRec(GetFontDefault(), c, r_inner, fontSize, 1.0f, true, col2);
+	DrawText(c, r_inner.x, r_inner.y, fontSize, col2);
 
 	return false;
 }

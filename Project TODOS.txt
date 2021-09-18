@@ -1,0 +1,15 @@
+Project TODOS Sept. 2021
+
+-- fix program structure to fit the standard, i.e. DONE
+/resources/spr , /resources/snd
+/src , /src/include
+/levels
+
+-- convert cpp to c
+
+-- tune up makefile
+
+-- include hamlib
+
+-- create a level progression system and a menu from where to "play", "level select", "editor", "quit"
+--- unify level editor / tester by making use of my Update / Draw method abstraction technique seen in microgame project

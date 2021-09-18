@@ -256,7 +256,8 @@ void DrawBGEnvObject(const env_object o, Texture2D atlas, RectSet rects)
 {
 	if (o.type == TEXT)
 	{
-		DrawTextRec(GetFontDefault(), o.label.c_str(), o.rect, 20, 1.0, true, o.color);
+		//DrawTextRec(GetFontDefault(), o.label.c_str(), o.rect, 20, 1.0, true, o.color);
+		DrawText(o.label.c_str(), o.rect.x, o.rect.y, 20, o.color);
 	}
 	else if (o.type == GOAL)
 	{

@@ -56,11 +56,11 @@ int main()
 	/** TEXTURES
 	=============*/
 
-	Texture2D tex_terrain_bg = LoadTexture("sprites/terrain/bg.png");
+	Texture2D tex_terrain_bg = LoadTexture("resources/spr/terrain/bg.png");
 	RectSet rect_terrain_bg; /**< Mapping from string names to source rects (BACKGROUND). */
 	rect_terrain_bg.emplace("flag", Rectangle{0,0,50,50});
 
-	Texture2D tex_terrain_fg = LoadTexture("sprites/terrain/fg.png");
+	Texture2D tex_terrain_fg = LoadTexture("resources/spr/terrain/fg.png");
 	RectSet rect_terrain_fg; /**< Mapping from string names to source rects (FOREGROUND). */
 
 	/** LEVELS
@@ -110,7 +110,7 @@ int main()
 	/** SOUNDS
 	=============*/
 
-	coinSound = LoadSound("snd/coin.ogg");
+	coinSound = LoadSound("resources/snd/coin.ogg");
 
 
 	/** SETUP
@@ -243,7 +243,8 @@ int main()
 #ifdef DEV_LEVEL_TEST
 		if (!levelIsLoaded)
 		{
-			DrawTextRec(GetFontDefault(), "DRAG AND DROP A LEVEL ON THIS WINDOW TO LOAD IT", Rectangle{200, 150, 400, 400}, 30, 1.0, true, LIGHTGRAY);
+			//DrawTextRec(GetFontDefault(), "DRAG AND DROP A LEVEL ON THIS WINDOW TO LOAD IT", Rectangle{200, 150, 400, 400}, 30, 1.0, true, LIGHTGRAY);
+			DrawText("DRAG AND DROP A LEVEL ON THIS WINDOW TO LOAD IT", 200, 200, 30, LIGHTGRAY);
 
 			EndDrawing();
 			continue;
@@ -264,10 +265,13 @@ int main()
 
 		if (flag_drawCoinCount)
 		{
+			char text[30];
 #ifdef DEV_LEVEL_TEST
-			auto text = FormatText("%d / %d COINS COLLECTED", (int)p1.coins, (int)level.coinsRequired);
+			//auto text = ;
+			strcpy(text, TextFormat("%d / %d COINS COLLECTED", (int)p1.coins, (int)level.coinsRequired));
 #else
-			auto text = FormatText("%d / %d COINS COLLECTED", (int)p1.coins, (int)levels[level].coinsRequired);
+			//auto text = TextFormat("%d / %d COINS COLLECTED", (int)p1.coins, (int)levels[level].coinsRequired);
+			strcpy(text, TextFormat("%d / %d COINS COLLECTED", (int)p1.coins, (int)levels[level].coinsRequired));
 #endif
 			int off = MeasureText(text, 30);
 			DrawRectangle(screenWidth/2 - off/2 - 10, 40, off + 20, 50, Color{0,0,0,140});
@@ -276,9 +280,9 @@ int main()
 
 #ifdef DEV_SHOW_MOUSE_POS
 		Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-		DrawText(FormatText("x=%4.2f\ny=%4.2f", v.x, v.y), GetMouseX(), GetMouseY() + 20, 20, NEARBLACK);
-		DrawText(FormatText("x=%3.2f\ny=%3.2f",p1.vel.x, p1.vel.y),0,0, 40, BLACK);
-		//DrawText(FormatText("x=%3.2f\ny=%3.2f",p1.externAcc.x, p1.externAcc.y),0,0, 40, BLACK);
+		DrawText(TextFormat("x=%4.2f\ny=%4.2f", v.x, v.y), GetMouseX(), GetMouseY() + 20, 20, NEARBLACK);
+		DrawText(TextFormat("x=%3.2f\ny=%3.2f",p1.vel.x, p1.vel.y),0,0, 40, BLACK);
+		//DrawText(TextFormat("x=%3.2f\ny=%3.2f",p1.externAcc.x, p1.externAcc.y),0,0, 40, BLACK);
 #endif
 
 		EndDrawing();

@@ -1,0 +1,61 @@
+{
+    "coins_required": 20768,
+    "id": 0,
+    "label": "",
+    "objects": [
+        {
+            "color": [
+                178,
+                45,
+                127,
+                84
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                0.0,
+                0.0,
+                100.0,
+                50.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 130
+        },
+        {
+            "color": [
+                102,
+                122,
+                138,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                150.0,
+                0.0,
+                75.0,
+                75.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 6,
+            "uuId": 130
+        }
+    ],
+    "player_start": [
+        100.0,
+        -100.0
+    ]
+}

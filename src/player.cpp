@@ -400,7 +400,7 @@ void player::DrawPlayer()
 	// dev stand-in for a real render of sorts
 	Rectangle r = Rectangle{pos.x - w/2, pos.y - h, w, h};
 	DrawRectangleRec(r, color);
-	DrawText(FormatText("%d", coins), (int)pos.x - 44, (int)pos.y - 95, 30, NEARBLACK);
+	DrawText(TextFormat("%d", coins), (int)pos.x - 44, (int)pos.y - 95, 30, NEARBLACK);
 }
 
 void player::setHitboxSize(Vector2 hitboxSize)

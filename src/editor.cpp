@@ -47,14 +47,14 @@ int main()
 	/** TEXTURES
 	=============*/
 
-	Texture2D tex_terrain_bg = LoadTexture("sprites/terrain/bg.png");
+	Texture2D tex_terrain_bg = LoadTexture("resources/spr/terrain/bg.png");
 	RectSet rect_terrain_bg; /**< Mapping from string names to source rects (BACKGROUND). */
 	rect_terrain_bg.emplace("flag", Rectangle{0,0,50,50});
 
-	Texture2D tex_terrain_fg = LoadTexture("sprites/terrain/fg.png");
+	Texture2D tex_terrain_fg = LoadTexture("resources/spr/terrain/fg.png");
 	RectSet rect_terrain_fg; /**< Mapping from string names to source rects (FOREGROUND). */
 
-	Texture2D buttonTex = LoadTexture("sprites/buttons.png"); /**< EDITOR ONLY */
+	Texture2D buttonTex = LoadTexture("resources/spr/buttons.png"); /**< EDITOR ONLY */
 
 	/** SOUNDS
 	=============*/
@@ -251,7 +251,7 @@ int main()
 		/// FileNameTextField
 		if (SimpleTextBoxUpdate(fileNameRect, fileNameString, 30, &fileNameFocus))
 		{
-			file_name = FormatText("%s.json", fileNameString);
+			file_name = TextFormat("%s.json", fileNameString);
 			level.label = fileNameString;
 
 			if (!levelIsLoaded)
@@ -556,7 +556,8 @@ int main()
 		// if level is not loaded put some instructions
 		if(!levelIsLoaded)
 		{
-			DrawTextRec(GetFontDefault(), "DRAG AND DROP A LEVEL TO EDIT OR TYPE A NAME AND PRESS ENTER", Rectangle{200,200,400,400}, 40, 1.0f, true, LIGHTGRAY);
+			//DrawTextRec(GetFontDefault(), "DRAG AND DROP A LEVEL TO EDIT OR TYPE A NAME AND PRESS ENTER", Rectangle{200,200,400,400}, 40, 1.0f, true, LIGHTGRAY);
+			DrawText("DRAG AND DROP A LEVEL TO EDIT OR TYPE A NAME AND PRESS ENTER", 200,200, 50, LIGHTGRAY);
 		}
 
 		/// DRAW INSERT BAR (ON BOTTOM)
@@ -726,7 +727,7 @@ int main()
 		/// SAVE BUTTONS
 		if (ImageButtonSink(buttonDestRect[SAVE], buttonTex, buttonSourceRect[SAVE]))
 		{
-			file_name = FormatText("%s.json", fileNameString);
+			file_name = TextFormat("%s.json", fileNameString);
 			level.label = fileNameString;
 
 			if (!levelIsLoaded)
@@ -745,8 +746,8 @@ int main()
 
 #ifdef DEV_SHOW_MOUSE_POS
 		Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-		//DrawText(FormatText("x=%4.2f\ny=%4.2f", v.x, v.y), GetMouseX(), GetMouseY() - 25, 20, NEARBLACK);
-		DrawText(FormatText("x=%3d\ny=%3d", GetMouseX(), GetMouseY()), GetMouseX(), GetMouseY() - 25, 20, NEARBLACK);
+		//DrawText(TextFormat("x=%4.2f\ny=%4.2f", v.x, v.y), GetMouseX(), GetMouseY() - 25, 20, NEARBLACK);
+		DrawText(TextFormat("x=%3d\ny=%3d", GetMouseX(), GetMouseY()), GetMouseX(), GetMouseY() - 25, 20, NEARBLACK);
 #endif
 
 		EndDrawing();
