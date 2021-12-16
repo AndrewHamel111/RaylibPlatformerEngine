@@ -5,7 +5,7 @@ Project TODOS Sept. 2021
 /src , /src/include
 /levels
 
--- convert cpp to c
+-- convert cpp to c (never mind that shit employers want to see C++ not C :( oh well)
 
 -- tune up makefile
 

@@ -902,6 +902,31 @@
             "spriteId": 255,
             "type": 6,
             "uuId": 0
+        },
+        {
+            "color": [
+                61,
+                127,
+                198,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -100.0,
+                -125.0,
+                100.0,
+                100.0
+            ],
+            "sides": [
+                true,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 130
         }
     ],
     "player_start": [
