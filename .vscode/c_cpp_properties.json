@@ -4,8 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${default}",
-				"./src/include"
-			],
+                "./src/include"
+            ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",

@@ -1,3 +1,5 @@
+// TODO all draw calls must be replaced by scaled draw calls
+
 #include "button.h"
 
 bool ImageButtonSpriteSwap(Rectangle bounds, Texture2D atlas, Rectangle source, Rectangle altSource)

@@ -1,3 +1,9 @@
+// TODO clean up some of the random comments within class def. as well as whitespace
+// when a "wall" is short enough, the player should be able to step onto it. this code should also neatly support slopes of 40 degrees or less. bonus points if it's configurable.
+
+// adjust visibility of player's fields; her pos / vel / acc / etc. should not be public knowledge!
+// also adjust visibility of behaviours (only update and draw should be visible.)
+
 #ifndef PLAYER_H_
 #define PLAYER_H_
 
@@ -42,7 +48,7 @@
 #include "constants.h"
 #include "environment.h"
 #include "operators.h"
-#include "animation.h"
+//#include "animation.h"
 
 #include <cmath>
 #include <string>

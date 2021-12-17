@@ -1,3 +1,5 @@
+// TODO collect other overrides from the project and store here
+
 #ifndef OPERATORS_H_
 #define OPERATORS_H_
 

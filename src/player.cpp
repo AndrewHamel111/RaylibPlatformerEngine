@@ -1,4 +1,7 @@
+// TODO consider replacing the LineCheck collision system with some kind of overlap box system, that way you can figure out the relative position of the other object. In addition, perhaps the process of determining stairs / slopes can be as simple as getting the height of the overlap and checking it against some value, and then correcting for the step can be as simple as adding said height to player pos.
+
 #include "player.h"
+#include <algorithm>
 
 /// CONSTRUCTORS
 

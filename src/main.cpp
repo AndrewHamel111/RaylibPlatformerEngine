@@ -1,12 +1,13 @@
 /// TODO
 /* 
+** - don't worry too much about optimizing the number of player fields as there is only one instance a little bit of sloppy code is okay. The game's optimization will come from optimizing env_objects and env_level rendering / collision checking / etc.
 ** - trace entire SRC folder and note all changes. Do not attempt to fix, document at the top of each file and then add a master list to Project TODOs
 
 ** - implement the following missing features:
 ** - stairs and slopes
-** - level loading system
 ** - make spikes work
 ** - create a RETRY screen
+** - level loading system
 ** - main menu
 ** - level select
 ** - some decent levels
@@ -16,6 +17,7 @@
 ** - Improvements to hamlib required:
 ** - working animation system
 ** - well-round the centered and scaled draw calls
+** - create a Sprite object that contains a reference to an atlas and source rectangle
 */
 
 #include "raylib.h"

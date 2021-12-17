@@ -1,3 +1,11 @@
+// TODO
+/*
+** - level geometry features
+** - keys and doors, where the nth key in env_list corresponds to the nth door in env_list
+** - alt color assignment in DrawEnvObject needs to be hidden in a function or two. I think hamlib already has this?
+** - we can't be drawing EVERYTHING in the environment, same goes for collision, so decide on a simple way to skip certain draws / updates and we can iterate on it further at a later time
+*/
+
 #include "environment.h"
 
 /// STRUCT ENV_OBJECT

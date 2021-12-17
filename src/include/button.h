@@ -1,3 +1,6 @@
+// TODO
+// This is ultimately an implementation of Immediate GUI, so rename it as such and incorporate it into hamlib.
+
 #ifndef BUTTON_H_
 #define BUTTON_H_
 
@@ -111,4 +114,5 @@ bool NumberBoxUpdate(Rectangle r, char* c, int max_field_length, bool* focus);
  * @details Keys pressed will only update the string if the field has focus. This is indicated by the bool pointer parameter, and the field is given a blue outline when it is selected so the user knows which box is selected. This field will lose focus when enter is pressed or the mouse is clicked outside the bounds of the field.
  */
 bool SimpleTextBoxDraw(Rectangle r, char* c, int max_field_length, bool* focus);
+
 #endif

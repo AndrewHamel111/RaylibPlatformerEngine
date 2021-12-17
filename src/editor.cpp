@@ -4,10 +4,9 @@
 ** - ALSO FUNCTION env_level::AddEnvList(env_list) THAT CALLS ::AddObject using iterator
 **
 ** EDITOR FEATURES
-** - more insert options including text
-** - move level start position
+** - more insert options including text, start position
 ** - more details of current zoom level/tile size/perhaps a grid? (probably not)
-** - level details section with editable name, max coin count, etc.
+** - level details section with editable name, goal setting, etc.
 **/
 
 #include "raylib.h"

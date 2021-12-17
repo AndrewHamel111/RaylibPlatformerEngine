@@ -1,3 +1,24 @@
+// TODO
+// reconfigure env_object to use anonymous unions to save space
+// i.e. boostAcc and boostMag are left uninitialized for anything other than a boost/launch, label is only used for text objects and isCollected is only used for collectables
+// consider removing boost and only having launch
+// consider using structs to contain multiple attributes specific to each env_object. i.e.
+/*
+union { 
+	struct {std::string text, TextAlignment alignment} env_text;
+	struct {Vector2 boostAcc, float boostMag} env_launch;
+	struct {bool isCollected} env_coin;
+};
+*/
+// player_start in env_level might be controlled by a special env_object?
+// env_level can also have a union that has multiple win conditions, i.e.
+/*
+union {
+	unsigned short goal_coins;
+	float goal_time;
+};
+*/
+
 #ifndef ENVIRONMENT_H_
 #define ENVIRONMENT_H_
 
@@ -6,7 +27,7 @@
 #define LAUNCH_BASE_VALUE 20
 
 #include "raylib.h"
-#include "animation.h"
+//#include "animation.h"
 
 #include <vector>
 #include <string>

@@ -1,3 +1,6 @@
+// TODO make sure any parts where we convert a specific element to a json object or vice versa are wrapped independently.
+// find out what it's going to take to save and load objects using unions when it gets implemented
+
 #include "files.h"
 
 ///////////////

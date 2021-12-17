@@ -1,3 +1,5 @@
+// TODO adjust visibility of some of these JSON files, this feels like we're exposing way too much. Maybe some of these functions are also unused?
+
 /// All File IO logic is included here, as used by the editor and the game.
 
 #ifndef FILES_H_INCLUDED

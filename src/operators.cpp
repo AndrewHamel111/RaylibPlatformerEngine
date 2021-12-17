@@ -1,4 +1,8 @@
+// TODO move the lib type extensions into hamlib
+// move the enhanced std into an extras section of hamlib called stdplusplus
+
 #include "operators.h"
+#include <string>
 
 ////////////////////
 // Enhanced std:: //
