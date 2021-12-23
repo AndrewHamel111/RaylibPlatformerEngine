@@ -12,8 +12,6 @@
 ** - level select
 ** - some decent levels
 ** - 
-** - 
-** - 
 ** - Improvements to hamlib required:
 ** - working animation system
 ** - well-round the centered and scaled draw calls

@@ -473,12 +473,17 @@ bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
 
 bool coinDist(player pl, Rectangle coinRect)
 {
-	Vector2 plV = pl.pos;
-	plV = plV - Vector2{0, pl.hitboxSize.y/2};
-	float a = plV.x - (coinRect.x + coinRect.width/2);
-	float b = plV.y - (coinRect.y + coinRect.height/2);
-	if (a < 0) a *= (-1);
-	if (b < 0) b *= (-1);
+	Vector2 diff = Vector2{pl.pos.x, (pl.pos.y - pl.hitboxSize.y/2)} - (Vector2{(coinRect.x + coinRect.width/2), (coinRect.y + coinRect.height/2)});
+	diff.x = (diff.x < 0) ? -diff.x : diff.x;
+	diff.y = (diff.y < 0) ? -diff.y : diff.y;
+	return diff.x < PLAYER_COIN_RADIUS && diff.y < PLAYER_COIN_RADIUS;
 
-	return a < PLAYER_COIN_RADIUS && b < PLAYER_COIN_RADIUS;
+	// Vector2 plV = pl.pos;
+	// plV = plV - Vector2{0, pl.hitboxSize.y/2};
+	// float a = plV.x - (coinRect.x + coinRect.width/2);
+	// float b = plV.y - (coinRect.y + coinRect.height/2);
+	// if (a < 0) a *= (-1);
+	// if (b < 0) b *= (-1);
+
+	// return a < PLAYER_COIN_RADIUS && b < PLAYER_COIN_RADIUS;
 }

@@ -63,10 +63,10 @@ bool ImageButtonSink(Rectangle bounds, Texture2D atlas, Rectangle source)
 		c = LIGHTGRAY;
 
 		if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
-		{
 			source.y -= 9;
+
+		if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
 			q = true;
-		}
 
 	}
 

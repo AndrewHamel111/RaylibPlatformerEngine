@@ -1,1 +1,1 @@
-- Raylib no longer has a DrawTextRec, so i've temporarily replaced these with normal DrawText or DrawTextPro calls. I will expand the functionality of DrawTextAligned to support multiline and then will replace these calls to DrawTextRec with those.
+- Raylib no longer has a DrawTextRec, so i've temporarily replaced these with normal DrawText or DrawTextPro calls. I will expand the functionality of DrawTextAligned to support multiline and then will replace these calls to DrawTextRec with those. UPDATE: DrawTextAligned now has this support so I just need to do that replacing.
