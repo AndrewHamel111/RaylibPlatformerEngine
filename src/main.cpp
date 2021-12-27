@@ -7,15 +7,19 @@
 ** - stairs and slopes
 ** - make spikes work
 ** - create a RETRY screen
+** - keys and doors
 ** - level loading system
 ** - main menu
 ** - level select
 ** - some decent levels
 ** - 
-** - Improvements to hamlib required:
+** - Improvements to hamlib finished:
 ** - working animation system
 ** - well-round the centered and scaled draw calls
 ** - create a Sprite object that contains a reference to an atlas and source rectangle
+** - 
+** - Consider the following (2.0 Ideas):
+** - some sort of 2D mesh system, to enable slopes and less flat geometry
 */
 
 #include "raylib.h"
@@ -208,6 +212,7 @@ int main()
 			level.backgroundRect = rect_terrain_bg;
 
 			ResetLevel(&p1, level);
+			p1.coins = 0;
 #endif // DEV_TEST_LEVEL
 		}
 
@@ -262,6 +267,8 @@ int main()
 			continue;
 		}
 #endif
+		DrawText(TextFormat("player pos: %3.1f %3.1f", p1.pos.x, p1.pos.y), 10, 10, 20, BLACK);
+		DrawText(TextFormat("player vel: %3.1f %3.1f", p1.vel.x, p1.vel.y), 10, 30, 20, BLACK);
 		BeginMode2D(camera);
 
 #ifdef DEV_LEVEL_TEST

@@ -203,6 +203,12 @@ void DrawFGEnvObject(const env_object o, Texture2D atlas, RectSet rects)
 
 			// draw each side independently based on the value of o.sides[].
 			float lineWidth = 15;
+			// TODO review this
+			if (o.rect.height < lineWidth)
+				lineWidth = o.rect.height/2;
+			if (o.rect.width < lineWidth)
+				lineWidth = o.rect.width/2;
+
 			if (o.sides[0])
 			{
 				DrawLineEx(Vector2{o.rect.x, o.rect.y + lineWidth/2}, Vector2{o.rect.x + o.rect.width, o.rect.y + lineWidth/2}, lineWidth, o.color);

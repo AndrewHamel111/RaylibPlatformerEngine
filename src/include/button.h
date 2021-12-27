@@ -45,6 +45,22 @@ bool ImageButtonEx(Rectangle bounds, Texture2D atlas, Rectangle source);
 bool ImageButtonSink(Rectangle bounds, Texture2D atlas, Rectangle source);
 
 /**
+ * \brief For ImageTextButton functions, sets the yOffset for the button in the event that the Rectangle bounds doesn't necessarily describe the position of the text.
+ * \param xOffset The number of pixels from the center of bounds the text should be offset horizontally.
+ * \param yOffset The number of pixels from the center of bounds the text should be offset vertically.
+ */
+void SetTextButtonOffset(int xOffset, int yOffset);
+/**
+ * \brief For ImageTextButton functions, unsets the use of a TextButtonOffset.
+ */
+void UnsetTextButtonOffset();
+
+/**
+ * \brief Draws described button which sinks when moused over and returns true when clicked.
+ */
+bool ImageTextButtonSink(Rectangle bounds, Texture2D atlas, Rectangle source, std::string label, Font font);
+
+/**
 * @brief Draws a button at the bounds, displaying the specified text and returns true when clicked.
 * @param bounds The bounds of the button {x,y,width,height} where x,y denote the top left corner
 * @param text Label to print on the button
@@ -114,5 +130,7 @@ bool NumberBoxUpdate(Rectangle r, char* c, int max_field_length, bool* focus);
  * @details Keys pressed will only update the string if the field has focus. This is indicated by the bool pointer parameter, and the field is given a blue outline when it is selected so the user knows which box is selected. This field will lose focus when enter is pressed or the mouse is clicked outside the bounds of the field.
  */
 bool SimpleTextBoxDraw(Rectangle r, char* c, int max_field_length, bool* focus);
+
+
 
 #endif

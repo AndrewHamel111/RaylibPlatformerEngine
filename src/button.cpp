@@ -1,6 +1,17 @@
 // TODO all draw calls must be replaced by scaled draw calls
+// Much of this code will be used for hamlib's IMGUI section so feel free to make it pog but don't use too much C++.
+
+// TODO implement ImageTextButton()
+// TODO add support for NPatch drawings through the use of static values, button.h methods to control those values and if statements in the IMGUI functions
 
 #include "button.h"
+
+// DEBUGGING ONLY
+#include <iostream>
+
+static int __textButtonXOffset = 0;
+static int __textButtonYOffset = 0;
+static bool __useTextButtonOffset = false;
 
 bool ImageButtonSpriteSwap(Rectangle bounds, Texture2D atlas, Rectangle source, Rectangle altSource)
 {
@@ -72,6 +83,59 @@ bool ImageButtonSink(Rectangle bounds, Texture2D atlas, Rectangle source)
 
 	// draw the button
 	DrawTextureRec(atlas, source, Vector2{bounds.x,bounds.y}, c);
+
+	return q;
+}
+
+static void DrawTextAligned(std::string text, float posX, float posY, float fontsize, Color tint, Font font)
+{
+	Vector2 measurement = MeasureTextEx(font, text.c_str(), fontsize, 1.0f);
+	float newPos = posY - fontsize/2.0f;
+	// std::cout << TextFormat("posY %.1f fontsize %.1f fontsize/2 %.1f newPos %.1f\n", posY, fontsize, fontsize/2.0f, newPos);
+	DrawTextEx(font, text.c_str(), Vector2{posX - measurement.x/2, newPos}, fontsize, 1.0f, tint);
+}
+
+void SetTextButtonOffset(int xOffset, int yOffset)
+{
+	__textButtonXOffset = xOffset;
+	__textButtonYOffset = yOffset;
+	__useTextButtonOffset = true;
+}
+
+void UnsetTextButtonOffset()
+{
+	__textButtonXOffset = 0;
+	__textButtonYOffset = 0;
+	__useTextButtonOffset = false;
+}
+
+bool ImageTextButtonSink(Rectangle bounds, Texture2D atlas, Rectangle source, std::string label, Font font)
+{
+	Vector2 m = GetMousePosition();
+	Color c = WHITE;
+	bool q = false;
+
+	float text_pos_x = (bounds.x + bounds.width / 2) + ((__useTextButtonOffset) ? __textButtonXOffset : 0);
+	float text_pos_y = (bounds.y + bounds.height / 2) + ((__useTextButtonOffset) ? __textButtonYOffset : 0);
+
+	if (m < bounds)
+	{
+		c = LIGHTGRAY;
+
+		if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+		{
+			source.y -= 9;
+			text_pos_y += 9;
+		}
+
+		if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+			q = true;
+
+	}
+
+	// draw the button
+	DrawTextureRec(atlas, source, Vector2{bounds.x,bounds.y}, c);
+	DrawTextAligned(label, text_pos_x, text_pos_y, 40, Color{0x14, 0x14, 0x14, 0xFF}, font);
 
 	return q;
 }

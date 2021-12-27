@@ -22,7 +22,7 @@
 
 /// gravity and jump
 #define PLAYER_GRAVITY 1
-#define PLAYER_TERMINAL_VELOCITY 30
+#define PLAYER_TERMINAL_VELOCITY 25
 
 #define PLAYER_JUMP_VELOCITY 15
 #define PLAYER_WALL_JUMP_MODIFIER 0.95
@@ -39,6 +39,7 @@
 /// other
 #define PLAYER_HITBOX_PERCENTAGE 0.15
 #define PLAYER_COIN_RADIUS 50
+#define STAIR_HEIGHT 30
 
 #ifndef RAYLIB_H_
 #define RAYLIB_H_

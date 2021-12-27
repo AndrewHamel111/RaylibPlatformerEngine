@@ -51,7 +51,7 @@ enum ENV_OBJECT_FUNCTION
 struct env_object
 {
 	Rectangle rect; /**< The rayib::Rectangle acting as the bounds of the hitbox, as well as the dest_rect for when the object is drawn. */
-	bool sides[4]; /**< An array describing the solid properties of the Rect. The default choice is the mario "semi-solid", where the player can jump up from the bottom and land on the top but run through the sides freely. */
+	bool sides[4]; /** An array describing the solid properties of the Rect. The default choice is the mario "semi-solid", where the player can jump up from the bottom and land on the top but run through the sides freely. Sides are UP, RIGHT, DOWN, LEFT respectively. */
 	unsigned short spriteId; /**< id is used as an index to a set of sprite rects: it is used to determine how the object should be displayed. */
 	unsigned short uuId; /**< a unique id issued by the env_level to have a unique identifier for each object in the level. env_object::uuId is unique only in it's own env_list. */
 	ENV_OBJECT_TYPE type;

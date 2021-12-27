@@ -3,6 +3,15 @@
 #include "player.h"
 #include <algorithm>
 
+// DEBUGGING ONLY
+#include <iostream>
+
+static bool OverlapBox(Rectangle a, Rectangle b, Rectangle* out);
+#define MIN(A,B) (((A) < (B)) ? (A) : (B))
+
+#define PLAYER_STAIR_HEIGHT 10
+#define PLAYER_STAIR_PENALTY 0.95f
+
 /// CONSTRUCTORS
 
 player::player(): pos{Vector2{400,300}}, vel{Vector2{0,0}}, acc{Vector2{0,0}}, externAcc{Vector2{0,0}}, externVel{Vector2{0,0}}, coins{0}, color{RandomColor()}, isDead{false}, godmode{false}, inEndZone{false}
@@ -199,6 +208,9 @@ void player::check(env_list* env)
 
 	const int lineSegmentCount = 10;
 
+	Rectangle playerRect = {this->pos.x - this->hitboxSize.x/2, this->pos.y - this->hitboxSize.y,
+		this->hitboxSize.x, this->hitboxSize.y};
+
 	// for each env_object
 	for (auto envI = env->begin(); envI != env->end(); envI++)
 	{
@@ -300,52 +312,106 @@ void player::check(env_list* env)
 
 			// TODO consider adding a check to exclude objects that are super far away
 
-			// perform line checks on each side of the player's hitbox
-				/// IN CEILING
-			if (envI->sides[2] && LineCheck(UP, lineSegmentCount, *envI))
-			{
-				// if still moving upward set vel to 0
-				if (this->vel.y < 0)
-				{
-					this->pos.y = envI->rect.y + envI->rect.height + this->hitboxSize.y;
-					this->vel.y = 0;
-				}
-			}
-				/// WALL ON RIGHT
-			if (envI->sides[3] && LineCheck(RIGHT, lineSegmentCount, *envI))
-			{
-				// if still moving right set vel to 0
-				if (this->vel.x > 0)
-				{
-					this->pos.x = envI->rect.x - this->hitboxSize.x/2;
-					this->vel.x = 0;
-				}
+			//overlap.height <= STAIR_HEIGHT
 
-				temp_flag_ON_WALL_RIGHT = true;
-			}
-				/// IN FLOOR
-			if (envI->sides[0] && LineCheck(DOWN, lineSegmentCount, *envI))
+			Rectangle overlap;
+			if (OverlapBox(playerRect, envI->rect, &overlap))
 			{
-				// if still falling set vel to 0
-				if (this->vel.y > 0)
-				{
-					this->pos.y = envI->rect.y;
-					this->vel.y = 0;
-				}
+				Vector2 offset = {0,0};
 
-				temp_flag_ON_GROUND = true;
-			}
-				/// WALL ON LEFT
-			if (envI->sides[1] && LineCheck(LEFT, lineSegmentCount, *envI))
-			{
-				// if still moving right set vel to 0
-				if (this->vel.x < 0)
+				// if statement removed since it created a bug where, when the width is super super super small and the player is falling fast enough, they will simply clip through the block. It was only possible on the edges of blocks so it wasn't a huge bug, but I am trying to build something fairly robust here. All related comments end with DEPRECATEDCODE_01
+				// if ((overlap.width > overlap.height))// || (vel.y > 10)) // DEPRECATEDCODE_01
+				// { // DEPRECATEDCODE_01
+				// 	if (overlap.height < PLAYER_TERMINAL_VELOCITY)
+				// 	{
+				// 		if ((overlap.y > playerRect.y && vel.y > 0) && envI->sides[0])// || (abs(vel.x > 0) && overlap.height <= STAIR_HEIGHT))
+				// 		{
+				// 			offset.y -= overlap.height;
+				// 			vel.y = 0;
+				// 			temp_flag_ON_GROUND = true;
+				// 		}
+				// 		else if ((overlap.y == playerRect.y && vel.y < 0) && envI->sides[2])
+				// 		{
+				// 			offset.y += overlap.height;
+				// 			vel.y = 0;
+				// 		}
+				// 	}
+				// } // DEPRECATEDCODE_01
+				// else // DEPRECATEDCODE_01
+				// { // DEPRECATEDCODE_01
+				// 	if (overlap.width < 0.5f * playerRect.width)
+				// 	{
+				// 		if((overlap.x > playerRect.x && vel.x > 0) && envI->sides[3])
+				// 		{
+				// 			offset.x -= overlap.width;
+				// 			vel.x = 0;
+				// 			temp_flag_ON_WALL_RIGHT = true;
+				// 		}
+				// 		else if ((overlap.x == playerRect.x && vel.x < 0) && envI->sides[1])
+				// 		{
+				// 			offset.x += overlap.width;
+				// 			vel.x = 0;
+				// 			temp_flag_ON_WALL_LEFT = true;
+				// 		}
+				// 	}
+				// } // DEPRECATEDCODE_01
+				
+				// bool up_stairs = false;
+				if (overlap.height <= PLAYER_STAIR_HEIGHT && (overlap.y > playerRect.y) && abs(vel.x) > 0)
 				{
-					this->pos.x = envI->rect.x + envI->rect.width + this->hitboxSize.x/2;
-					this->vel.x = 0;
+					offset.y -= overlap.height;
+					vel.y = 0;
+					temp_flag_ON_GROUND = true;
+					// up_stairs = true;
 				}
+				else if (overlap.height < PLAYER_TERMINAL_VELOCITY)
+				{
+					if ((overlap.y > playerRect.y && vel.y > 0) && envI->sides[0])// || (abs(vel.x > 0) && overlap.height <= STAIR_HEIGHT))
+					{
+						offset.y -= overlap.height;
+						vel.y = 0;
+						temp_flag_ON_GROUND = true;
+					}
+					else if ((overlap.y == playerRect.y && vel.y < 0) && envI->sides[2])
+					{
+						offset.y += overlap.height;
+						vel.y = 0;
+					}
+				}
+				// if ((overlap.width <= overlap.height) && !up_stairs)// || (vel.y > 10)) // DEPRECATEDCODE_02
+				if ((overlap.width <= overlap.height))// || (vel.y > 10)) // DEPRECATEDCODE_02
+				{ // DEPRECATEDCODE_02
+					// std::cout << "Second case hit\n";
 
-				temp_flag_ON_WALL_LEFT = true;
+					if (overlap.width < 0.5f * playerRect.width)
+					{
+						if((overlap.x > playerRect.x && vel.x > 0) && envI->sides[3])
+						{
+							offset.x -= overlap.width;
+							vel.x = 0;
+							temp_flag_ON_WALL_RIGHT = true;
+						}
+						else if ((overlap.x == playerRect.x && vel.x < 0) && envI->sides[1])
+						{
+							offset.x += overlap.width;
+							vel.x = 0;
+							temp_flag_ON_WALL_LEFT = true;
+						}
+					}
+				} // DEPRECATEDCODE_02
+
+				// if (up_stairs)
+				// {
+				// 	// small penalty to velocity
+				// 	std::cout << "Up Stairs\n";
+				// 	vel.x *= PLAYER_STAIR_PENALTY;
+				// }
+				// else
+				// 	std::cout << "\n";
+
+				// std::cout << TextFormat("overlap: x%4.0f y%4.0f w%4.0f h%4.0f\n", overlap.x, overlap.y, overlap.width, overlap.height);
+
+				pos = pos + offset;
 			}
 
 			continue;
@@ -486,4 +552,30 @@ bool coinDist(player pl, Rectangle coinRect)
 	// if (b < 0) b *= (-1);
 
 	// return a < PLAYER_COIN_RADIUS && b < PLAYER_COIN_RADIUS;
+}
+
+static bool OverlapBox(Rectangle a, Rectangle b, Rectangle* out)
+{
+	/* b > a 		logically equivalent to 
+	b - a > 0
+	plus we will use b - a so we store these and check against 0 instead
+	*/
+	// return (((b.x < a.x + a.width) && (b.x + b.width > a.x)) && ((b.y < a.y + a.height) && (b.y + b.height > a.y)));
+	float awb = a.x + a.width - b.x; // b.x < a.x + a.width
+	float bwa = b.x + b.width - a.x; // b.x + b.width > a.x
+	float ahb = a.y + a.height - b.y; // b.y < a.y + a.height
+	float bha = b.y + b.height - a.y; // b.y + b.height - a.y
+
+	if (awb > 0 && bwa > 0 && ahb > 0 && bha > 0)
+	{
+		*out = Rectangle{
+			(a.x < b.x) ? b.x : a.x,
+			(a.y < b.y) ? b.y : a.y,
+			(a.x < b.x) ? MIN(b.width, awb) : MIN(a.width, bwa),
+			(a.y < b.y) ? MIN(b.height, ahb) : MIN(a.height, bha)
+		};
+		return true;
+	}
+	else
+		return false;
 }

@@ -18,6 +18,9 @@
 
 #define CAMERA_SCROLL_SPEED 6.0f
 #define EDITOR_RESIZE_SPEED 25.0f
+#define EDITOR_MIN_BLOCK_WIDTH 25.0f
+#define EDITOR_MIN_BLOCK_HEIGHT 25.0f
+#define EDITOR_STAIR_SIZE 10
 
 #include "environment.h"
 #include "operators.h"
@@ -29,6 +32,7 @@
 #include <iostream>
 
 void UpdateLevel(env_level* level);
+static Color GetHandleColor(float rPercent, float gPercent, float bPercent);
 
 int main()
 {
@@ -53,7 +57,11 @@ int main()
 	Texture2D tex_terrain_fg = LoadTexture("resources/spr/terrain/fg.png");
 	RectSet rect_terrain_fg; /**< Mapping from string names to source rects (FOREGROUND). */
 
-	Texture2D buttonTex = LoadTexture("resources/spr/buttons.png"); /**< EDITOR ONLY */
+	Texture2D buttonTex = LoadTexture("resources/spr/buttons.png"); /** EDITOR ONLY */
+	Texture2D singleButtonTex = LoadTexture("resources/spr/button.png"); /** EDITOR ONLY */
+	SetTextureWrap(singleButtonTex, TEXTURE_WRAP_CLAMP);
+	// Font font_gamer = LoadFont("resources/gamer.ttf");
+	Font font_gamer = LoadFontEx("resources/gamer.ttf", 40, NULL, 94);
 
 	/** SOUNDS
 	=============*/
@@ -96,7 +104,7 @@ int main()
 	/** editor variables */
 	bool buttonValues[8] = {false}; /**< Button triggers */
 	short editorFlag = -1; /**< Determines the current action by the editor. */
-
+	bool stairMode = false;
 
 	enum INSERT_MODE_SELECTION /**< Enum for following variable */
 	{
@@ -128,6 +136,15 @@ int main()
 		Rectangle{0, 14,180,80}, // TEXTBOX SPACER
 		Rectangle{0, 14,180,80},	// TEMP4
 		Rectangle{720 + 540, 14,180,80} // SAVE
+	};
+
+	std::string buttonLabels[] = {
+		"INSERT",
+		"DELETE",
+		"SOLIDS",
+		"PAINT",
+		"COPY",
+		"CUT"
 	};
 
 	Rectangle buttonDestRect[] =
@@ -189,7 +206,7 @@ int main()
 		if (IsKeyDown(KEY_LEFT_SHIFT)) scrollSpeed *= 3;
 
 		/// WASD scrolls camera
-		camera.target = camera.target + (scrollSpeed * Vector2{(IsKeyDown(KEY_D) - IsKeyDown(KEY_A)), (IsKeyDown(KEY_S) - IsKeyDown(KEY_W))});
+		camera.target = camera.target + (scrollSpeed * Vector2{((float)IsKeyDown(KEY_D) - (float)IsKeyDown(KEY_A)), ((float)IsKeyDown(KEY_S) - (float)IsKeyDown(KEY_W))});
 
 		int resizeSpeed = (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) ? 100 : EDITOR_RESIZE_SPEED;
 
@@ -202,7 +219,7 @@ int main()
 		}
 		else
 			xResizeCounter = 0;
-		if (blockWidth < 25) blockWidth = 25;
+		if (blockWidth < EDITOR_MIN_BLOCK_WIDTH) blockWidth = EDITOR_MIN_BLOCK_WIDTH;
 
 		blockHeight += resizeSpeed * (IsKeyPressed(KEY_DOWN) - IsKeyPressed(KEY_UP));
 		if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_UP))
@@ -212,7 +229,16 @@ int main()
 		}
 		else
 			yResizeCounter = 0;
-		if (blockHeight < 25) blockHeight = 25;
+		if (blockHeight < EDITOR_MIN_BLOCK_HEIGHT) blockHeight = EDITOR_MIN_BLOCK_HEIGHT;
+
+		if (IsKeyPressed(KEY_X))
+			stairMode = !stairMode;
+
+		if (stairMode)
+		{
+			blockWidth = EDITOR_STAIR_SIZE;
+			blockHeight = EDITOR_STAIR_SIZE;
+		}
 		/// END RESIZE BLOCK
 
 		if (IsKeyPressed(KEY_I)) blockSides[0] = !blockSides[0];
@@ -305,8 +331,16 @@ int main()
 				Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
 				if (IsKeyDown(KEY_LEFT_CONTROL))
 				{
-					v.x = 25*((int)v.x/(int)25);
-					v.y = 25*((int)v.y/(int)25);
+					if (stairMode)
+					{
+						v.x = EDITOR_STAIR_SIZE*((int)v.x/(int)EDITOR_STAIR_SIZE);
+						v.y = EDITOR_STAIR_SIZE*((int)v.y/(int)EDITOR_STAIR_SIZE);
+					}
+					else
+					{
+						v.x = EDITOR_MIN_BLOCK_WIDTH*((int)v.x/(int)EDITOR_MIN_BLOCK_WIDTH);
+						v.y = EDITOR_MIN_BLOCK_WIDTH*((int)v.y/(int)EDITOR_MIN_BLOCK_HEIGHT);
+					}
 				}
 
 				env_object obj = env_object(Rectangle{v.x, v.y, blockWidth, blockHeight});
@@ -316,7 +350,7 @@ int main()
 					/// CREATE BLOCK PREVIEW
 					obj.setSides(blockSides[0], blockSides[1], blockSides[2], blockSides[3]);
 					obj.color = blockColor;
-					obj.type == BLOCK;
+					obj.type = BLOCK;
 				}
 				else if (insertSelection == INSERT_COIN)
 				{
@@ -652,10 +686,11 @@ int main()
 		DrawRectangleRec(editPanel, Color{30,30,30,200});
 
 		// draw buttons
-		/// TODO CLEAN UP THIS LOGIC
 		for (int i = 0; i < 6; i++)
 		{
-			buttonValues[i] = ImageButtonSink(buttonDestRect[i], buttonTex, buttonSourceRect[i]);
+			SetTextButtonOffset(0, -7);
+			buttonValues[i] = ImageTextButtonSink(buttonDestRect[i], singleButtonTex, Rectangle{0,0,180,80}, buttonLabels[i], font_gamer);
+			UnsetTextButtonOffset();
 		}
 		if (buttonValues[0])
 		{
@@ -700,22 +735,20 @@ int main()
 			blockColor = Color{(unsigned char)(rPercent * 255), (unsigned char)(gPercent * 255), (unsigned char)(bPercent * 255), (unsigned char)(aPercent * 255)};
 
 			DrawRectangle(colorPanelRect.x + 10, colorPanelRect.y + 20, 40, 100, blockColor);
+			Vector2 __v;
 
-			Vector2 __v = Vector2{colorPanelRect.x + 80,colorPanelRect.y + 20};
-			Color handleCol = Color{255, (255 - 255*rPercent), (255 - 255*rPercent), 255};
-			SliderBar(__v, 100, &rPercent, handleCol,1.0f, false);
+			__v = Vector2{colorPanelRect.x + 80,colorPanelRect.y + 20};
+			SliderBar(__v, 100, &rPercent, GetHandleColor(rPercent, 0, 0),1.0f, false);
 
 			__v = Vector2{colorPanelRect.x + 130,colorPanelRect.y + 20};
-			handleCol = Color{(255 - 255*gPercent), 255, (255 - 255*gPercent), 255};
-			SliderBar(__v, 100, &gPercent, handleCol,1.0f, false);
+			SliderBar(__v, 100, &gPercent, GetHandleColor(0, gPercent, 0),1.0f, false);
 
 			__v = Vector2{colorPanelRect.x + 180,colorPanelRect.y + 20};
-			handleCol = Color{(255 - 255*bPercent), (255 - 255*bPercent), 255, 255};
-			SliderBar(__v, 100, &bPercent, handleCol,1.0f, false);
+			SliderBar(__v, 100, &bPercent, GetHandleColor(0, 0, bPercent),1.0f, false);
 
 			__v = Vector2{colorPanelRect.x + 230,colorPanelRect.y + 20};
-			handleCol = Color{(255 - 255*aPercent), (255 - 255*aPercent), (255 - 255*aPercent), 255};
-			SliderBar(__v, 100, &aPercent, handleCol,1.0f, false);
+			unsigned char rgb = (unsigned char)(255 - 255*aPercent);
+			SliderBar(__v, 100, &aPercent, Color{rgb, rgb, rgb, 255},1.0f, false);
 			/// END COLOR PANEL
 		}
 
@@ -775,4 +808,12 @@ void UpdateLevel(env_level* level)
 		}
 		i++;
 	}
+}
+
+// Color handleCol = Color{255, (255 - 255*rPercent), (255 - 255*rPercent), 255};
+// handleCol = Color{(255 - 255*gPercent), 255, (255 - 255*gPercent), 255};
+// handleCol = Color{(255 - 255*bPercent), (255 - 255*bPercent), 255, 255};
+static Color GetHandleColor(float rPercent, float gPercent, float bPercent)
+{
+	return Color{(unsigned char)(255 - 255*rPercent), (unsigned char)(255 - 255*gPercent), (unsigned char)(255 - 255*bPercent), 255};
 }
