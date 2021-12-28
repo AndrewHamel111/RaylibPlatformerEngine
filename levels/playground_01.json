@@ -880,31 +880,6 @@
         },
         {
             "color": [
-                102,
-                122,
-                138,
-                255
-            ],
-            "func": 0,
-            "label": "block",
-            "rect": [
-                -950.0,
-                500.0,
-                100.0,
-                100.0
-            ],
-            "sides": [
-                false,
-                false,
-                false,
-                false
-            ],
-            "spriteId": 255,
-            "type": 6,
-            "uuId": 0
-        },
-        {
-            "color": [
                 61,
                 127,
                 198,
@@ -927,6 +902,31 @@
             "spriteId": 255,
             "type": 0,
             "uuId": 130
+        },
+        {
+            "color": [
+                102,
+                122,
+                138,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -950.0,
+                500.0,
+                500.0,
+                100.0
+            ],
+            "sides": [
+                false,
+                false,
+                false,
+                false
+            ],
+            "spriteId": 255,
+            "type": 6,
+            "uuId": 5
         }
     ],
     "player_start": [

@@ -353,5 +353,5 @@ env_level::env_level(unsigned short id, std::string label, env_list env_objects)
 
 Color RandomColor()
 {
-	return Color{rand() % 255, rand() % 255, rand() % 255, 255};
+	return Color{(unsigned char)(rand() % 255), (unsigned char)(rand() % 255), (unsigned char)(rand() % 255), 255};
 }

@@ -4,14 +4,13 @@
 ** - trace entire SRC folder and note all changes. Do not attempt to fix, document at the top of each file and then add a master list to Project TODOs
 
 ** - implement the following missing features:
-** - stairs and slopes
-** - make spikes work
-** - create a RETRY screen
 ** - keys and doors
-** - level loading system
+** - revamp editor
+** -- support for generic "editor panels" so that as I add features like text boxes that need custom panels it won't be so terrible to add them
+** - stairs and slopes
+** - create a RETRY screen
 ** - main menu
 ** - level select
-** - some decent levels
 ** - 
 ** - Improvements to hamlib finished:
 ** - working animation system
@@ -38,11 +37,16 @@
 // DEV SHIT
 #include <iostream>
 
+/// Variables
+player p1;
+env_level current_level;
+
 /// Sound and Texture Declarations
 Sound coinSound;
 
 void UpdateLevel(env_level* level);
 void ResetLevel(player*, env_level);
+void ResetCurrentLevel();
 
 int main()
 {
@@ -51,7 +55,7 @@ int main()
 	const int screenWidth = 800;
 	const int screenHeight = 600;
 
-	player p1(Vector2{0,0});
+	p1 = player(Vector2{0,0});
 	p1.setHitboxSize(Vector2{50,50});
 
 /** Load Levels */
@@ -85,12 +89,12 @@ int main()
 
 	bool levelIsLoaded = false;
 	std::string file_name;
-	env_level level;
+	//env_level level;
 
 #else
 
 	std::vector<env_level> levels;
-	unsigned short level = 0; /**< acts as an index to std::vector<> levels. level 0 is an interactive menu, level 1 marks the first level in the game. */
+	unsigned short level_num = 0; /**< acts as an index to std::vector<> levels. level 0 is an interactive menu, level 1 marks the first level in the game. */
 	// load all levels in the levels folder
 	try
 	{
@@ -106,7 +110,8 @@ int main()
 		/// TODO handle the case where the folder has no files in it whatsoever
 		exit(0);
 	}
-	ResetLevel(&p1, levels[level]);
+	// ResetLevel(&p1, levels[level]);
+	ResetLevel(&p1, current_level);
 
 	// add the atlases (default atlases as placeholder)
 	auto i = levels.begin();
@@ -162,32 +167,35 @@ int main()
 #ifdef DEV_LEVEL_TEST
 		/// kill player if needed
 		if (p1.isDead)
-			ResetLevel(&p1, level);
+			ResetLevel(&p1, current_level);
+			// ResetLevel(&p1, level);
 
 		/// check for win condition
-		if (p1.inEndZone && p1.coins >= level.coinsRequired)
+		if (p1.inEndZone && p1.coins >= current_level.coinsRequired)
 		{
 				// FOR NOW IT ENDS GAME
 				CloseAudioDevice();
 				CloseWindow();
 				return 0;
 			}
-		else if (p1.inEndZone && !(p1.coins >= level.coinsRequired)) // show the player's progress
+		else if (p1.inEndZone && !(p1.coins >= current_level.coinsRequired)) // show the player's progress
 		{
 			flag_drawCoinCount = true;
 		}
 
 		if (levelIsLoaded)
 		{
-			p1.update(&level.env_objects);
+			p1.update(&current_level.env_objects);
 		}
 
 #else
 		/// kill player if needed
 		if (p1.isDead)
-			ResetLevel(&p1, levels[level]);
+			ResetLevel(&p1, current_level);
+			// ResetLevel(&p1, levels[level]);
 
-		p1.update(&levels[level].env_objects);
+		// p1.update(&levels[level].env_objects);
+		p1.update(&(current_level.env_objects));
 #endif
 
 		/// CAMERA UPDATE
@@ -203,15 +211,15 @@ int main()
 			camera.zoom = 1.0f;
 
 #ifdef DEV_LEVEL_TEST
-			level = LoadLevelFromFile(file_name);
+			current_level = LoadLevelFromFile(file_name);
 
 			// add the atlases (DEV)
-			level.foregroundAtlas = tex_terrain_fg;
-			level.foregroundRect = rect_terrain_fg;
-			level.backgroundAtlas = tex_terrain_bg;
-			level.backgroundRect = rect_terrain_bg;
+			current_level.foregroundAtlas = tex_terrain_fg;
+			current_level.foregroundRect = rect_terrain_fg;
+			current_level.backgroundAtlas = tex_terrain_bg;
+			current_level.backgroundRect = rect_terrain_bg;
 
-			ResetLevel(&p1, level);
+			ResetLevel(&p1, current_level);
 			p1.coins = 0;
 #endif // DEV_TEST_LEVEL
 		}
@@ -224,7 +232,7 @@ int main()
 			file_name = "";
 			SetWindowTitle("Level Tester");
 		}
-		UpdateLevel(&level);
+		UpdateLevel(&current_level);
 		if (IsFileDropped())
 		{
 			int count;
@@ -232,21 +240,22 @@ int main()
 			if (count > 0)
 				file_name = files[0];
 
-			level = LoadLevelFromFile(file_name);
+			current_level = LoadLevelFromFile(file_name);
 
 			// add the atlases (DEV)
-			level.foregroundAtlas = tex_terrain_fg;
-			level.foregroundRect = rect_terrain_fg;
-			level.backgroundAtlas = tex_terrain_bg;
-			level.backgroundRect = rect_terrain_bg;
+			current_level.foregroundAtlas = tex_terrain_fg;
+			current_level.foregroundRect = rect_terrain_fg;
+			current_level.backgroundAtlas = tex_terrain_bg;
+			current_level.backgroundRect = rect_terrain_bg;
 
 			ClearDroppedFiles();
 			SetWindowTitle(GetFileName(file_name.c_str()));
-			ResetLevel(&p1, level);
+			ResetLevel(&p1, current_level);
 			levelIsLoaded = true;
 		}
 #else
-		UpdateLevel(&levels[level]);
+		// UpdateLevel(&levels[level]);
+		UpdateLevel(&current_level);
 #endif
 
 
@@ -272,9 +281,10 @@ int main()
 		BeginMode2D(camera);
 
 #ifdef DEV_LEVEL_TEST
-		DrawLevel(level);
+		DrawLevel(current_level);
 #else
-		DrawLevel(levels[level]);
+		// DrawLevel(levels[level]);
+		DrawLevel(current_level);
 #endif
 
 		/// draw player
@@ -287,10 +297,11 @@ int main()
 			char text[30];
 #ifdef DEV_LEVEL_TEST
 			//auto text = ;
-			strcpy(text, TextFormat("%d / %d COINS COLLECTED", (int)p1.coins, (int)level.coinsRequired));
+			strcpy(text, TextFormat("%d / %d COINS COLLECTED", (int)p1.coins, (int)current_level.coinsRequired));
 #else
 			//auto text = TextFormat("%d / %d COINS COLLECTED", (int)p1.coins, (int)levels[level].coinsRequired);
-			strcpy(text, TextFormat("%d / %d COINS COLLECTED", (int)p1.coins, (int)levels[level].coinsRequired));
+			// strcpy(text, TextFormat("%d / %d COINS COLLECTED", (int)p1.coins, (int)levels[level].coinsRequired));
+			strcpy(text, TextFormat("%d / %d COINS COLLECTED", (int)p1.coins, (int)(current_level.coinsRequired)));
 #endif
 			int off = MeasureText(text, 30);
 			DrawRectangle(screenWidth/2 - off/2 - 10, 40, off + 20, 50, Color{0,0,0,140});
@@ -342,6 +353,11 @@ void UpdateLevel(env_level* level)
 
 void ResetLevel(player* p, env_level level)
 {
-	p->acc = p->vel = Vector2{0,0};
-	p->pos = level.player_start;
+	current_level = level;
+	p->reset();
+}
+
+void ResetCurrentLevel()
+{
+	ResetLevel(&p1, current_level);
 }

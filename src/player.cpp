@@ -6,6 +6,9 @@
 // DEBUGGING ONLY
 #include <iostream>
 
+extern void ResetCurrentLevel();
+extern env_level current_level;
+
 static bool OverlapBox(Rectangle a, Rectangle b, Rectangle* out);
 #define MIN(A,B) (((A) < (B)) ? (A) : (B))
 
@@ -214,6 +217,8 @@ void player::check(env_list* env)
 	// for each env_object
 	for (auto envI = env->begin(); envI != env->end(); envI++)
 	{
+		Rectangle overlap;
+
 		/// IGNORE COLLISION FOR TEXT
 		if (envI->type == TEXT)
 		{
@@ -275,25 +280,11 @@ void player::check(env_list* env)
 		else if (envI->type == HAZARD && !godmode)
 		{
 			// collide with a spike? DIE
-
-			//simplified version of block collision checking
-			if (envI->sides[2] && LineCheck(UP, lineSegmentCount/2, *envI))
+			if (OverlapBox(playerRect, envI->rect, &overlap))
 			{
-				isDead = true;
+				this->isDead = true;
+				return;
 			}
-			else if (envI->sides[3] && LineCheck(RIGHT, lineSegmentCount/2, *envI))
-			{
-				isDead = true;
-			}
-			else if (envI->sides[0] && LineCheck(DOWN, lineSegmentCount/2, *envI))
-			{
-				isDead = true;
-			}
-			else if (envI->sides[1] && LineCheck(LEFT, lineSegmentCount/2, *envI))
-			{
-				isDead = true;
-			}
-
 		}
 		else if (envI->type == GOAL)
 		{
@@ -305,56 +296,11 @@ void player::check(env_list* env)
 		}
 		else if (envI->type == BLOCK || (envI->type == HAZARD && godmode))
 		{
-			// don't bother with collision check if our center is totally inside of the current object,
-			// since it's most likely a semisolid that the player is "in front of"
-			//if ((this->pos + Vector2{0, 0 - 50}) < envI->rect)
-			//	continue;
-
 			// TODO consider adding a check to exclude objects that are super far away
 
-			//overlap.height <= STAIR_HEIGHT
-
-			Rectangle overlap;
 			if (OverlapBox(playerRect, envI->rect, &overlap))
 			{
 				Vector2 offset = {0,0};
-
-				// if statement removed since it created a bug where, when the width is super super super small and the player is falling fast enough, they will simply clip through the block. It was only possible on the edges of blocks so it wasn't a huge bug, but I am trying to build something fairly robust here. All related comments end with DEPRECATEDCODE_01
-				// if ((overlap.width > overlap.height))// || (vel.y > 10)) // DEPRECATEDCODE_01
-				// { // DEPRECATEDCODE_01
-				// 	if (overlap.height < PLAYER_TERMINAL_VELOCITY)
-				// 	{
-				// 		if ((overlap.y > playerRect.y && vel.y > 0) && envI->sides[0])// || (abs(vel.x > 0) && overlap.height <= STAIR_HEIGHT))
-				// 		{
-				// 			offset.y -= overlap.height;
-				// 			vel.y = 0;
-				// 			temp_flag_ON_GROUND = true;
-				// 		}
-				// 		else if ((overlap.y == playerRect.y && vel.y < 0) && envI->sides[2])
-				// 		{
-				// 			offset.y += overlap.height;
-				// 			vel.y = 0;
-				// 		}
-				// 	}
-				// } // DEPRECATEDCODE_01
-				// else // DEPRECATEDCODE_01
-				// { // DEPRECATEDCODE_01
-				// 	if (overlap.width < 0.5f * playerRect.width)
-				// 	{
-				// 		if((overlap.x > playerRect.x && vel.x > 0) && envI->sides[3])
-				// 		{
-				// 			offset.x -= overlap.width;
-				// 			vel.x = 0;
-				// 			temp_flag_ON_WALL_RIGHT = true;
-				// 		}
-				// 		else if ((overlap.x == playerRect.x && vel.x < 0) && envI->sides[1])
-				// 		{
-				// 			offset.x += overlap.width;
-				// 			vel.x = 0;
-				// 			temp_flag_ON_WALL_LEFT = true;
-				// 		}
-				// 	}
-				// } // DEPRECATEDCODE_01
 				
 				// bool up_stairs = false;
 				if (overlap.height <= PLAYER_STAIR_HEIGHT && (overlap.y > playerRect.y) && abs(vel.x) > 0)
@@ -408,8 +354,6 @@ void player::check(env_list* env)
 				// }
 				// else
 				// 	std::cout << "\n";
-
-				// std::cout << TextFormat("overlap: x%4.0f y%4.0f w%4.0f h%4.0f\n", overlap.x, overlap.y, overlap.width, overlap.height);
 
 				pos = pos + offset;
 			}
@@ -482,61 +426,6 @@ void player::setHitboxSize(Vector2 hitboxSize)
 	this->hitbox_corners[3] = Vector2{0 - hitboxSize.x/2 - 1, 0};
 }
 
-/*	Vector2{-51, -101}		Vector2{0, -101} 	Vector2{51, -101}
-	Vector2{-51, -50}							Vector2{51, -50}
-	Vector2{-51, 1}			Vector2{0, 1}		Vector2{51, 1} */
-/// TODO improve this shit because it's certainly not divine intellect
-bool player::LineCheck(LineCheckDirection dir, int lineSegments, env_object obj)
-{
-	// never use less than 5 line segments (would be very inaccurate if we did)
-	if (lineSegments < 5) lineSegments = 5;
-
-	const float hitPercentage = PLAYER_HITBOX_PERCENTAGE;
-
-	unsigned char collisionCounter = 0;
-
-	switch(dir)
-	{
-	case UP: // top left to top right
-		for(int i = 0; i < lineSegments && (float)collisionCounter/lineSegments < hitPercentage; i++)
-		{
-			// player's position + the offset to reach the appropriate corner (top left) + the offset from where we are in the iteration
-			Vector2 hitPoint = this->pos + this->hitbox_corners[0] + Vector2{(float)i/(lineSegments - 1)*(this->hitboxSize.x - 1), 0};
-			if (hitPoint < obj.rect && this->pos.y > (obj.rect.y + obj.rect.height)) ///TODO double check this if
-				collisionCounter++;
-		}
-		break;
-	case RIGHT: // top right to bottom right
-		for(int i = 0; i < lineSegments && (float)collisionCounter/lineSegments < hitPercentage; i++)
-		{
-			Vector2 hitPoint = this->pos + this->hitbox_corners[1] + Vector2{0, (float)i/(lineSegments - 1)*(this->hitboxSize.y - 1)};
-			if (hitPoint < obj.rect && this->pos.x < obj.rect.x)
-				collisionCounter++;
-		}
-		break;
-	case DOWN: // bottom right to bottom left
-		for(int i = 0; i < lineSegments && (float)collisionCounter/lineSegments < hitPercentage; i++)
-		{
-			Vector2 hitPoint = this->pos + this->hitbox_corners[2] - Vector2{(float)i/(lineSegments - 1)*(this->hitboxSize.x - 1), 0};
-			if (hitPoint < obj.rect && this->pos.y < (obj.rect.y + this->hitboxSize.y/2))
-				collisionCounter++;
-		}
-		break;
-	case LEFT: // bottom left to top right
-		for(int i = 0; i < lineSegments && (float)collisionCounter/lineSegments < hitPercentage; i++)
-		{
-			Vector2 hitPoint = this->pos + this->hitbox_corners[3] - Vector2{0, (float)i/(lineSegments - 1)*(this->hitboxSize.y - 1)};
-			if (hitPoint < obj.rect && this->pos.x > (obj.rect.x + obj.rect.width))
-				collisionCounter++;
-		}
-		break;
-	}
-
-	if ((float)collisionCounter/lineSegments >= hitPercentage)
-		return true;
-	return false;
-}
-
 bool coinDist(player pl, Rectangle coinRect)
 {
 	Vector2 diff = Vector2{pl.pos.x, (pl.pos.y - pl.hitboxSize.y/2)} - (Vector2{(coinRect.x + coinRect.width/2), (coinRect.y + coinRect.height/2)});
@@ -578,4 +467,20 @@ static bool OverlapBox(Rectangle a, Rectangle b, Rectangle* out)
 	}
 	else
 		return false;
+}
+
+void player::reset()
+{
+	this->isDead = false;
+	this->inEndZone = false;
+	this->coins = 0;
+	this->pos = current_level.player_start;
+	this->acc = this->vel = Vector2{0,0};
+	this->externAcc = this->externVel = Vector2{0,0};
+
+	for(int i = 0; i < PLAYER_FLAG_COUNT; i++)
+		this->_flag[i] = false;
+
+	for(int i = 0; i < PLAYER_FLAG_COUNT; i++)
+		this->_value[i] = 0;
 }

@@ -129,6 +129,8 @@ public:
 	void update(env_list*); /**< update method for the player simply calls the above methods in the correct order. Distributes the parameters out accordingly. */
 
 	void DrawPlayer();
+
+	void reset();
 };
 
 bool coinDist(player, Rectangle);
