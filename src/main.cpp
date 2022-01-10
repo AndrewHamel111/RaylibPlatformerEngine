@@ -4,10 +4,8 @@
 ** - trace entire SRC folder and note all changes. Do not attempt to fix, document at the top of each file and then add a master list to Project TODOs
 
 ** - implement the following missing features:
-** - keys and doors
 ** - revamp editor
 ** -- support for generic "editor panels" so that as I add features like text boxes that need custom panels it won't be so terrible to add them
-** - stairs and slopes
 ** - create a RETRY screen
 ** - main menu
 ** - level select
@@ -19,6 +17,8 @@
 ** - 
 ** - Consider the following (2.0 Ideas):
 ** - some sort of 2D mesh system, to enable slopes and less flat geometry
+** - keys and doors
+** - stairs and slopes
 */
 
 #include "raylib.h"
@@ -94,7 +94,7 @@ int main()
 #else
 
 	std::vector<env_level> levels;
-	unsigned short level_num = 0; /**< acts as an index to std::vector<> levels. level 0 is an interactive menu, level 1 marks the first level in the game. */
+	unsigned short level_num = 0; /**< DEPRECATED acts as an index to std::vector<> levels. level 0 is an interactive menu, level 1 marks the first level in the game. */
 	// load all levels in the levels folder
 	try
 	{

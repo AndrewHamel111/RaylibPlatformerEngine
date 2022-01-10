@@ -31,6 +31,9 @@
 // DEV SHIT
 #include <iostream>
 
+env_level current_level;
+env_level level;
+
 void UpdateLevel(env_level* level);
 static Color GetHandleColor(float rPercent, float gPercent, float bPercent);
 
@@ -108,7 +111,7 @@ int main()
 
 	enum INSERT_MODE_SELECTION /**< Enum for following variable */
 	{
-		INSERT_BLOCK, INSERT_TEXT, INSERT_COIN, INSERT_BOOST, INSERT_LAUNCH, INSERT_HAZARD, INSERT_GOAL
+		INSERT_BLOCK, INSERT_TEXT, INSERT_COIN, INSERT_BOOST, INSERT_LAUNCH, INSERT_HAZARD, INSERT_GOAL, INSERT_KEY, INSERT_DOOR
 	};
 	INSERT_MODE_SELECTION insertSelection = INSERT_BLOCK; /**< What object is created while in Insert mode. */
 
@@ -176,7 +179,7 @@ int main()
 	bool levelIsLoaded = false;
 	std::string file_name = "output.json";
 	std::string window_label = "Level Tester";
-	env_level level;
+	// env_level level;
 
 	/// Create the camera object
 	Camera2D camera{Vector2{0,0}, Vector2{0, 0}, 0, 0.5f};
@@ -257,14 +260,14 @@ int main()
 			if (count > 0)
 				file_name = files[0];
 
-			level = LoadLevelFromFile(file_name);
+			current_level = LoadLevelFromFile(file_name);
 			ClearDroppedFiles();
 
 			// add the atlases (DEV)
-			level.foregroundAtlas = tex_terrain_fg;
-			level.foregroundRect = rect_terrain_fg;
-			level.backgroundAtlas = tex_terrain_bg;
-			level.backgroundRect = rect_terrain_bg;
+			current_level.foregroundAtlas = tex_terrain_fg;
+			current_level.foregroundRect = rect_terrain_fg;
+			current_level.backgroundAtlas = tex_terrain_bg;
+			current_level.backgroundRect = rect_terrain_bg;
 
 			SetWindowTitle(TextFormat("%s %s", "Editing ", GetFileName(file_name.c_str())));
 			levelIsLoaded = true;
@@ -283,11 +286,11 @@ int main()
 			{
 				levelIsLoaded = true;
 
-				level.player_start = Vector2{100,-100};
-				level.env_objects.push_back(env_object{Rectangle{0,0,200,100}, BLOCK});
+				current_level.player_start = Vector2{100,-100};
+				current_level.env_objects.push_back(env_object{Rectangle{0,0,200,100}, BLOCK});
 
 				// since the level isn't loaded, create the new file
-				SaveLevelToFile(level, "levels/" + file_name);
+				SaveLevelToFile(current_level, "levels/" + file_name);
 			}
 		}
 
@@ -306,12 +309,11 @@ int main()
 
 		ClearBackground(WHITE);
 
-
 		BeginMode2D(camera); /// BEGIN MODE 2D
 
 		//{ LEVEL DRAW
 		if (levelIsLoaded)
-			DrawLevel(level);
+			DrawLevel(current_level);
 		//}
 
 		Vector2 m = GetMousePosition();
@@ -401,24 +403,24 @@ int main()
 				/// CREATE OBJECT BASED ON PREVIEW
 				if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
 				{
-					level.env_objects.push_back(obj);
+					current_level.env_objects.push_back(obj);
 					blockColor = Color{(unsigned char)(rPercent * 255), (unsigned char)(gPercent * 255), (unsigned char)(bPercent * 255), (unsigned char)(aPercent * 255)};
 				}
 			}
 			else if (editorFlag == (short)DELETE)
 			{
-				auto it = level.env_objects.end() - 1;
+				auto it = current_level.env_objects.end() - 1;
 				Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-				auto obj = level.env_objects.begin() - 1;
+				auto obj = current_level.env_objects.begin() - 1;
 
 				// iterate from the end of the list, since objects near the end of the list appear at the front
-				for (; it != level.env_objects.begin() - 1 && obj == level.env_objects.begin() - 1; it--)
+				for (; it != current_level.env_objects.begin() - 1 && obj == current_level.env_objects.begin() - 1; it--)
 				{
 					if (v < it->rect)
 						obj = it;
 				}
 
-				if (obj != level.env_objects.begin() - 1)
+				if (obj != current_level.env_objects.begin() - 1)
 				{
 					env_object obj_clone = *obj;
 					obj_clone.color = Color{255, 211, 209, 255};
@@ -426,24 +428,24 @@ int main()
 
 					if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
 					{
-						level.env_objects.erase(obj);
+						current_level.env_objects.erase(obj);
 					}
 				}
 			}
 			else if (editorFlag == (short)PAINT)
 			{
-				auto it = level.env_objects.end() - 1;
+				auto it = current_level.env_objects.end() - 1;
 				Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-				auto obj = level.env_objects.begin() - 1;
+				auto obj = current_level.env_objects.begin() - 1;
 
 				// iterate from the end of the list, since objects near the end of the list appear at the front
-				for (; it != level.env_objects.begin() - 1 && obj == level.env_objects.begin() - 1; it--)
+				for (; it != current_level.env_objects.begin() - 1 && obj == current_level.env_objects.begin() - 1; it--)
 				{
 					if (v < it->rect)
 						obj = it;
 				}
 
-				if (obj != level.env_objects.begin() - 1)
+				if (obj != current_level.env_objects.begin() - 1)
 				{
 					env_object obj_clone = *obj;
 					obj_clone.color = blockColor;
@@ -465,18 +467,18 @@ int main()
 			}
 			else if (editorFlag == (short)SIDES)
 			{
-				auto it = level.env_objects.end() - 1;
+				auto it = current_level.env_objects.end() - 1;
 				Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-				auto obj = level.env_objects.begin() - 1;
+				auto obj = current_level.env_objects.begin() - 1;
 
 				// iterate from the end of the list, since objects near the end of the list appear at the front
-				for (; it != level.env_objects.begin() - 1 && obj == level.env_objects.begin() - 1; it--)
+				for (; it != current_level.env_objects.begin() - 1 && obj == current_level.env_objects.begin() - 1; it--)
 				{
 					if (v < it->rect)
 						obj = it;
 				}
 
-				if (obj != level.env_objects.begin() - 1)
+				if (obj != current_level.env_objects.begin() - 1)
 				{
 					env_object obj_clone = *obj;
 					obj_clone.color = LIGHTGRAY;
@@ -491,18 +493,18 @@ int main()
 			}
 			else if (editorFlag == (short)COPY)
 			{
-				auto it = level.env_objects.end() - 1;
+				auto it = current_level.env_objects.end() - 1;
 				Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-				auto obj = level.env_objects.begin() - 1;
+				auto obj = current_level.env_objects.begin() - 1;
 
 				// iterate from the end of the list, since objects near the end of the list appear at the front
-				for (; it != level.env_objects.begin() - 1 && obj == level.env_objects.begin() - 1; it--)
+				for (; it != current_level.env_objects.begin() - 1 && obj == current_level.env_objects.begin() - 1; it--)
 				{
 					if (v < it->rect)
 						obj = it;
 				}
 
-				if (obj != level.env_objects.begin() - 1)
+				if (obj != current_level.env_objects.begin() - 1)
 				{
 					env_object obj_clone = *obj;
 					obj_clone.color = Color{233, 255, 186, 255};
@@ -537,18 +539,18 @@ int main()
 			}
 			else if (editorFlag == (short)CUT)
 			{
-				auto it = level.env_objects.end() - 1;
+				auto it = current_level.env_objects.end() - 1;
 				Vector2 v = GetScreenToWorld2D(GetMousePosition(), camera);
-				auto obj = level.env_objects.begin() - 1;
+				auto obj = current_level.env_objects.begin() - 1;
 
 				// iterate from the end of the list, since objects near the end of the list appear at the front
-				for (; it != level.env_objects.begin() - 1 && obj == level.env_objects.begin() - 1; it--)
+				for (; it != current_level.env_objects.begin() - 1 && obj == current_level.env_objects.begin() - 1; it--)
 				{
 					if (v < it->rect)
 						obj = it;
 				}
 
-				if (obj != level.env_objects.begin() - 1)
+				if (obj != current_level.env_objects.begin() - 1)
 				{
 					env_object obj_clone = *obj;
 					obj_clone.color = Color{255, 242, 209, 255};
@@ -568,7 +570,7 @@ int main()
 						blockSides[2] = obj->sides[2];
 						blockSides[3] = obj->sides[3];
 
-						level.env_objects.erase(obj);
+						current_level.env_objects.erase(obj);
 
 						editorFlag = (short)INSERT;
 						if (obj->type == BLOCK)
@@ -590,7 +592,7 @@ int main()
 		if(!levelIsLoaded)
 		{
 			//DrawTextRec(GetFontDefault(), "DRAG AND DROP A LEVEL TO EDIT OR TYPE A NAME AND PRESS ENTER", Rectangle{200,200,400,400}, 40, 1.0f, true, LIGHTGRAY);
-			DrawText("DRAG AND DROP A LEVEL TO EDIT OR TYPE A NAME AND PRESS ENTER", 200,200, 50, LIGHTGRAY);
+			DrawText("DRAG AND DROP A LEVEL TO EDIT\nOR TYPE A NAME AND PRESS ENTER", 50,200, 30, LIGHTGRAY);
 		}
 
 		/// DRAW INSERT BAR (ON BOTTOM)
@@ -680,6 +682,8 @@ int main()
 				// goal insert
 				insertSelection = INSERT_GOAL;
 			}
+
+			/// draw key icon
 		}
 
 		// draw edit panel
@@ -760,17 +764,17 @@ int main()
 		if (ImageButtonSink(buttonDestRect[SAVE], buttonTex, buttonSourceRect[SAVE]))
 		{
 			file_name = TextFormat("%s.json", fileNameString);
-			level.label = fileNameString;
+			current_level.label = fileNameString;
 
 			if (!levelIsLoaded)
 			{
 				levelIsLoaded = true;
 
-				level.player_start = Vector2{100,-100};
-				level.env_objects.push_back(env_object{Rectangle{0,0,200,100}, BLOCK});
+				current_level.player_start = Vector2{100,-100};
+				current_level.env_objects.push_back(env_object{Rectangle{0,0,200,100}, BLOCK});
 			}
 
-			SaveLevelToFile(level, "levels/" + file_name);
+			SaveLevelToFile(current_level, "levels/" + file_name);
 		}
 
 		SimpleTextBoxDraw(fileNameRectSmall, fileNameString, 30, &fileNameFocus);

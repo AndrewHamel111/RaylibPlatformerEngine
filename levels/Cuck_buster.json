@@ -1,7 +1,7 @@
 {
+    "coins_required": 0,
     "id": 0,
-    "label": "Level 0",
-		"coins_required": 0,
+    "label": "Cuck_buster",
     "objects": [
         {
             "color": [
@@ -4330,81 +4330,6 @@
         },
         {
             "color": [
-                215,
-                164,
-                237,
-                255
-            ],
-            "func": 0,
-            "label": "block",
-            "rect": [
-                -1873.8787841796875,
-                1017.3938598632813,
-                1400.0,
-                25.0
-            ],
-            "sides": [
-                true,
-                true,
-                true,
-                true
-            ],
-            "spriteId": 255,
-            "type": 0,
-            "uuId": 71
-        },
-        {
-            "color": [
-                243,
-                59,
-                167,
-                255
-            ],
-            "func": 0,
-            "label": "block",
-            "rect": [
-                -3086.30322265625,
-                1015.8787231445313,
-                1400.0,
-                25.0
-            ],
-            "sides": [
-                true,
-                true,
-                true,
-                true
-            ],
-            "spriteId": 255,
-            "type": 0,
-            "uuId": 71
-        },
-        {
-            "color": [
-                114,
-                175,
-                239,
-                255
-            ],
-            "func": 0,
-            "label": "block",
-            "rect": [
-                -3435.091064453125,
-                1015.8787231445313,
-                1400.0,
-                25.0
-            ],
-            "sides": [
-                true,
-                true,
-                true,
-                true
-            ],
-            "spriteId": 255,
-            "type": 0,
-            "uuId": 71
-        },
-        {
-            "color": [
                 141,
                 119,
                 145,
@@ -5867,6 +5792,31 @@
                 -1405.757568359375,
                 600.0,
                 100.0
+            ],
+            "sides": [
+                true,
+                true,
+                true,
+                true
+            ],
+            "spriteId": 255,
+            "type": 0,
+            "uuId": 71
+        },
+        {
+            "color": [
+                215,
+                164,
+                237,
+                255
+            ],
+            "func": 0,
+            "label": "block",
+            "rect": [
+                -3600.0,
+                1075.0,
+                3000.0,
+                25.0
             ],
             "sides": [
                 true,

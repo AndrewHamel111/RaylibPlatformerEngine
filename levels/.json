@@ -1,5 +1,5 @@
 {
-    "coins_required": 20440,
+    "coins_required": 32,
     "id": 0,
     "label": "",
     "objects": [
@@ -26,7 +26,7 @@
             ],
             "spriteId": 255,
             "type": 0,
-            "uuId": 130
+            "uuId": 661
         }
     ],
     "player_start": [
