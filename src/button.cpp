@@ -5,6 +5,7 @@
 // TODO add support for NPatch drawings through the use of static values, button.h methods to control those values and if statements in the IMGUI functions
 
 #include "button.h"
+#include "editor_button.h"
 
 // DEBUGGING ONLY
 #include <iostream>
@@ -12,6 +13,10 @@
 static int __textButtonXOffset = 0;
 static int __textButtonYOffset = 0;
 static bool __useTextButtonOffset = false;
+
+static Texture2D editor_button_atlas;
+static Rectangle editor_button_source;
+static Font editor_button_font;
 
 bool ImageButtonSpriteSwap(Rectangle bounds, Texture2D atlas, Rectangle source, Rectangle altSource)
 {
@@ -87,7 +92,7 @@ bool ImageButtonSink(Rectangle bounds, Texture2D atlas, Rectangle source)
 	return q;
 }
 
-static void DrawTextAligned(std::string text, float posX, float posY, float fontsize, Color tint, Font font)
+void DrawButtonLabel(std::string text, float posX, float posY, float fontsize, Color tint, Font font)
 {
 	Vector2 measurement = MeasureTextEx(font, text.c_str(), fontsize, 1.0f);
 	float newPos = posY - fontsize/2.0f;
@@ -135,9 +140,37 @@ bool ImageTextButtonSink(Rectangle bounds, Texture2D atlas, Rectangle source, st
 
 	// draw the button
 	DrawTextureRec(atlas, source, Vector2{bounds.x,bounds.y}, c);
-	DrawTextAligned(label, text_pos_x, text_pos_y, 40, Color{0x14, 0x14, 0x14, 0xFF}, font);
+	DrawButtonLabel(label, text_pos_x, text_pos_y, 40, Color{0x14, 0x14, 0x14, 0xFF}, font);
 
 	return q;
+}
+
+void DrawEditorButton(Button button)
+{
+	Color c = WHITE;
+	Rectangle source = editor_button_source;
+
+	Vector2 text_pos = button.pos;
+	if (__useTextButtonOffset)
+	{
+		text_pos.x += __textButtonXOffset;
+		text_pos.y += __textButtonYOffset;
+	}
+
+	if (button.isHovered)
+	{
+		c = LIGHTGRAY;
+
+		if (button.isPressed)
+		{
+			source.y -= 9;
+			text_pos.y += 9;
+		}
+	}
+
+	// draw the button
+	DrawTextureRec(editor_button_atlas, source, button.pos, c);
+	DrawButtonLabel(button.label, text_pos.x, text_pos.y, 40, Color{0x14, 0x14, 0x14, 0xFF}, editor_button_font);
 }
 
 bool TextButton(Rectangle bounds, std::string text, Color buttonColor, Color textColor)
@@ -462,4 +495,11 @@ bool SimpleTextBoxDraw(Rectangle r, char* c, int max_field_length, bool* focus)
 	DrawText(c, r_inner.x, r_inner.y, fontSize, col2);
 
 	return false;
+}
+
+void SetEditorButtonTexture(Texture2D atlas, Rectangle source, Font font)
+{
+	editor_button_atlas = atlas;
+	editor_button_source = source;
+	editor_button_font = font;
 }

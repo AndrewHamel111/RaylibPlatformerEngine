@@ -4,7 +4,7 @@
 ** - trace entire SRC folder and note all changes. Do not attempt to fix, document at the top of each file and then add a master list to Project TODOs
 
 ** - implement the following missing features:
-** - revamp editor
+** - revamp editor (STARTED. CREATE A CLASS FOR A PANEL THAT WILL HAVE BUTTONS ON IT AND HAVE PRESSING THE EDITOR BUTTONS ENABLE THEM. ALSO ABSTRACT THE CLASS BUTTON MORE AND CREATE AN EDITORPANEL BUTTON SUBCLASS?)
 ** -- support for generic "editor panels" so that as I add features like text boxes that need custom panels it won't be so terrible to add them
 ** - create a RETRY screen
 ** - main menu

@@ -8,6 +8,7 @@
 #include "operators.h"
 #include <string>
 #include <cstring>
+#include "editor_button.h"
 
 #define SLIDER_HANDLE_HEIGHT 30
 #define SLIDER_HEIGHT 20
@@ -34,6 +35,7 @@ bool ImageButtonSpriteSwap(Rectangle bounds, Texture2D atlas, Rectangle source, 
 */
 bool ImageButtonEx(Rectangle bounds, Texture2D atlas, Rectangle source);
 
+
 /**
 * @brief Draws described button which sinks when moused over and returns true when clicked.
 * @param bounds The bounds of the button {x,y,width,height} where x,y denote the top left corner
@@ -43,6 +45,8 @@ bool ImageButtonEx(Rectangle bounds, Texture2D atlas, Rectangle source);
 * A replacement for raygui::GuiImageButtonEx (which was not very good at all).
 */
 bool ImageButtonSink(Rectangle bounds, Texture2D atlas, Rectangle source);
+
+void DrawButtonLabel(std::string text, float posX, float posY, float fontsize, Color tint, Font font);
 
 /**
  * \brief For ImageTextButton functions, sets the yOffset for the button in the event that the Rectangle bounds doesn't necessarily describe the position of the text.
@@ -131,6 +135,17 @@ bool NumberBoxUpdate(Rectangle r, char* c, int max_field_length, bool* focus);
  */
 bool SimpleTextBoxDraw(Rectangle r, char* c, int max_field_length, bool* focus);
 
+//// EDITOR SPECIFIC ////
+
+/**
+ * \brief Draw a button from the editor panel using all the editor stuff.
+ */
+void DrawEditorButton(Button button);
+
+/**
+ * \brief Set the atlas source rectangle and font of the editor buttons.
+ */
+void SetEditorButtonTexture(Texture2D atlas, Rectangle source, Font font);
 
 
 #endif
